@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Volume">
-<meta name="theme-color" content="#121010">
+<meta name="theme-color" content="#131110">
 <meta name="application-name" content="Volume">
 <title>Volume — Personal Workout App</title>
 <link rel="manifest" href="./manifest.json">
@@ -61,20 +61,120 @@
 <style>
   /* ─── RESET & TOKENS ───────────────────────────────────────────────── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ─── COLOR TOKENS — Agent 9 'Forged Ember' v1.0 (COLOR-001..022) ────
+     Source of truth: Agent Prompt 9/tokens.css. Dark = default.
+     Legacy vars below are ALIASES into the token system — do not add raw
+     color literals to components. */
   :root {
-    --bg:        #121010;
-    --bg2:       #171412;
-    --bg3:       #3D2410;
-    --card:      #1A1715;
-    --border:    #2A2420;
-    --accent:    #FF5C00;
-    --accent2:   #FF8A3D;
-    --green:     #3ECF7A;
-    --red:       #FF6157;
-    --yellow:    #FFB020;
-    --text:      #F2EFE8;
-    --text-inv:  #F2EFE8;
-    --muted:     #9A9289;
+    --color-focus-ring-width: 2px;
+    --color-focus-ring-offset: 2px;
+    color-scheme: dark;
+  }
+  [data-theme="dark"], :root {
+    --color-brand-primary: #FF5C00; --color-brand-primary-hover: #FF7A2E;
+    --color-brand-primary-active: #E85400; --color-brand-primary-subtle: #33210F;
+    --color-brand-secondary: #D8D2C8; --color-brand-secondary-subtle: #262220;
+    --color-brand-accent: #FFB380; --color-brand-on-primary: #1A0D04;
+    --color-brand-on-secondary: #1D1915;
+    --color-background-canvas: #131110; --color-background-workout: #0D0B0A;
+    --color-surface-primary: #1B1815; --color-surface-secondary: #211D1A;
+    --color-surface-elevated: #26211E; --color-surface-input: #211D1A;
+    --color-surface-selected: #33241A; --color-surface-disabled: #1E1B18;
+    --color-surface-overlay: #26211E; --color-surface-scrim: rgba(9, 7, 6, 0.65);
+    --color-text-primary: #EDE8E0; --color-text-secondary: #B5ACA1;
+    --color-text-tertiary: #968D82; --color-text-disabled: #6E6659;
+    --color-text-inverse: #1D1915; --color-text-link: #FF9A5C;
+    --color-text-link-hover: #FFB380;
+    --color-border-subtle: #2A2420; --color-border-default: #3A332C;
+    --color-border-strong: #756A5E; --color-border-selected: #FF5C00;
+    --color-divider-default: #2A2420;
+    --color-action-primary: #FF5C00; --color-action-primary-hover: #FF7A2E;
+    --color-action-primary-active: #E85400; --color-action-secondary: transparent;
+    --color-action-secondary-hover: #211D1A; --color-action-disabled: #1E1B18;
+    --color-action-destructive: #D93A3A; --color-focus-ring: #7AB8FF;
+    --color-selection-background: #4A2B14;
+    --color-status-success: #3ECF7A; --color-status-success-text: #7ADFA6;
+    --color-status-success-background: #10281B; --color-status-success-border: #2C6E4A;
+    --color-status-warning: #FFB020; --color-status-warning-text: #FFC65C;
+    --color-status-warning-background: #2B2007; --color-status-warning-border: #8A6A1E;
+    --color-status-danger: #FF6B61; --color-status-danger-text: #FF9A92;
+    --color-status-danger-background: #321413; --color-status-danger-border: #7E3833;
+    --color-status-information: #6FB1FF; --color-status-information-text: #9CC8FF;
+    --color-status-information-background: #12233A; --color-status-information-border: #2C567F;
+    --color-workout-not-started: #968D82; --color-workout-active: #FF5C00;
+    --color-workout-paused: #FFB020; --color-workout-complete: #3ECF7A;
+    --color-set-unlogged: #968D82; --color-set-active: #FF5C00;
+    --color-set-complete: #3ECF7A; --color-set-skipped: #6E6659;
+    --color-timer-resting: #6FB1FF; --color-timer-ending: #FFB020;
+    --color-timer-complete: #3ECF7A; --color-workout-pr: #F5C64F;
+    --color-progression-recommended: #5FC9B2; --color-deload-recommended: #B39DDB;
+    --color-viz-1: #FF8A4C; --color-viz-2: #5FC9B2; --color-viz-3: #B39DDB;
+    --color-viz-4: #7AB8FF; --color-viz-5: #D9C08A; --color-viz-neutral: #8A8177;
+  }
+  /* Light theme tokens — STAGED (Agent 9 light set). Not yet user-reachable:
+     activation (toggle + prefers-color-scheme mirror) ships with the
+     light-theme ticket after visual QA. */
+  [data-theme="light"] {
+    --color-brand-primary: #C24A00; --color-brand-primary-hover: #A83F00;
+    --color-brand-primary-active: #8F3600; --color-brand-primary-subtle: #FFE9DB;
+    --color-brand-secondary: #5C554C; --color-brand-secondary-subtle: #F3F0EB;
+    --color-brand-accent: #FF5C00; --color-brand-on-primary: #FFFFFF;
+    --color-brand-on-secondary: #FFFFFF;
+    --color-background-canvas: #FAF8F5; --color-background-workout: #F3F0EB;
+    --color-surface-primary: #FFFFFF; --color-surface-secondary: #F3F0EB;
+    --color-surface-elevated: #FFFFFF; --color-surface-input: #F3F0EB;
+    --color-surface-selected: #FFE9DB; --color-surface-disabled: #EFEBE4;
+    --color-surface-overlay: #FFFFFF; --color-surface-scrim: rgba(29, 25, 21, 0.40);
+    --color-text-primary: #1D1915; --color-text-secondary: #5C554C;
+    --color-text-tertiary: #736B61; --color-text-disabled: #8A8378;
+    --color-text-inverse: #FAF8F5; --color-text-link: #B34400;
+    --color-text-link-hover: #8F3600;
+    --color-border-subtle: #EDE7DE; --color-border-default: #DCD4C8;
+    --color-border-strong: #857B6E; --color-border-selected: #C24A00;
+    --color-divider-default: #EDE7DE;
+    --color-action-primary: #C24A00; --color-action-primary-hover: #A83F00;
+    --color-action-primary-active: #8F3600; --color-action-secondary: transparent;
+    --color-action-secondary-hover: #F3F0EB; --color-action-disabled: #EFEBE4;
+    --color-action-destructive: #A8231C; --color-focus-ring: #1E6FD9;
+    --color-selection-background: #FFD9BF;
+    --color-status-success: #1E7F4D; --color-status-success-text: #166B41;
+    --color-status-success-background: #E7F5EC; --color-status-success-border: #9BD4B4;
+    --color-status-warning: #8A5B00; --color-status-warning-text: #7A5200;
+    --color-status-warning-background: #FFF3D6; --color-status-warning-border: #E3C578;
+    --color-status-danger: #B3261E; --color-status-danger-text: #A8231C;
+    --color-status-danger-background: #FCEBEA; --color-status-danger-border: #EFA9A5;
+    --color-status-information: #1E6FD9; --color-status-information-text: #1A5FBF;
+    --color-status-information-background: #E8F0FC; --color-status-information-border: #A8C6F0;
+    --color-workout-not-started: #736B61; --color-workout-active: #C24A00;
+    --color-workout-paused: #7A5200; --color-workout-complete: #166B41;
+    --color-set-unlogged: #736B61; --color-set-active: #C24A00;
+    --color-set-complete: #166B41; --color-set-skipped: #8A8378;
+    --color-timer-resting: #1A5FBF; --color-timer-ending: #7A5200;
+    --color-timer-complete: #166B41; --color-workout-pr: #8A6A1E;
+    --color-progression-recommended: #1C7A66; --color-deload-recommended: #6B4FA3;
+    --color-viz-1: #C24A00; --color-viz-2: #1C7A66; --color-viz-3: #6B4FA3;
+    --color-viz-4: #1A5FBF; --color-viz-5: #8A6A1E; --color-viz-neutral: #6E675E;
+  }
+  ::selection { background: var(--color-selection-background); }
+  :focus-visible {
+    outline: var(--color-focus-ring-width) solid var(--color-focus-ring);
+    outline-offset: var(--color-focus-ring-offset);
+  }
+  /* Legacy aliases → token system (COLOR migration map, see BUILD_NOTES) */
+  :root {
+    --bg:        var(--color-background-canvas);
+    --bg2:       var(--color-surface-secondary);
+    --bg3:       var(--color-surface-selected);
+    --card:      var(--color-surface-primary);
+    --border:    var(--color-border-subtle);
+    --accent:    var(--color-action-primary);
+    --accent2:   var(--color-brand-primary-hover);
+    --green:     var(--color-status-success);
+    --red:       var(--color-status-danger);
+    --yellow:    var(--color-status-warning);
+    --text:      var(--color-text-primary);
+    --text-inv:  var(--color-text-primary);
+    --muted:     var(--color-text-secondary);
     --r:         12px;
     --r2:        20px;
     --safe-b:    env(safe-area-inset-bottom, 0px);
@@ -144,7 +244,7 @@
   .logo-base {
     display: block;
     height: 3px;
-    background: #2B2622;
+    background: #26211E;
     border-radius: 2px;
     position: relative;
     overflow: hidden;
@@ -184,7 +284,7 @@
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: #1a2540;
+    background: #12233A;
     border: 1px solid rgba(255,255,255,0.12);
     border-radius: 14px;
     padding: 6px;
@@ -290,7 +390,7 @@
     border-radius: var(--r2);
   }
   .ring-svg { flex-shrink: 0; }
-  .ring-bg { fill: none; stroke: #C4C9D4; stroke-width: 4; }
+  .ring-bg { fill: none; stroke: #DCD4C8; stroke-width: 4; }
   .ring-fill {
     fill: none; stroke: var(--accent2); stroke-width: 4;
     stroke-linecap: round;
@@ -308,7 +408,7 @@
   /* ─── EXERCISE CARDS ─────────────────────────────────────────────────── */
   .exercises-list { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
   .ex-card {
-    background: #EDF1F7;
+    background: #F3F0EB;
     border: 1px solid rgba(255,92,0,0.3);
     border-radius: var(--r2);
     overflow: hidden;
@@ -335,15 +435,15 @@
   .ex-icon.muscle-core     { background: rgba(234,88,12,0.15); }
   .ex-icon.muscle-cardio   { background: rgba(147,51,234,0.15); }
   .ex-card-info { flex: 1; min-width: 0; }
-  .ex-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #1F2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ex-name { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #1D1915; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ex-muscle {
     font-size: 11px; font-family: var(--font-mono);
-    color: #C2410C; letter-spacing: 0.5px; text-transform: uppercase;
+    color: #C24A00; letter-spacing: 0.5px; text-transform: uppercase;
   }
   .ex-status { font-size: 22px; }
   .ex-body {
     display: none;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #EDE7DE;
     padding: 16px 18px;
     flex-direction: column;
     gap: 14px;
@@ -357,7 +457,7 @@
     border-radius: 8px;
     background: rgba(255,138,61,0.1);
     border: 1px solid rgba(255,138,61,0.25);
-    color: #9A3412;
+    color: #8F3600;
   }
   .swap-btn {
     display: inline-flex; align-items: center; gap: 4px;
@@ -365,7 +465,7 @@
     padding: 5px 10px; border-radius: 8px;
     background: rgba(0,0,0,0.04);
     border: 1px solid rgba(0,0,0,0.15);
-    color: #57534E; cursor: pointer;
+    color: #5C554C; cursor: pointer;
     transition: all .15s; flex-shrink: 0;
     letter-spacing: 0.3px;
   }
@@ -401,14 +501,14 @@
   }
   .variant-label {
     font-family: var(--font-mono); font-size: 10.5px;
-    color: #57534E; text-transform: uppercase; letter-spacing: 0.8px;
+    color: #5C554C; text-transform: uppercase; letter-spacing: 0.8px;
     flex-shrink: 0;
   }
   .variant-chip {
     font-family: var(--font-mono); font-size: 10px;
     padding: 4px 9px; border-radius: 6px; cursor: pointer;
-    background: #F3F4F6; border: 1px solid #e5e7eb;
-    color: #4b5563; transition: all .15s; flex-shrink: 0;
+    background: #F3F0EB; border: 1px solid #EDE7DE;
+    color: #5C554C; transition: all .15s; flex-shrink: 0;
   }
   .variant-chip.active {
     background: rgba(255,92,0,0.1);
@@ -418,7 +518,7 @@
   }
   .variant-chip:active { transform: scale(0.93); }
   .ex-cue {
-    font-size: 13px; line-height: 1.6; color: #374151;
+    font-size: 13px; line-height: 1.6; color: #5C554C;
     border-left: 2px solid var(--accent2);
     padding-left: 12px;
   }
@@ -428,28 +528,28 @@
     align-items: center; gap: 7px;
   }
   .set-num {
-    font-family: var(--font-mono); font-size: 12px; color: #6b7280;
+    font-family: var(--font-mono); font-size: 12px; color: #736B61;
     text-align: center;
   }
   .set-input {
     background: #fff;
-    border: 1px solid #C4C9D4;
+    border: 1px solid #DCD4C8;
     border-radius: 8px;
     padding: 8px 10px;
     font-size: 16px; font-family: var(--font-mono);
-    color: #1F2937;
+    color: #1D1915;
     width: 100%;
     outline: none;
     transition: border-color .15s;
     font-variant-numeric: tabular-nums;
   }
   .set-input:focus { border-color: var(--accent2); }
-  .set-input::placeholder { color: #6b7280; }
+  .set-input::placeholder { color: #736B61; }
   .set-check {
     width: 28px; height: 28px;
     border-radius: 8px;
     background: #fff;
-    border: 1px solid #C4C9D4;
+    border: 1px solid #DCD4C8;
     display: flex; align-items: center; justify-content: center;
     font-size: 14px;
     transition: all .15s;
@@ -460,39 +560,39 @@
     display: grid; grid-template-columns: 26px 1fr 1fr auto;
     gap: 7px; margin-bottom: 2px;
   }
-  .set-label { font-size: 11px; color: #57534E; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; }
+  .set-label { font-size: 11px; color: #5C554C; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; }
 
   /* RPE row */
   .set-rpe-row {
     display: grid; grid-template-columns: 26px 1fr auto;
     gap: 7px; align-items: center; margin-top: -4px;
   }
-  .rpe-label { font-family: var(--font-mono); font-size: 10.5px; color: #57534E; text-align: center; text-transform: uppercase; }
+  .rpe-label { font-family: var(--font-mono); font-size: 10.5px; color: #5C554C; text-align: center; text-transform: uppercase; }
   .rpe-pills { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .rpe-pills::-webkit-scrollbar { display: none; }
   .rpe-pill {
     font-family: var(--font-mono); font-size: 10px;
     min-width: 26px; padding: 4px 5px;
     border-radius: 6px; text-align: center;
-    background: #fff; border: 1px solid #C4C9D4;
-    color: #6b7280; cursor: pointer; transition: all .12s;
+    background: #fff; border: 1px solid #DCD4C8;
+    color: #736B61; cursor: pointer; transition: all .12s;
     flex-shrink: 0;
   }
   .rpe-pill.selected-rpe { border-color: currentColor; background: rgba(0,0,0,0.06); }
-  .rpe-1, .rpe-2, .rpe-3  { color: #15803d; }
-  .rpe-4, .rpe-5, .rpe-6  { color: #b45309; }
-  .rpe-7, .rpe-8           { color: #c2410c; }
-  .rpe-9, .rpe-10          { color: #b91c1c; }
+  .rpe-1, .rpe-2, .rpe-3  { color: #1E7F4D; }
+  .rpe-4, .rpe-5, .rpe-6  { color: #7A5200; }
+  .rpe-7, .rpe-8           { color: #C24A00; }
+  .rpe-9, .rpe-10          { color: #B3261E; }
   .set-notes-input {
     background: transparent; border: none;
     font-size: 11px; font-family: var(--font-body);
-    color: #6b7280; outline: none; width: 100%;
+    color: #736B61; outline: none; width: 100%;
     padding: 2px 0;
     border-bottom: 1px solid transparent;
     transition: border-color .15s, color .15s;
   }
-  .set-notes-input:focus { border-color: #C4C9D4; color: #1F2937; }
-  .set-notes-input::placeholder { color: #9ca3af; }
+  .set-notes-input:focus { border-color: #DCD4C8; color: #1D1915; }
+  .set-notes-input::placeholder { color: #736B61; }
   .mark-btn {
     width: 100%;
     padding: 12px;
@@ -500,7 +600,7 @@
     font-size: 14px; font-weight: 600;
     background: rgba(255,138,61,0.1);
     border: 1px solid rgba(255,138,61,0.3);
-    color: #9A3412;
+    color: #8F3600;
     transition: all .2s;
     letter-spacing: 0.5px;
   }
@@ -531,13 +631,13 @@
   }
   .plan-card:active { transform: scale(0.97); }
   .plan-card.selected { border-color: var(--accent2); }
-  .plan-card.selected .plan-card-face { background: #DBEAFE; }
-  .plan-card.selected .plan-card-face .plan-name { color: #1F2937; }
+  .plan-card.selected .plan-card-face { background: #E8F0FC; }
+  .plan-card.selected .plan-card-face .plan-name { color: #1D1915; }
   .plan-card.selected .plan-card-face .plan-desc,
   .plan-card.selected .plan-card-face .plan-today-label,
-  .plan-card.selected .plan-card-face .plan-watch-tip { color: #57534E; }
-  .plan-card.selected .plan-card-face .plan-watch-tip span { color: #374151; }
-  .plan-card.selected .plan-card-face .plan-tag { color: #9A3412; border-color: rgba(154,52,18,0.35); background: rgba(255,138,61,0.12); }
+  .plan-card.selected .plan-card-face .plan-watch-tip { color: #5C554C; }
+  .plan-card.selected .plan-card-face .plan-watch-tip span { color: #5C554C; }
+  .plan-card.selected .plan-card-face .plan-tag { color: #8F3600; border-color: rgba(154,52,18,0.35); background: rgba(255,138,61,0.12); }
   .plan-card.expanded { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(255,138,61,0.15); }
   .plan-card-face {
     padding: 14px 12px 12px;
@@ -562,7 +662,7 @@
     font-size: 10px; color: var(--muted);
     margin-top: 2px;
   }
-  .plan-watch-tip span { color: #C7BFB4; font-weight: 500; }
+  .plan-watch-tip span { color: #B5ACA1; font-weight: 500; }
   .plan-desc {
     font-size: 10.5px; color: var(--muted);
     line-height: 1.5;
@@ -596,20 +696,20 @@
   .plan-selected-badge {
     font-family: var(--font-mono); font-size: 10.5px;
     padding: 3px 8px; border-radius: 20px;
-    background: #EFF6FF;
+    background: #E8F0FC;
     border: 1px solid var(--accent2);
-    color: #1d4ed8;
+    color: #1A5FBF;
     white-space: nowrap;
   }
-  .plan-chevron { font-size: 10px; color: #9ca3af; transition: transform .2s; }
+  .plan-chevron { font-size: 10px; color: #736B61; transition: transform .2s; }
   .plan-card.expanded .plan-chevron { transform: rotate(180deg); color: var(--accent2); }
 
   /* Dropdown — grid-column 1/-1 so it spans full width */
   .plan-dropdown {
     grid-column: 1 / -1;
     display: none;
-    color: #1F2937;
-    background: #EFF6FF;
+    color: #1D1915;
+    background: #E8F0FC;
     border: 1px solid var(--accent2);
     border-radius: var(--r2);
     overflow: hidden;
@@ -620,8 +720,8 @@
   .plan-dropdown.open { display: flex; }
   .plan-dropdown-inner { padding: 14px 16px; display: flex; flex-direction: column; gap: 7px; }
   .sched-row { display: flex; align-items: center; gap: 10px; }
-  .sched-day { font-family: var(--font-mono); font-size: 10px; color: #6b7280; width: 26px; text-transform: uppercase; flex-shrink: 0; }
-  .sched-label { font-size: 12px; flex: 1; color: #1F2937; }
+  .sched-day { font-family: var(--font-mono); font-size: 10px; color: #736B61; width: 26px; text-transform: uppercase; flex-shrink: 0; }
+  .sched-label { font-size: 12px; flex: 1; color: #1D1915; }
   .sched-ex-list {
     display: flex; flex-wrap: wrap; gap: 4px;
     padding: 5px 0 6px 36px;
@@ -631,7 +731,7 @@
     padding: 2px 7px; border-radius: 5px;
     background: rgba(255,138,61,0.07);
     border: 1px solid rgba(255,138,61,0.18);
-    color: #4b5563;
+    color: #5C554C;
   }
   .sched-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent2); flex-shrink: 0; }
   .sched-dot.rest { background: var(--muted); }
@@ -684,24 +784,24 @@
   .cardio-type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .cardio-type-btn {
     padding: 10px 8px; border-radius: 10px;
-    background: #EDF1F7; border: 1px solid #C4C9D4;
+    background: #F3F0EB; border: 1px solid #DCD4C8;
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     cursor: pointer; transition: all .15s;
-    font-size: 12px; font-weight: 600; color: #374151;
+    font-size: 12px; font-weight: 600; color: #5C554C;
   }
   .cardio-type-btn span { font-size: 20px; }
-  .cardio-type-btn.active { background: rgba(255,92,0,0.14); border-color: var(--accent); color: #9A3412; }
+  .cardio-type-btn.active { background: rgba(255,92,0,0.14); border-color: var(--accent); color: #8F3600; }
   .cardio-type-btn:active { transform: scale(0.96); }
   .cardio-duration-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .cardio-dur-label { font-size: 11px; color: #57534E; font-family: var(--font-mono); flex-shrink: 0; }
+  .cardio-dur-label { font-size: 11px; color: #5C554C; font-family: var(--font-mono); flex-shrink: 0; }
   .cardio-dur-btns { display: flex; gap: 6px; flex-wrap: wrap; }
   .cardio-dur-btn {
     font-family: var(--font-mono); font-size: 11px;
     padding: 5px 10px; border-radius: 8px;
-    background: #EDF1F7; border: 1px solid #C4C9D4;
-    color: #374151; cursor: pointer; transition: all .15s;
+    background: #F3F0EB; border: 1px solid #DCD4C8;
+    color: #5C554C; cursor: pointer; transition: all .15s;
   }
-  .cardio-dur-btn.active { background: rgba(255,92,0,0.14); border-color: var(--accent); color: #9A3412; }
+  .cardio-dur-btn.active { background: rgba(255,92,0,0.14); border-color: var(--accent); color: #8F3600; }
   .cardio-launch-btn {
     width: 100%; padding: 12px; border-radius: 10px;
     font-size: 14px; font-weight: 700;
@@ -730,22 +830,22 @@
   .hist-badge {
     font-family: var(--font-mono); font-size: 11px;
     padding: 4px 10px; border-radius: 8px;
-    background: #dcfce7;
-    border: 1px solid #86efac;
-    color: #15803d;
+    background: #E7F5EC;
+    border: 1px solid #9BD4B4;
+    color: #1E7F4D;
   }
   .hist-delete-btn {
     width: 28px; height: 28px;
     border-radius: 7px;
-    background: #FEF2F2;
-    border: 1px solid #FECACA;
+    background: #FCEBEA;
+    border: 1px solid #EFA9A5;
     color: var(--red);
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
     transition: all .15s;
     flex-shrink: 0;
   }
-  .hist-delete-btn:active { transform: scale(0.9); background: #FECACA; }
+  .hist-delete-btn:active { transform: scale(0.9); background: #EFA9A5; }
   /* ─── WARM-UP ROUTINES ───────────────────────────────────────────────── */
   .warmup-routine-btn {
     display: flex; align-items: center; gap: 12px;
@@ -759,7 +859,7 @@
     width: 100%;
   }
   .warmup-routine-btn:active { transform: scale(0.98); }
-  .warmup-routine-btn.selected-routine { border-color: #ff8c00; background: rgba(255,140,0,0.08); }
+  .warmup-routine-btn.selected-routine { border-color: var(--color-border-selected); background: var(--color-brand-primary-subtle); }
   .warmup-routine-icon {
     width: 36px; height: 36px; border-radius: 9px;
     background: rgba(255,140,0,0.15);
@@ -775,9 +875,9 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 11px; flex-shrink: 0; transition: all .15s;
   }
-  .selected-routine .warmup-routine-check { background: #ff8c00; border-color: #ff8c00; color: #000; }
-  .selected-routine .warmup-routine-name { color: #1F2937; }
-  .selected-routine .warmup-routine-meta { color: #57534E; }
+  .selected-routine .warmup-routine-check { background: var(--color-brand-primary); border-color: var(--color-brand-primary); color: var(--color-brand-on-primary); }
+  .selected-routine .warmup-routine-name { color: #1D1915; }
+  .selected-routine .warmup-routine-meta { color: #5C554C; }
 
   .hist-body {
     display: none;
@@ -813,7 +913,7 @@
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .modal {
     width: 100%; max-height: 90dvh;
-    background: #171412;
+    background: var(--color-surface-secondary);
     border-radius: 24px 24px 0 0;
     border-top: 1px solid var(--border);
     overflow-y: auto;
@@ -883,7 +983,7 @@
   .ios-step-body.open { display: flex; }
   .ios-p { font-size: 13px; line-height: 1.7; color: rgba(229,231,235,0.75); }
   .code-block {
-    background: #060B18;
+    background: #0D0B0A;
     border: 1px solid rgba(255,92,0,0.3);
     border-radius: 10px;
     padding: 14px;
@@ -892,12 +992,12 @@
   .code-block pre {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: #60d8f0;
+    color: #6FB1FF;
     white-space: pre;
     line-height: 1.6;
   }
-  .code-block .kw { color: #a080ff; }
-  .code-block .str { color: #60ff99; }
+  .code-block .kw { color: #B39DDB; }
+  .code-block .str { color: #7ADFA6; }
   .code-block .cmt { color: var(--muted); }
   .ios-tip {
     display: flex; gap: 10px; align-items: flex-start;
@@ -990,19 +1090,19 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 10px;
   }
-  .rng-label { font-size: 12px; color: #4b5563; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+  .rng-label { font-size: 12px; color: #5C554C; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
   .rng-option-group { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
   .rng-opt {
     font-family: var(--font-mono); font-size: 11px;
     padding: 5px 10px; border-radius: 8px;
-    background: #F3F4F6; border: 1px solid #e5e7eb;
-    color: #4b5563; cursor: pointer;
+    background: #F3F0EB; border: 1px solid #EDE7DE;
+    color: #5C554C; cursor: pointer;
     transition: all .15s;
   }
   .rng-opt.active {
-    background: #FEF3C7;
-    border-color: #d97706;
-    color: #92400e;
+    background: #FFF3D6;
+    border-color: #8A5B00;
+    color: #8A5B00;
   }
   .rng-muscle-grid {
     display: flex; flex-wrap: wrap; gap: 6px;
@@ -1010,20 +1110,20 @@
   .rng-muscle-chip {
     font-family: var(--font-mono); font-size: 11px;
     padding: 5px 10px; border-radius: 8px;
-    background: #F3F4F6; border: 1px solid #e5e7eb;
-    color: #4b5563; cursor: pointer;
+    background: #F3F0EB; border: 1px solid #EDE7DE;
+    color: #5C554C; cursor: pointer;
     transition: all .15s;
   }
   .rng-muscle-chip.active {
-    background: #FEF3C7;
-    border-color: #d97706;
-    color: #92400e;
+    background: #FFF3D6;
+    border-color: #8A5B00;
+    color: #8A5B00;
   }
   .rng-generate-btn {
     width: 100%; padding: 14px;
     border-radius: 12px;
     font-size: 15px; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent2), #1d4ed8);
+    background: linear-gradient(135deg, var(--accent2), #1A5FBF);
     color: #000;
     letter-spacing: 0.5px;
     transition: opacity .2s, transform .15s;
@@ -1050,13 +1150,13 @@
     border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 12px;
   }
-  .rng-preview-name { font-family: var(--font-head); font-size: 22px; letter-spacing: 1px; flex: 1; color: #1F2937; }
+  .rng-preview-name { font-family: var(--font-head); font-size: 22px; letter-spacing: 1px; flex: 1; color: #1D1915; }
   .rng-preview-badge {
     font-family: var(--font-mono); font-size: 10px;
     padding: 4px 10px; border-radius: 20px;
-    background: #FEF3C7;
-    border: 1px solid #fcd34d;
-    color: #92400e;
+    background: #FFF3D6;
+    border: 1px solid #FFC65C;
+    color: #8A5B00;
   }
   .rng-preview-schedule {
     padding: 12px 18px;
@@ -1080,7 +1180,7 @@
     flex: 2; padding: 11px;
     border-radius: 10px;
     font-size: 13px; font-weight: 700;
-    background: linear-gradient(135deg, var(--accent2), #1d4ed8);
+    background: linear-gradient(135deg, var(--accent2), #1A5FBF);
     color: #000;
     transition: all .15s;
   }
@@ -1098,9 +1198,9 @@
     font-family: var(--font-head);
     font-size: 22px; letter-spacing: 1px;
     margin-bottom: 4px;
-    color: #1F2937;
+    color: #1D1915;
   }
-  .custom-day-sub { font-size: 12px; color: #57534E; margin-bottom: 14px; line-height: 1.5; }
+  .custom-day-sub { font-size: 12px; color: #5C554C; margin-bottom: 14px; line-height: 1.5; }
   .custom-day-btn {
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; padding: 13px;
@@ -1108,7 +1208,7 @@
     font-size: 14px; font-weight: 600;
     background: rgba(123,47,255,0.18);
     border: 1px solid rgba(123,47,255,0.55);
-    color: #6D28D9;
+    color: #6B4FA3;
     transition: all .2s;
     letter-spacing: 0.3px;
   }
@@ -1141,7 +1241,7 @@
     width: 100%; padding: 13px;
     border-radius: 12px;
     font-size: 14px; font-weight: 600;
-    background: linear-gradient(135deg, var(--accent2), #1d4ed8);
+    background: linear-gradient(135deg, var(--accent2), #1A5FBF);
     color: #000;
     letter-spacing: 0.5px;
     transition: opacity .2s, transform .15s;
@@ -1197,7 +1297,7 @@
     padding: 5px 12px; border-radius: 20px;
     white-space: nowrap;
     background: rgba(30,58,138,0.5); border: 1px solid rgba(255,138,61,0.4);
-    color: #E5E7EB; cursor: pointer;
+    color: #EDE7DE; cursor: pointer;
     transition: all .15s;
     flex-shrink: 0;
   }
@@ -1215,7 +1315,7 @@
     display: flex; align-items: center; gap: 12px;
     padding: 12px 14px;
     border-radius: var(--r);
-    background: #F8FAFC;
+    background: #FAF8F5;
     border: 1px solid rgba(0,150,200,0.2);
     cursor: pointer;
     transition: border-color .15s, background .15s;
@@ -1232,7 +1332,7 @@
     font-size: 18px; flex-shrink: 0;
   }
   .picker-item-info { flex: 1; min-width: 0; }
-  .picker-item-name { font-size: 14px; font-weight: 600; color: #1F2937; }
+  .picker-item-name { font-size: 14px; font-weight: 600; color: #1D1915; }
   .picker-item-muscle {
     font-family: var(--font-mono); font-size: 10px;
     color: rgba(17,24,39,0.65); text-transform: uppercase; letter-spacing: 0.5px;
@@ -1249,7 +1349,7 @@
   .picker-item.selected-item .picker-item-check {
     background: rgba(123,47,255,0.3);
     border-color: var(--accent2);
-    color: #5B21B6;
+    color: #6B4FA3;
   }
 
   /* picker modal — light background overrides for text visibility */
@@ -1261,14 +1361,14 @@
   }
   #picker-modal .picker-search {
     background: #FFFFFF;
-    color: #1F2937;
+    color: #1D1915;
   }
   .picker-done-btn {
     margin: 10px 14px 14px;
     padding: 14px;
     border-radius: var(--r);
     background: linear-gradient(135deg, var(--accent), var(--accent2));
-    color: #121010;
+    color: var(--color-brand-on-primary);
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: 700;
@@ -1308,7 +1408,7 @@
     cursor: pointer;
     transition: all .15s;
     flex-shrink: 0;
-    color: #7DD3FC;
+    color: #9CC8FF;
   }
   .reco-pill:active { background: rgba(0,229,255,0.14); transform: scale(0.97); }
   .reco-pill.already-added {
@@ -1363,7 +1463,7 @@
     border-radius: 0 3px 3px 0;
   }
   .rest-timer-progress-fill.urgent {
-    background: linear-gradient(90deg, var(--red), #ff8040);
+    background: linear-gradient(90deg, var(--red), #FF8A4C);
   }
 
   /* Main content row */
@@ -1435,7 +1535,7 @@
   .prog-panel.signal-ontrack  { border-color: rgba(255,204,0,0.25); background: rgba(255,204,0,0.04); }
   .prog-panel.signal-dropped  { border-color: rgba(255,59,92,0.25); background: rgba(255,59,92,0.04); }
   .prog-panel.signal-new      { border-color: rgba(96,165,250,0.3); background: var(--bg3); }
-  .signal-new .prog-sessions-ago { color: #94a3b8; }
+  .signal-new .prog-sessions-ago { color: #968D82; }
 
   .prog-header { display: flex; align-items: center; gap: 8px; }
   .prog-dot {
@@ -1444,29 +1544,29 @@
   .signal-ready  .prog-dot { background: var(--green); box-shadow: 0 0 5px var(--green); }
   .signal-ontrack .prog-dot { background: var(--yellow); box-shadow: 0 0 5px var(--yellow); }
   .signal-dropped .prog-dot { background: var(--red); box-shadow: 0 0 5px var(--red); }
-  .signal-new    .prog-dot { background: #60a5fa; box-shadow: 0 0 5px #60a5fa; }
+  .signal-new    .prog-dot { background: #6FB1FF; box-shadow: 0 0 5px #6FB1FF; }
 
   .prog-signal-label {
     font-family: var(--font-mono); font-size: 10px;
     text-transform: uppercase; letter-spacing: 0.8px;
     flex: 1;
   }
-  .signal-ready   .prog-signal-label { color: #15803d; }
-  .signal-ontrack .prog-signal-label { color: #b45309; }
-  .signal-dropped .prog-signal-label { color: #b91c1c; }
-  .signal-new     .prog-signal-label { color: #93c5fd; }
+  .signal-ready   .prog-signal-label { color: #1E7F4D; }
+  .signal-ontrack .prog-signal-label { color: #7A5200; }
+  .signal-dropped .prog-signal-label { color: #B3261E; }
+  .signal-new     .prog-signal-label { color: #9CC8FF; }
 
   .prog-sessions-ago {
-    font-family: var(--font-mono); font-size: 10px; color: #9ca3af;
+    font-family: var(--font-mono); font-size: 10px; color: #736B61;
   }
-  .prog-message { font-size: 12px; line-height: 1.55; color: #374151; }
-  .signal-new .prog-message { color: #cbd5e1; }
+  .prog-message { font-size: 12px; line-height: 1.55; color: #5C554C; }
+  .signal-new .prog-message { color: #DCD4C8; }
   .prog-suggest {
     font-family: var(--font-mono); font-size: 12px;
-    color: #1d4ed8;
+    color: #1A5FBF;
     padding: 6px 10px;
-    background: #EFF6FF;
-    border: 1px solid #BFDBFE;
+    background: #E8F0FC;
+    border: 1px solid #A8C6F0;
     border-radius: 8px;
   }
   .prog-history-row {
@@ -1475,10 +1575,10 @@
   .prog-hist-chip {
     font-family: var(--font-mono); font-size: 10px;
     padding: 3px 8px; border-radius: 6px;
-    background: #F3F4F6; border: 1px solid #e5e7eb;
-    color: #6b7280;
+    background: #F3F0EB; border: 1px solid #EDE7DE;
+    color: #736B61;
   }
-  .prog-hist-chip.latest { border-color: #93c5fd; color: #1d4ed8; }
+  .prog-hist-chip.latest { border-color: #9CC8FF; color: #1A5FBF; }
 
   /* Sparkline */
   .prog-sparkline {
@@ -1486,7 +1586,7 @@
     display: flex; flex-direction: column; gap: 3px;
   }
   .prog-sparkline-label {
-    font-family: var(--font-mono); font-size: 10.5px; color: #9ca3af;
+    font-family: var(--font-mono); font-size: 10.5px; color: #736B61;
     text-transform: uppercase; letter-spacing: 0.5px;
   }
   .sparkline-svg { width: 100%; height: 36px; overflow: visible; }
@@ -1576,7 +1676,7 @@
     border-radius: 10px; padding: 12px;
   }
   .backup-warn-icon { font-size: 14px; flex-shrink: 0; }
-  .backup-warn-text { font-size: 12px; color: #b0b0cc; line-height: 1.6; }
+  .backup-warn-text { font-size: 12px; color: #B5ACA1; line-height: 1.6; }
   #import-file-input { display: none; }
 
   /* ─── PLAN ACTIVE BANNER ─────────────────────────────────────────────── */
@@ -1660,6 +1760,7 @@
       <div class="hero-day" id="hero-day">Loading...</div>
       <div class="hero-title" id="hero-title">—</div>
       <div class="hero-meta" id="hero-meta"></div>
+      <a href="javascript:void(0)" onclick="showStopRule()" style="font-family:var(--font-mono);font-size:10px;color:var(--color-text-link);letter-spacing:0.5px;">⚕ WHEN TO STOP</a>
     </div>
 
     <div class="progress-ring-wrap" id="progress-wrap">
@@ -1703,7 +1804,7 @@
         <button onclick="pushForwardRest()"
           style="flex:1;min-width:120px;padding:10px 8px;border-radius:10px;font-size:12px;font-weight:500;
             background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.25);
-            color:#818cf8;letter-spacing:0.3px;transition:all .2s;">
+            color:#B39DDB;letter-spacing:0.3px;transition:all .2s;">
           📅 Push to Tomorrow
         </button>
         <button onclick="openRescheduleModal()"
@@ -1772,7 +1873,7 @@
         <button onclick="deactivateTravelMode()"
           style="font-family:var(--font-mono);font-size:10px;padding:5px 10px;
             border-radius:7px;background:rgba(16,185,129,0.12);
-            border:1px solid rgba(16,185,129,0.3);color:#10b981;font-weight:600;flex-shrink:0;">
+            border:1px solid var(--color-status-success-border);color:var(--color-status-success);font-weight:600;flex-shrink:0;">
           End
         </button>
       </div>
@@ -1834,7 +1935,7 @@
       <!-- Quick Cardio expanded panel -->
       <div class="plan-dropdown" id="cardio-panel" style="display:none;">
         <div class="plan-dropdown-inner" style="gap:12px;">
-          <div style="font-family:var(--font-mono);font-size:10px;color:#57534E;
+          <div style="font-family:var(--font-mono);font-size:10px;color:#5C554C;
             text-transform:uppercase;letter-spacing:1px;">Type</div>
           <div class="cardio-type-grid" id="cardio-type-grid">
             <button class="cardio-type-btn active" data-type="hiit" onclick="setCardioType('hiit',this)"><span>⚡</span>HIIT</button>
@@ -1887,7 +1988,7 @@
             </div>
           </div>
           <div>
-            <div class="rng-label" style="margin-bottom:8px;">Focus muscles <span style="color:#57534E;font-size:9px;">(optional)</span></div>
+            <div class="rng-label" style="margin-bottom:8px;">Focus muscles <span style="color:#5C554C;font-size:9px;">(optional)</span></div>
             <div class="rng-muscle-grid" id="rng-muscles">
               <div class="rng-muscle-chip" data-val="Chest" onclick="toggleRngMuscle(this)">💪 Chest</div>
               <div class="rng-muscle-chip" data-val="Back" onclick="toggleRngMuscle(this)">🔙 Back</div>
@@ -1971,14 +2072,14 @@
       <!-- Warm-Up expanded panel -->
       <div class="plan-dropdown" id="warmup-panel" style="display:none;">
         <div class="plan-dropdown-inner" style="gap:10px;">
-          <div style="font-family:var(--font-mono);font-size:10px;color:#57534E;
+          <div style="font-family:var(--font-mono);font-size:10px;color:#5C554C;
             text-transform:uppercase;letter-spacing:1px;">Choose a routine</div>
           <div id="warmup-routine-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
         <div class="plan-dropdown-actions">
           <button onclick="launchWarmup()"
             style="flex:1;padding:12px;border-radius:10px;font-size:14px;font-weight:700;
-              background:linear-gradient(135deg,#ff8c00,#ffcc00);color:#000;
+              background:linear-gradient(135deg,var(--color-brand-primary),var(--color-brand-primary-hover));color:var(--color-brand-on-primary);
               transition:opacity .2s,transform .15s;"
             id="warmup-launch-btn">
             🔥 Add to Today's Workout
@@ -2072,6 +2173,7 @@
       </div>
       <div class="rest-timer-actions">
         <div class="rest-timer-presets">
+          <button class="rest-timer-btn" onclick="showStopRule()" aria-label="Safety — when to stop" title="Safety">⚕</button>
           <button class="rest-timer-btn" onclick="setRestTimer(60)">1m</button>
           <button class="rest-timer-btn" onclick="setRestTimer(90)">90s</button>
           <button class="rest-timer-btn" onclick="setRestTimer(120)">2m</button>
@@ -2148,7 +2250,7 @@
 
           <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
             border-radius:12px;padding:12px 14px;">
-            <div style="font-family:var(--font-mono);font-size:9px;color:#10b981;
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-status-success);
               text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Home Workout covers</div>
             <div style="font-size:12px;color:rgba(229,231,235,0.65);line-height:1.7;">
               Mon: Upper Push · Tue: Lower Body · Wed: Rest<br>
@@ -2160,7 +2262,7 @@
 
         <button onclick="activateTravelMode()"
           style="width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;
-            background:linear-gradient(135deg,#10b981,#059669);color:#fff;
+            background:var(--color-status-success);color:var(--color-brand-on-primary);
             letter-spacing:0.3px;transition:opacity .2s,transform .15s;">
           🧳 Activate Travel Mode
         </button>
@@ -2178,7 +2280,7 @@
 
         <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
           border-radius:12px;padding:14px 16px;margin-bottom:16px;">
-          <div style="font-family:var(--font-mono);font-size:9px;color:#10b981;
+          <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-status-success);
             text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Saved plan</div>
           <div style="font-size:13px;color:var(--text-inv);" id="travel-saved-plan-name">—</div>
           <div style="font-size:11px;color:var(--muted);margin-top:3px;">Will be restored when you end Travel Mode</div>
@@ -2588,7 +2690,8 @@ const PLANS = [
     name: 'Beginner Full Body',
     desc: '3-day full body for beginners. Dumbbells and bodyweight. Balanced upper/lower work.',
     badge: '🌱',
-    color: '#00e5ff',
+    color: '#5FC9B2',
+    category: 'start',
     tags: ['3x/week', 'Strength', 'Beginner'],
     schedule: [
       { day: 'MON', label: 'Full Body A', rest: false },
@@ -2602,7 +2705,7 @@ const PLANS = [
     days: {
       0: { name: 'Full Body A', exercises: ['goblet_squat','pushup','row','romanian_deadlift','dead_bug'] },
       1: { name: 'Rest', exercises: [] },
-      2: { name: 'Full Body B', exercises: ['romanian_deadlift','pike_pushup','lat_pulldown','lunge','lateral_raise'] },
+      2: { name: 'Full Body B', exercises: ['glute_bridge','pike_pushup','lat_pulldown','lunge','lateral_raise','glute_med_raise'] },
       3: { name: 'Rest', exercises: [] },
       4: { name: 'Full Body A', exercises: ['goblet_squat','pushup','row','romanian_deadlift','dead_bug'] },
       5: { name: 'Active Recovery', exercises: [] },
@@ -2614,7 +2717,8 @@ const PLANS = [
     name: 'Intermediate PPL',
     desc: 'Push/Pull/Legs split for muscle growth. Full gym required. 6 days/week.',
     badge: '🔥',
-    color: '#7b2fff',
+    color: '#7AB8FF',
+    category: 'build',
     tags: ['6x/week', 'Hypertrophy', 'Intermediate'],
     schedule: [
       { day: 'MON', label: 'Push (Chest/Shoulders/Tris)', rest: false },
@@ -2628,19 +2732,20 @@ const PLANS = [
     days: {
       0: { name: 'Push Day', exercises: ['bench_press','incline_dumbbell','lateral_raise','cable_fly','skull_crusher'] },
       1: { name: 'Pull Day', exercises: ['pullup','row','cable_row','face_pull','hammer_curl'] },
-      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','calf_raise'] },
+      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','calf_raise','pallof_press','hip_abductor_machine'] },
       3: { name: 'Push Day B', exercises: ['ohp','dips','incline_dumbbell','cable_lateral_raise','tricep_pushdown'] },
       4: { name: 'Pull Day B', exercises: ['deadlift','lat_pulldown','cable_row','rear_delt_fly','bicep_curl'] },
-      5: { name: 'Leg Day B', exercises: ['goblet_squat','split_squat','leg_curl','leg_press','hip_thrust'] },
+      5: { name: 'Leg Day B', exercises: ['hip_thrust','hack_squat','split_squat','leg_press','leg_curl','hip_adductor_machine'] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
     id: 'advanced_split', watchType: 'Traditional Strength Training',
-    name: 'Advanced 5-Day Split',
+    name: 'Classic Body-Part Split',
     desc: '5-day body-part split for experienced lifters. Full gym access. Strength and muscle focus.',
     badge: '⚡',
-    color: '#ffcc00',
+    color: '#7AB8FF',
+    category: 'build',
     tags: ['5x/week', 'Strength+Size', 'Advanced'],
     schedule: [
       { day: 'MON', label: 'Back', rest: false },
@@ -2654,19 +2759,20 @@ const PLANS = [
     days: {
       0: { name: 'Back Day', exercises: ['deadlift','pullup','lat_pulldown','cable_row','row','rear_delt_fly'] },
       1: { name: 'Chest Day', exercises: ['bench_press','incline_dumbbell','cable_fly','dips','face_pull'] },
-      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','hip_thrust','pallof_press'] },
-      3: { name: 'Shoulder Day', exercises: ['ohp','lateral_raise','rear_delt_fly','face_pull','shrug'] },
+      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','hip_thrust','pallof_press','hip_adductor_machine'] },
+      3: { name: 'Shoulder Day', exercises: ['ohp','lateral_raise','rear_delt_fly','face_pull','shrug','hip_thrust','hip_abductor_machine'] },
       4: { name: 'Arms Day', exercises: ['bicep_curl','hammer_curl','tricep_pushdown','skull_crusher','face_pull'] },
       5: { name: 'Rest', exercises: [] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
-    id: 'weight_loss_cardio', watchType: 'Traditional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Tue/Fri) · Indoor Run (treadmill) or Indoor Cycling (bike) (Sat)',
+    id: 'weight_loss_cardio', watchType: 'Traditional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Tue HIIT · Fri Low-Impact Circuit) · Indoor Run or Indoor Cycling (Sat)',
     name: 'Weight Loss Cardio Mix',
-    desc: 'Cardio + strength mix for fat loss. Minimal equipment. 5 days/week.',
+    desc: 'Cardio + strength mix for fat loss. Gym cardio equipment used for intervals — every piece is swappable. 5 days/week. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
     badge: '🏃',
-    color: '#ff3b5c',
+    color: '#FF8A4C',
+    category: 'fatloss',
     tags: ['5x/week', 'Fat Loss', 'All Levels'],
     schedule: [
       { day: 'MON', label: 'Resistance A', rest: false },
@@ -2678,11 +2784,11 @@ const PLANS = [
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Resistance A', exercises: ['goblet_squat','bench_press','row','bicep_curl','dead_bug'] },
-      1: { name: 'HIIT Circuit', exercises: ['burpee','jump_squat','high_knees','jump_rope','mountain_climber'] },
+      0: { name: 'Resistance A', exercises: ['goblet_squat','bench_press','row','bicep_curl','dead_bug','lateral_band_walk'] },
+      1: { name: 'HIIT Circuit', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
       2: { name: 'Rest / Walk', exercises: [] },
       3: { name: 'Resistance B', exercises: ['romanian_deadlift','ohp','lat_pulldown','cable_row','plank_rotation'] },
-      4: { name: 'Low-Impact Circuit', exercises: ['box_step_up','squat_bw','mountain_climber','plank_rotation','bike'] },
+      4: { name: 'Low-Impact Circuit', exercises: ['box_step_up','squat_bw','plank_rotation','bike'] },
       5: { name: 'Steady-State', exercises: ['treadmill_run','bike'] },
       6: { name: 'Rest', exercises: [] },
     }
@@ -2690,9 +2796,10 @@ const PLANS = [
   {
     id: 'cardio_only', watchType: 'High Intensity Interval Training', watchTypeAlt: 'Indoor Run (treadmill) or Outdoor Run (outside) (Mon/Sat) · Indoor Cycling (Wed)',
     name: 'Pure Cardio',
-    desc: 'Daily cardio-only training. HIIT, steady-state, intervals. Zero weights needed.',
+    desc: 'Daily cardio-only training. HIIT, steady-state, intervals. Zero weights needed. Best paired with 2×/week strength work — consider layering this onto a strength plan.',
     badge: '❤️',
-    color: '#ff00c8',
+    color: '#B39DDB',
+    category: 'conditioning',
     tags: ['6x/week', 'Cardio', 'Intermediate'],
     schedule: [
       { day: 'MON', label: 'Steady-State Run', rest: false },
@@ -2705,10 +2812,10 @@ const PLANS = [
     ],
     days: {
       0: { name: 'Steady-State Run', exercises: ['treadmill_run','bike'] },
-      1: { name: 'HIIT Blast', exercises: ['burpee','jump_squat','mountain_climber','high_knees','jump_rope'] },
+      1: { name: 'HIIT Blast', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
       2: { name: 'Interval Bike', exercises: ['bike'] },
       3: { name: 'Active Recovery & Mobility', exercises: [] },
-      4: { name: 'HIIT Blast', exercises: ['burpee','jump_squat','mountain_climber','high_knees','jump_rope'] },
+      4: { name: 'HIIT Blast', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
       5: { name: 'Long Run', exercises: ['treadmill_run'] },
       6: { name: 'Rest', exercises: [] },
     }
@@ -2718,7 +2825,8 @@ const PLANS = [
     name: 'Drive Phase',
     desc: 'Athletic power development. Lower body focus. Strength + plyometrics. 4 days/week.',
     badge: '🚀',
-    color: '#2DD4BF',
+    color: '#FF5C00',
+    category: 'power',
     tags: ['4x/week', 'Power', 'Intermediate'],
     schedule: [
       { day: 'MON', label: 'Strength', rest: false },
@@ -2731,46 +2839,51 @@ const PLANS = [
     ],
     days: {
       0: { name: 'Strength', exercises: ['split_squat','glute_bridge','romanian_deadlift','pallof_press'] },
-      1: { name: 'Lateral Power', exercises: ['lateral_bound','skater_squat','single_leg_rdl','lateral_hip_thrust','skating_hold'] },
+      1: { name: 'Lateral Power', exercises: ['lateral_bound','skater_squat','single_leg_rdl','lateral_hip_thrust','skating_hold','copenhagen_plank'] },
       2: { name: 'Rest / Mobility', exercises: [] },
-      3: { name: 'Strength + Plyometric', exercises: ['deadlift','depth_jump','lateral_hurdle_hop','box_jump','jump_squat'] },
-      4: { name: 'Posterior Chain', exercises: ['nordic_curl','hip_thrust','pallof_press','romanian_deadlift','skating_hold'] },
+      3: { name: 'Strength + Plyometric', exercises: ['depth_jump','lateral_hurdle_hop','box_jump','deadlift'] /* VOL-001 R2: jump_squat removed from this day (library record retained); 3-set doses; Σcontacts 57 ≤ 80 */ },
+      4: { name: 'Posterior Chain', exercises: ['nordic_curl','hip_thrust','pallof_press','back_extension','skating_hold'] },
       5: { name: 'Rest', exercises: [] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
-    id: 'ppl_athletic', watchType: 'Traditional Strength Training', watchTypeAlt: 'Functional Strength Training (Tue/Sat) · High Intensity Interval Training (Thu Plyometric)',
+    id: 'ppl_athletic', watchType: 'Traditional Strength Training', watchTypeAlt: 'Functional Strength Training (Sat/Sun) · High Intensity Interval Training (Wed Plyometric)',
     name: 'PPL + Drive Phase',
     desc: 'Hybrid strength + power. For experienced lifters only. 6 days/week, high volume.',
-    badge: '⚡',
-    color: '#2DD4BF',
+    badge: '💥',
+    color: '#FF5C00',
+    category: 'power',
     tags: ['6x/week', 'Hypertrophy+Power', 'Advanced'],
     schedule: [
       { day: 'MON', label: 'Legs (Heavy)', rest: false },
       { day: 'TUE', label: 'Push (Chest/Shoulders/Tris)', rest: false },
       { day: 'WED', label: 'Plyometric', rest: false },
-      { day: 'THU', label: 'Pull (Deadlift)', rest: false },
-      { day: 'FRI', label: 'Lateral Power', rest: false },
-      { day: 'SAT', label: 'Posterior Chain + Drive', rest: false },
-      { day: 'SUN', label: 'Rest', rest: true },
+      { day: 'THU', label: 'Rest', rest: true },
+      { day: 'FRI', label: 'Pull (Deadlift)', rest: false },
+      { day: 'SAT', label: 'Lateral Power', rest: false },
+      { day: 'SUN', label: 'Posterior Chain + Drive', rest: false },
     ],
     days: {
+      /* Week order per S&C R2 verdict #4 (+PT A2-VOL-22 concurrence): upper day precedes
+         plyo; Fri-Sun descends in axial load (heavy hinge -> low-axial lateral -> posterior).
+         S&C + PT human signatures still outstanding (VOL-001). */
       0: { name: 'Legs (Heavy)', exercises: ['squat','leg_press','romanian_deadlift','leg_curl','calf_raise'] },
       1: { name: 'Push Day', exercises: ['bench_press','ohp','incline_dumbbell','cable_fly','lateral_raise','tricep_pushdown'] },
-      2: { name: 'Plyometric', exercises: ['box_jump','depth_jump','lateral_hurdle_hop','jump_squat'] },
-      3: { name: 'Pull Day', exercises: ['deadlift','pullup','row','lat_pulldown','face_pull','bicep_curl'] },
-      4: { name: 'Lateral Power', exercises: ['lateral_band_walk','split_squat','lateral_bound','skater_squat','lateral_hip_thrust','skating_hold'] },
-      5: { name: 'Posterior Chain + Drive', exercises: ['nordic_curl','hip_thrust','cable_pull_through','pallof_press','dead_bug'] },
-      6: { name: 'Rest', exercises: [] },
+      2: { name: 'Plyometric', exercises: ['depth_jump','box_jump','lateral_hurdle_hop'] /* VOL-001 R2: depth jump first (own-cue rule), jump_squat removed; Σcontacts 57 ≤ 80 */ },
+      3: { name: 'Rest', exercises: [] },
+      4: { name: 'Pull Day', exercises: ['deadlift','pullup','row','lat_pulldown','face_pull','bicep_curl'] },
+      5: { name: 'Lateral Power', exercises: ['lateral_band_walk','split_squat','lateral_bound','skater_squat','lateral_hip_thrust','skating_hold','copenhagen_plank'] },
+      6: { name: 'Posterior Chain + Drive', note: 'Third consecutive training day — cut a set before you cut depth or control.', exercises: ['nordic_curl','hip_thrust','cable_pull_through','pallof_press','dead_bug','hip_abductor_machine'] },
     }
   },
   {
-    id: 'home_workout', watchType: 'Functional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Fri — Full Body Conditioning)',
+    id: 'home_workout', watchType: 'Functional Strength Training', watchTypeAlt: 'Functional Strength Training (Fri — Full Body Conditioning, standing low-impact circuit)',
     name: 'Home Workout',
     desc: 'Bodyweight full body. Minimal equipment — a sturdy table or doorframe bar for pulls.',
     badge: '🏠',
-    color: '#10b981',
+    color: '#5FC9B2',
+    category: 'start',
     tags: ['4x/week', 'Bodyweight', 'All Levels'],
     schedule: [
       { day: 'MON', label: 'Upper Body Push', rest: false },
@@ -2783,11 +2896,92 @@ const PLANS = [
     ],
     days: {
       0: { name: 'Upper Push', exercises: ['pushup','pike_pushup','tricep_dip_chair','plank','dead_bug'] },
-      1: { name: 'Lower Body', exercises: ['split_squat','lunge_bw','glute_bridge','single_leg_rdl_bw','calf_raise_bw'] },
+      1: { name: 'Lower Body', exercises: ['split_squat','lunge_bw','glute_bridge','single_leg_rdl_bw','calf_raise_bw','glute_med_raise','cushion_adductor_squeeze'] },
       2: { name: 'Rest / Stretch', exercises: [] },
       3: { name: 'Upper Pull + Core', exercises: ['inverted_row','pullup_bw','plank_rotation','dead_bug'] },
-      4: { name: 'Full Body Conditioning', exercises: ['burpee','jump_squat','high_knees','plank'] },
+      4: { name: 'Full Body Conditioning', exercises: ['box_step_up','inverted_row','squat_bw','bear_crawl'] },
       5: { name: 'Active Recovery', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'upper_lower_4day', watchType: 'Traditional Strength Training',
+    name: 'Upper/Lower 4-Day',
+    desc: 'Upper/lower split, 4 days/week. The default recommendation for building muscle and strength. Full gym required.',
+    badge: '🏋️',
+    color: '#7AB8FF',
+    category: 'build',
+    tags: ['4x/week', 'Hypertrophy', 'Intermediate'],
+    schedule: [
+      { day: 'MON', label: 'Upper A', rest: false },
+      { day: 'TUE', label: 'Lower A', rest: false },
+      { day: 'WED', label: 'Rest', rest: true },
+      { day: 'THU', label: 'Upper B', rest: false },
+      { day: 'FRI', label: 'Lower B', rest: false },
+      { day: 'SAT', label: 'Rest', rest: true },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Upper A', exercises: ['bench_press','row','ohp','lat_pulldown','lateral_raise','tricep_pushdown'] },
+      1: { name: 'Lower A', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','hip_adductor_machine','calf_raise','pallof_press'] } /* FR-25 correction: earlier pallof addition mis-landed on int_ppl Leg Day (identical list) */,
+      2: { name: 'Rest', exercises: [] },
+      3: { name: 'Upper B', exercises: ['ohp','pullup','incline_dumbbell','cable_row','bicep_curl','face_pull'] },
+      4: { name: 'Lower B', exercises: ['hip_thrust','hack_squat','split_squat','leg_curl','hip_abductor_machine','calf_raise','dead_bug'] },
+      5: { name: 'Rest', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'cut_phase', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Indoor Cycling (Zone 2 blocks — Tue/Wed/Fri/Sat)',
+    name: 'Cut Phase',
+    desc: 'Four lifting days plus easy Zone-2 cardio, built for a calorie deficit. In a deficit you defend muscle, you don’t chase it — the goal is holding your key lift numbers while weight drops. Machines carry more of the load so you can train hard without a spotter. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    badge: '✂️',
+    color: '#FF8A4C',
+    category: 'fatloss',
+    tags: ['4x/week + cardio', 'Fat Loss', 'All Levels'],
+    schedule: [
+      { day: 'MON', label: 'Lower A', rest: false },
+      { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
+      { day: 'WED', label: 'Zone 2 + Core', rest: false },
+      { day: 'THU', label: 'Lower B', rest: false },
+      { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
+      { day: 'SAT', label: 'Optional: Zone 2 / Rest', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A', exercises: ['leg_press','hip_thrust','leg_curl','hip_adductor_machine','calf_raise'] },
+      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','cable_fly','lateral_raise','tricep_pushdown','bike'] },
+      2: { name: 'Zone 2 + Core', exercises: ['treadmill_run','cable_crunch','side_plank'] },
+      3: { name: 'Lower B', exercises: ['hack_squat','back_extension','split_squat','hip_abductor_machine'] },
+      4: { name: 'Upper Pull + Zone 2', exercises: ['lat_pulldown','cable_row','face_pull','bicep_curl','rear_delt_fly','bike'] },
+      5: { name: 'Optional: Zone 2 / Rest', exercises: ['bike'] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'long_track', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Cycling (Fri bike sprints) · Indoor Walk / Stair Stepper (Tue/Sat LISS)',
+    name: 'Long Track',
+    desc: 'Lower-body specialization, 6 days/week. Volume-hungry — run this eating at maintenance or above. Cutting? Start with Cut Phase instead. Anchors: hip thrust and RDL — swap only within the same pattern, never remove.',
+    badge: '⛸️',
+    color: '#7AB8FF',
+    category: 'build',
+    tags: ['6x/week', 'Lower-Body Specialization', 'Advanced'],
+    schedule: [
+      { day: 'MON', label: 'Lower A (Quad Power)', rest: false },
+      { day: 'TUE', label: 'Upper Push + LISS', rest: false },
+      { day: 'WED', label: 'Lower B (Glute/Ham)', rest: false },
+      { day: 'THU', label: 'Upper Pull + Core', rest: false },
+      { day: 'FRI', label: 'Lower C (Glute Volume)', rest: false },
+      { day: 'SAT', label: 'Conditioning', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A (Quad Power)', exercises: ['squat','leg_press','lunge','leg_extension','calf_raise'] },
+      1: { name: 'Upper Push + LISS', exercises: ['bench_press','ohp','incline_dumbbell','cable_lateral_raise','skull_crusher','bike'] },
+      2: { name: 'Lower B (Glute/Ham)', exercises: ['hip_thrust','romanian_deadlift','split_squat','leg_curl','hip_abductor_machine'] },
+      3: { name: 'Upper Pull + Core', exercises: ['pullup','row','lat_pulldown','face_pull','bicep_curl','cable_crunch','pallof_press'] },
+      4: { name: 'Lower C (Glute Volume)', exercises: ['hack_squat','leg_press','cable_kickback','hip_adductor_machine','calf_raise','bike_sprint'] },
+      5: { name: 'Conditioning', exercises: ['treadmill_run','hanging_leg_raise','back_extension','side_plank'] },
       6: { name: 'Rest', exercises: [] },
     }
   }
@@ -2886,7 +3080,7 @@ const EXERCISES = {
   upright_row: {
     name: 'Upright Row', muscle: 'Shoulders', icon: '🎯', muscleClass: 'muscle-shoulders',
     sets: 3, reps: 12, weight: 60,
-    cue: '⚠️ Shoulder health note: the upright row places the shoulder in internal rotation at the top of the movement, which can cause subacromial impingement in users with pre-existing shoulder issues. If you experience any pinching or pain at the top of the lift, stop immediately and substitute with face pulls or lateral raises. If performing: grip shoulder-width or wider, pull elbows to ear height maximum — do not pull past the shoulder. Narrower grip dramatically increases impingement risk.'
+    cue: '⚠ Shoulder caution. Upright rows put the shoulder in a position that can pinch in some shoulders — especially with a narrow grip or a high pull. If your shoulder has ever been cranky, Face Pull or Lateral Raise trains the same muscles in a friendlier position. Doing it anyway? Grip shoulder-width or wider, pull elbows no higher than your ears, and stop at any pinch — that is not a work-through-it pain. ⚠️ Shoulder health note: the upright row places the shoulder in internal rotation at the top of the movement, which can cause subacromial impingement in users with pre-existing shoulder issues. If you experience any pinching or pain at the top of the lift, stop immediately and substitute with face pulls or lateral raises. If performing: grip shoulder-width or wider, pull elbows to ear height maximum — do not pull past the shoulder. Narrower grip dramatically increases impingement risk.'
   },
   shrug: {
     name: 'Dumbbell Shrug', muscle: 'Shoulders', icon: '🎯', muscleClass: 'muscle-shoulders',
@@ -3009,18 +3203,28 @@ const EXERCISES = {
   },
   depth_jump: {
     name: 'Depth Jump', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
-    sets: 4, reps: 5, weight: 0,
+    sets: 3, reps: 5, weight: 0,
     cue: 'Cap total session foot contacts at 60–80 (all jumps combined). Prerequisite: work toward a ~1.5× bodyweight squat before depth jumps — until then, swap for box jumps. Stand on a box 12–24 inches high. Step off — do not jump off — and land on both feet simultaneously. Immediately upon landing, explode straight up as high as possible. The goal is minimum ground contact time — think of the floor as a hot surface. The eccentric loading from the drop pre-stretches the muscle-tendon complex, allowing a more powerful concentric contraction. This is the highest-intensity plyometric in existence — never do it fatigued, always do it first in a session, and cap at 20 reps total per session.'
   },
   lateral_hurdle_hop: {
     name: 'Lateral Hurdle Hop', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
-    sets: 4, reps: 8, weight: 0,
+    sets: 3, reps: 8, weight: 0,
     cue: 'Set up a small hurdle or cone 12–18 inches high. Stand to one side and hop laterally over it on both feet, landing softly and immediately hopping back. Move as fast as possible while still landing under control. Count each lateral crossing as one rep. Progress by increasing hurdle height, or by performing on a single leg. Trains the reactive lateral force production central to skating, cutting sports, and change of direction.'
   },
   glute_med_raise: {
     name: 'Side-Lying Hip Abduction', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
     sets: 3, reps: 20, weight: 0,
     cue: 'Lie on your side with hips stacked and legs straight. Raise the top leg toward the ceiling, leading with the heel and keeping your foot flexed — do not let your hip rotate forward or your pelvis tilt. Hold one second at the top and lower slowly. Add a resistance band above the knees to increase difficulty. The glute medius is the primary stabiliser of the pelvis during single-leg stance — every skating stride. Weak glute med = knee that collapses inward on landing.'
+  },
+  copenhagen_plank: {
+    name: 'Copenhagen Plank (Short-Lever)', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 25, weight: 0,
+    cue: 'Short-lever version: lie on your side, top KNEE (not foot) resting on a bench, bottom leg under the bench. Lift your hips until your body forms a straight line, supported by the inside of the top knee — you will feel the inner thigh work immediately. Log seconds per side; hold 20–30s. Adductor strength is the main protective factor against groin strains in lateral and change-of-direction work, which is exactly why this sits at the END of lateral-power sessions, never fresh-legs first. Keep breathing normally throughout. Too much? The cushion adductor squeeze trains the same muscles gently. Progress to the long-lever (foot on bench) version only when 30s feels controlled.'
+  },
+  cushion_adductor_squeeze: {
+    name: 'Cushion Adductor Squeeze', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 15, weight: 0,
+    cue: 'Lie on your back with knees bent, feet flat, and a cushion or pillow between your knees. Squeeze the cushion firmly for a 2-second hold, then release without letting it drop. Zero equipment beyond the cushion, zero balance demand — the gentlest way to load the inner thighs. Breathe normally; never hold your breath during the squeeze. Ready for more? The Copenhagen plank (short-lever) is the harder progression.'
   },
   broad_jump: {
     name: 'Standing Broad Jump', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
@@ -3056,7 +3260,7 @@ const EXERCISES = {
   },
   box_jump: {
     name: 'Box Jump', muscle: 'Legs', icon: '🏃', muscleClass: 'muscle-legs',
-    sets: 4, reps: 8, weight: 0,
+    sets: 3, reps: 6, weight: 0,
     cue: 'Stand facing a sturdy box or platform. Swing arms back, then explode up, landing softly with both feet flat on the box. Stand tall to complete the rep, then step (not jump) back down to protect your Achilles.'
   },
   box_step_up: {
@@ -3166,6 +3370,81 @@ const EXERCISES = {
     sets: 3, reps: 12, weight: 40,
     cue: 'Attach a rope to the high pulley. Grip the rope with a neutral grip (palms facing each other), elbows pinned to your sides. Push the rope down and flare your wrists outward at the bottom — this outward rotation at the end position maximally contracts the lateral head of the tricep. Return slowly, keeping tension throughout. The rope attachment targets the lateral tricep head differently from a straight bar pushdown (which emphasises the long head). Use as a 4th swap option for tricep pushdown or as a variation in the same session.'
   },
+
+  // ── Low-impact conditioning (HIIT substitutions) ─────────────────────
+  bike_sprint: {
+    name: 'Bike Sprint Intervals', muscle: 'Cardio', icon: '🚴', muscleClass: 'muscle-cardio',
+    sets: 8, reps: 20, weight: 0,
+    cue: 'Interval logging: log seconds of work as reps (e.g. 20s sprint → reps: 20), resistance level in the Weight field. Format: 20 seconds all-out / 40 seconds easy spin, repeat 8 rounds. Keep resistance high enough that your legs — not the flywheel — limit the sprint. Zero impact: all intensity, no landing forces. Progress by adding rounds or lengthening work intervals to 30s. Chest pain or pressure, faintness, or unusual breathlessness is a stop-now signal — see the safety note.'
+  },
+  rower_interval: {
+    name: 'Rower Intervals', muscle: 'Cardio', icon: '🚣', muscleClass: 'muscle-cardio',
+    sets: 5, reps: 60, weight: 0,
+    cue: 'Interval logging: log seconds of work as reps. Format: 60s hard / 60s easy paddle, 5 rounds. Drive sequence is legs → hips → arms; return arms → hips → legs. Aim for a stroke rate of 24–28 during work intervals. Full-body, low-impact conditioning — no jumping, no floor transitions. If your back starts rounding as you tire, end the interval.'
+  },
+  sled_push: {
+    name: 'Sled Push', muscle: 'Cardio', icon: '🛷', muscleClass: 'muscle-cardio',
+    sets: 6, reps: 20, weight: 90,
+    cue: 'Load a sled and push 15–20 meters, rest 60–90 seconds, repeat. Log meters as reps and sled load in the Weight field. Stay low with arms locked, drive through the balls of your feet with a forward lean. No eccentric phase — brutal conditioning with minimal soreness and zero impact. Scale load so you can move continuously for the full distance. Keep breathing — no straining against a closed throat. Lighten the sled if you cannot.'
+  },
+  battle_ropes: {
+    name: 'Battle Ropes', muscle: 'Cardio', icon: '🌊', muscleClass: 'muscle-cardio',
+    sets: 4, reps: 30, weight: 0,
+    cue: 'Log seconds per round as reps — start with 30s work / 30s rest, 4 rounds. Athletic stance, slight squat, alternate arm waves keeping the rope moving continuously. Vary with double slams or lateral waves. High heart-rate work with the feet planted — zero impact on knees and ankles.'
+  },
+
+  // ── Machine / accessory additions ─────────────────────────────────────
+  hack_squat: {
+    name: 'Hack Squat', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 4, reps: 10, weight: 180,
+    cue: 'Set your back flat against the pad, feet mid-platform at shoulder width. Lower under control until thighs pass parallel, then drive through the whole foot. The fixed track lets you load the quads hard without balance being the limiter — go deeper than you would with a barbell. No hack squat machine? Substitute a goblet or barbell squat at 4×8–10. Depth is earned — stop where your knees complain.'
+  },
+  back_extension: {
+    name: '45° Back Extension (Glute Focus)', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 15, weight: 0,
+    cue: 'Set the 45° pad at hip-crease height. Round your upper back slightly and tuck your chin — this takes the spinal erectors out and makes the glutes do the hip extension. Toes turned out ~30°. Lower until your hamstrings stretch, then squeeze your glutes to rise — stop at a straight line, never hyperextend. Hold a plate at your chest to progress. A hinge-pattern swap for RDLs that unloads the spine. Come up slowly and pause before standing off the pad. If you have bone-density concerns, get a professional’s eyes on this one first — the glute bridge trains the same pattern meanwhile.'
+  },
+  leg_extension: {
+    name: 'Leg Extension', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 12, weight: 90,
+    cue: 'Align your knees with the machine\'s pivot point, pad on the front of your ankles. Extend to full lockout and squeeze the quads for one second at the top. Lower slowly over 2–3 seconds. The only exercise that trains the rectus femoris through knee extension while the hip is flexed — use full range, moderate load.'
+  },
+  machine_chest_press: {
+    name: 'Machine Chest Press', muscle: 'Chest', icon: '💪', muscleClass: 'muscle-chest',
+    sets: 3, reps: 10, weight: 100,
+    cue: 'Set the seat so the handles align with mid-chest. Press to full extension without locking the elbows harshly, then control the return until you feel a chest stretch. The fixed path removes the stabilizer demand — ideal when fatigued or in a calorie deficit, letting you train close to failure safely without a spotter.'
+  },
+  db_shoulder_press: {
+    name: 'Dumbbell Shoulder Press', muscle: 'Shoulders', icon: '🎯', muscleClass: 'muscle-shoulders',
+    sets: 3, reps: 10, weight: 20,
+    cue: 'Seated or standing, hold dumbbells at shoulder height, palms forward or slightly turned in. Press overhead until arms are fully extended, then lower with control to ear level. Beginners: start light with 2 sets of 8–10 — the vertical press is a skill before it is a strength lift. Keep ribs down and core braced; do not arch the lower back to finish reps.'
+  },
+  cable_kickback: {
+    name: 'Cable Glute Kickback', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 12, weight: 20,
+    cue: 'Attach an ankle cuff to the low pulley. Hinge slightly forward holding the frame, then drive the working leg straight back and slightly up, squeezing the glute hard at full hip extension. Do not arch the lower back to gain height — range comes from the hip only. Slow 2-second return. Complete all reps per side. Isolates the glute max at end-range where thrusts are easiest.'
+  },
+  // ── Core / conditioning additions ─────────────────────────────────────
+  cable_crunch: {
+    name: 'Cable Crunch', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 12, weight: 50,
+    cue: 'Kneel facing the cable with a rope held at your temples. Crunch by flexing the spine — drive your elbows toward your thighs, exhaling hard. The hips stay still; motion comes from the ribcage curling down. Control the stretch on the way up. This is the loadable, progressive version of the crunch — add weight like any other lift. If you have osteoporosis or low bone density, ask a professional before loading spinal flexion — the dead bug trains the core without it.'
+  },
+  side_plank: {
+    name: 'Side Plank (sec)', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 45, weight: 0,
+    cue: 'Lie on your side, prop up on your forearm with elbow under shoulder, and lift your hips until your body forms a straight line. Log seconds as reps — target 45s per side. Do not let the hips sag or roll forward. Trains the obliques and QL for lateral trunk stability. Progress by raising the top leg or adding time. Breathe normally throughout. Too much? Drop the bottom knee to the floor — same muscles, shorter lever.'
+  },
+  hanging_leg_raise: {
+    name: 'Hanging Leg Raise', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 12, weight: 0,
+    cue: 'Hang from a bar with straight arms. Raise your legs by curling the pelvis up — not just lifting the thighs — until legs are parallel to the floor or higher. Lower slowly without swinging. Too hard? Bend the knees (hanging knee raise). Too easy? Straighten fully and touch toes to bar. Builds the abs and grip together. When your grip starts going, you are done — dismount with control rather than dropping.'
+  },
+  bear_crawl: {
+    name: 'Low-Impact Conditioning: March / Bear Crawl', muscle: 'Cardio', icon: '🐻', muscleClass: 'muscle-cardio',
+    sets: 3, reps: 30, weight: 0,
+    cue: 'Log seconds per round as reps — 30s work, 30s rest. Alternate rounds: (1) brisk marching in place with high knees at walking impact, and (2) bear crawl — hands and feet on floor, knees hovering an inch up, crawl forward and back with opposite hand/foot moving together. Keep hips level and steps quiet. Low-impact conditioning that needs zero equipment and no jumping. March-only rounds are a full version of this exercise, not a downgrade.'
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3181,7 +3460,10 @@ const PLAN_PREREQUISITES = {
   'cardio_only': { minExpYears: 0, minLifts: {} },
   'drive_phase': { minExpYears: 2, minLifts: { squat: 225, deadlift: 315 } },
   'ppl_athletic': { minExpYears: 3, minLifts: { bench: 225, squat: 315, deadlift: 405, pullups: 5 } },
-  'home_workout': { minExpYears: 0, minLifts: {} }
+  'home_workout': { minExpYears: 0, minLifts: {} },
+  'upper_lower_4day': { minExpYears: 1, minLifts: { bench: 135, squat: 185, deadlift: 225 } },
+  'cut_phase': { minExpYears: 0, minLifts: {} },
+  'long_track': { minExpYears: 2, minLifts: { squat: 225 } }
 };
 
 // Equipment Requirements per Plan
@@ -3189,11 +3471,14 @@ const PLAN_EQUIPMENT = {
   'beginner_fullbody': ['Dumbbells', 'Bench (optional)'],
   'intermediate_ppl': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine'],
   'advanced_split': ['Full gym', 'Squat rack', 'Barbells', 'Leg press', 'Cable machine'],
-  'weight_loss_cardio': ['Dumbbells', 'Treadmill or bike (optional)'],
-  'cardio_only': ['Treadmill', 'Bike', 'Jump rope (optional)'],
+  'weight_loss_cardio': ['Dumbbells', 'Bike, rower, sled, battle ropes (all swappable)'],
+  'cardio_only': ['Treadmill', 'Bike', 'Rower, sled, battle ropes (swappable)'],
   'drive_phase': ['Squat rack', 'Boxes (12-36")', 'Hurdles', 'Bands', 'Cables'],
   'ppl_athletic': ['Full gym', 'Squat rack', 'Boxes', 'Hurdles', 'Bands', 'Cables'],
-  'home_workout': []
+  'home_workout': [],
+  'upper_lower_4day': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine'],
+  'cut_phase': ['Full gym (machine-biased)', 'Cardio equipment (bike, treadmill, or stairmaster)'],
+  'long_track': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine', 'Bike or stairmaster']
 };
 
 // Injury Types for Screening (None first for better UX)
@@ -3203,8 +3488,53 @@ const INJURY_TYPES = [
   'Knee pain or history',
   'Shoulder pain or history',
   'Elbow pain or history',
-  'Hamstring or groin strain'
+  'Hamstring or groin strain',
+  /* A2-VOL-02 (PT R2): age-critical categories added. Full routing spec (PT §3.3)
+     is tracked as open build work; categories are collected now so no answer is lost. */
+  'A fall or near-fall in the past year',
+  'Osteoporosis / low bone density / fragility fracture',
+  'Joint replacement or surgery in the past year',
+  'Numbness in feet, or a balance / inner-ear condition',
+  'A clinician has limited my exercise'
 ];
+
+/* A2-VOL-02 routing slice (PT R2 §3.3 rows 2-5, panel-confirmed; licensed-PT signature pending).
+   Each screening answer changes at least one visible default (acceptance criterion). */
+const SCREENING_ROUTING = [
+  {
+    answer: 'A fall or near-fall in the past year',
+    flagged: ['depth_jump','box_jump','lateral_bound','lateral_hurdle_hop','broad_jump','jump_squat','burpee','jump_rope','high_knees','single_leg_rdl','single_leg_rdl_bw','skater_squat'],
+    planLine: 'You noted a recent fall or unsteadiness. This plan includes jump or single-leg work: {LIST}. Every one has a supported or low-impact version on its Swap list — starting there is the strong move, not the timid one.',
+    cardLine: 'You flagged balance/falls — the supported or low-impact version (Swap) is the recommended starting point.'
+  },
+  {
+    answer: 'Osteoporosis / low bone density / fragility fracture',
+    flagged: ['depth_jump','box_jump','lateral_bound','lateral_hurdle_hop','broad_jump','jump_squat','jump_rope','high_knees','cable_crunch','back_extension','deadlift','romanian_deadlift'],
+    planLine: 'You noted bone-density concerns. Worth a professional’s eyes before loading: {LIST}. Same-pattern alternatives are on each card’s Swap list meanwhile.',
+    cardLine: 'You flagged bone density — get professional guidance before loading this one; same-pattern options are under Swap.'
+  },
+  {
+    answer: 'Joint replacement or surgery in the past year',
+    flagged: null,
+    planLine: 'Recent surgery or joint replacement: bring this plan to your clinician before starting. Machine and supported versions are on each exercise’s Swap list.',
+    cardLine: null
+  },
+  {
+    answer: 'Numbness in feet, or a balance / inner-ear condition',
+    flagged: ['depth_jump','box_jump','lateral_bound','lateral_hurdle_hop','broad_jump','jump_squat','single_leg_rdl','single_leg_rdl_bw','skater_squat','burpee','pike_pushup','bear_crawl'],
+    planLine: 'You noted numbness or a balance condition. Use supported versions first, and rise slowly on floor-to-stand moves: {LIST}.',
+    cardLine: 'You flagged balance/nerve issues — use the supported version, and rise slowly from the floor.'
+  },
+];
+function screeningAnswers() {
+  return (state.injuryHistory && state.injuryHistory.types) || [];
+}
+function screeningCardLines(exId) {
+  const ans = screeningAnswers();
+  return SCREENING_ROUTING
+    .filter(r => r.cardLine && r.flagged && r.flagged.includes(exId) && ans.includes(r.answer))
+    .map(r => r.cardLine);
+}
 
 // Deload Triggers (auto-suggest at these week marks)
 const DELOAD_EVERY_N_WEEKS = 4;      // time-based trigger
@@ -3328,6 +3658,33 @@ function checkPlanPrerequisites(planId) {
     }
   }
   
+  // A2-VOL-02 routing (PT R2 §3.3 rows 2-5): screening answers surface plan-specific flags
+  const _answers = screeningAnswers();
+  if (_answers.length) {
+    const _plan = PLANS.find(p => p.id === planId);
+    const _planExs = _plan ? [...new Set(Object.values(_plan.days || {}).flatMap(d => d.exercises || []))] : [];
+    SCREENING_ROUTING.forEach(r => {
+      if (!_answers.includes(r.answer)) return;
+      if (!r.flagged) { warnings.push('🩺 ' + r.planLine); return; }
+      const hits = _planExs.filter(e => r.flagged.includes(e)).map(e => (EXERCISES[e] ? EXERCISES[e].name : e));
+      if (hits.length) warnings.push('🩺 ' + r.planLine.replace('{LIST}', hits.slice(0, 4).join(', ') + (hits.length > 4 ? ` (+${hits.length - 4} more)` : '')));
+    });
+  }
+
+  // A2-VOL-02 slice (PT R2 §3.3 last row): clinician-limit answer surfaces on every plan
+  if (state.injuryHistory && state.injuryHistory.types && state.injuryHistory.types.includes('A clinician has limited my exercise')) {
+    warnings.push('⚕️ Your clinician’s limits override this plan — when in doubt, their word wins.');
+  }
+
+  // RR-N1 remediation: surface the plan's experience/strength assumptions.
+  // PLAN_PREREQUISITES was previously defined but never evaluated anywhere.
+  if (prereq.minExpYears > 0 || Object.keys(prereq.minLifts).length > 0) {
+    const liftNames = { bench: 'bench', squat: 'squat', deadlift: 'deadlift', pullups: 'pull-ups' };
+    const liftUnits = { pullups: ' reps' };
+    const lifts = Object.entries(prereq.minLifts).map(([l, w]) => (liftNames[l] || l) + ' ' + w + (liftUnits[l] || ' lb')).join(', ');
+    warnings.push('ℹ️ This plan assumes about ' + prereq.minExpYears + '+ year' + (prereq.minExpYears === 1 ? '' : 's') + ' of consistent training' + (lifts ? ' and working lifts around: ' + lifts : '') + '. Not there yet? An earlier plan will progress you faster.');
+  }
+
   if (warnings.length > 0) {
     showModal('Plan Safety Check', `
       <p>Before you load this plan:</p>
@@ -3563,8 +3920,8 @@ function showPlanRecommendations() {
   const currentIndex = PLANS.findIndex(p => p.id === state.primaryPlan);
   const progression = [
     { level: 'Beginner', plans: ['beginner_fullbody'] },
-    { level: 'Intermediate', plans: ['intermediate_ppl', 'weight_loss_cardio', 'pure_cardio', 'drive_phase', 'home_workout'] },
-    { level: 'Advanced', plans: ['advanced_split', 'ppl_athletic'] }
+    { level: 'Intermediate', plans: ['intermediate_ppl', 'weight_loss_cardio', 'pure_cardio', 'home_workout'] },
+    { level: 'Advanced', plans: ['drive_phase', 'advanced_split', 'ppl_athletic'] }
   ];
   
   // Find current level
@@ -4109,7 +4466,7 @@ function renderToday() {
           style="display:inline-flex;align-items:center;gap:4px;
             background:rgba(255,140,0,0.1);border:1px solid rgba(255,140,0,0.3);
             border-radius:20px;padding:5px 10px;font-size:11px;font-weight:500;
-            color:#ff8c00;cursor:pointer;white-space:nowrap;font-family:var(--font-body);"
+            color:var(--color-text-link);cursor:pointer;white-space:nowrap;font-family:var(--font-body);"
           title="Tap to load recommended warm-up">
           ${rec.icon} ${rec.name}
         </button>`;
@@ -4131,13 +4488,18 @@ function renderToday() {
       style="display:inline-flex;align-items:center;gap:4px;
         background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);
         border-radius:20px;padding:5px 10px;font-size:11px;font-weight:500;
-        color:#818cf8;cursor:pointer;font-family:var(--font-body);"
+        color:#B39DDB;cursor:pointer;font-family:var(--font-body);"
       title="Plan pushed forward ${state.planPushOffset} day${state.planPushOffset > 1 ? 's' : ''} — tap to reset">
       📅 +${state.planPushOffset}d shift · reset
     </button>`;
   }
 
   DOM.heroMeta.innerHTML = metaChips;
+
+  // A2-VOL-22 (PT R2): optional per-day note rendered under the hero meta
+  if (workout.note) {
+    DOM.heroMeta.innerHTML += `<div role="note" style="flex-basis:100%;font-size:11.5px;line-height:1.5;color:var(--color-status-warning-text);background:var(--color-status-warning-background);border-radius:8px;padding:7px 10px;margin-top:6px;">💡 ${workout.note}</div>`;
+  }
 
   if (!workout.exercises.length) {
     DOM.exerciseList.innerHTML = buildRestDayHTML(false);
@@ -4187,7 +4549,7 @@ function renderToday() {
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-size:16px;">${wu.icon}</span>
           <div>
-            <div style="font-family:var(--font-mono);font-size:9px;color:#ff8c00;
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-brand-accent);
               text-transform:uppercase;letter-spacing:1px;">Warm-Up</div>
             <div style="font-size:13px;font-weight:600;">${wu.name}</div>
           </div>
@@ -4216,7 +4578,7 @@ function renderToday() {
           <div class="ex-icon" style="background:rgba(255,140,0,0.15);">🔥</div>
           <div class="ex-card-info">
             <div class="ex-name">${wuEx.name}</div>
-            <div class="ex-muscle" style="color:#ff8c00;">WARM-UP · ${wuEx.sets} × ${wuEx.reps}</div>
+            <div class="ex-muscle" style="color:var(--color-brand-accent);">WARM-UP · ${wuEx.sets} × ${wuEx.reps}</div>
           </div>
           <div class="ex-status" id="wustatus-${wuId}">${wuEntry.complete ? '✅' : '○'}</div>
         </div>
@@ -4225,7 +4587,7 @@ function renderToday() {
           <a href="https://www.google.com/search?q=${encodeURIComponent(wuEx.name + ' exercise how to')}"
             target="_blank" rel="noopener"
             style="display:inline-flex;align-items:center;gap:5px;
-              font-family:var(--font-mono);font-size:10px;color:#57534E;
+              font-family:var(--font-mono);font-size:10px;color:#5C554C;
               text-decoration:none;letter-spacing:0.3px;margin-top:-4px;"
             onclick="event.stopPropagation()">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -4374,10 +4736,11 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
       </div>
       ${buildProgPanel(exId)}
       <div class="ex-cue">${effectiveEx.cue}</div>
+      ${screeningCardLines(exId).map(l => `<div class="ex-cue" role="note" style="color:var(--color-status-warning-text);background:var(--color-status-warning-background);border-radius:8px;padding:8px 10px;">🩺 ${l}</div>`).join('')}
       <a href="https://www.google.com/search?q=${encodeURIComponent(effectiveEx.name + ' exercise how to')}"
         target="_blank" rel="noopener"
         style="display:inline-flex;align-items:center;gap:5px;
-          font-family:var(--font-mono);font-size:10px;color:#57534E;
+          font-family:var(--font-mono);font-size:10px;color:#5C554C;
           text-decoration:none;letter-spacing:0.3px;margin-top:-4px;"
         onclick="event.stopPropagation()">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -4385,8 +4748,8 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
       </a>
       <div class="set-labels">
         <span></span>
-        <span class="set-label">Weight (lbs)</span>
-        <span class="set-label">Reps Done</span>
+        <span class="set-label">${(LOG_TYPES[exId] && LOG_TYPES[exId].weight) || 'Weight (lbs)'}</span>
+        <span class="set-label">${(LOG_TYPES[exId] && LOG_TYPES[exId].reps) || 'Reps Done'}</span>
         <span></span>
       </div>
       <div class="sets-grid" id="sets-${exId}">
@@ -4657,7 +5020,7 @@ const MUSCLE_POOLS = {
   Chest:     ['bench_press','incline_dumbbell','cable_fly','dips','pushup','pike_pushup'],
   Back:      ['deadlift','pullup','row','lat_pulldown','cable_row','face_pull','hip_hinge','inverted_row','pullup_bw'],
   Legs:      ['squat','goblet_squat','lunge','romanian_deadlift','leg_press','leg_curl','calf_raise','split_squat','single_leg_rdl','hip_thrust','lateral_bound','skater_squat','glute_med_raise','squat_bw','lunge_bw','glute_bridge','single_leg_rdl_bw','calf_raise_bw'],
-  Shoulders: ['ohp','lateral_raise','rear_delt_fly','upright_row','shrug','face_pull','pike_pushup'],
+  Shoulders: ['ohp','lateral_raise','rear_delt_fly','shrug','face_pull','pike_pushup'] /* FR-10/VOL-003: upright_row pool removal */,
   Arms:      ['bicep_curl','hammer_curl','tricep_pushdown','skull_crusher','tricep_dip_chair'],
   Core:      ['plank','dead_bug','plank_rotation','pallof_press','ab_wheel','ab_wheel_bw'],
   Cardio:    ['burpee','jump_squat','mountain_climber','high_knees','box_jump','treadmill_run','bike','jump_rope'],
@@ -4713,7 +5076,7 @@ const SESSION_MUSCLES = {
 
 // Sets/reps targets by goal + level
 const VOLUME = {
-  strength:    { beginner: {sets:3,repsLow:4,repsHigh:6}, intermediate: {sets:4,repsLow:3,repsHigh:5}, advanced: {sets:5,repsLow:2,repsHigh:4} },
+  strength:    { beginner: {sets:3,repsLow:6,repsHigh:8}, /* FR-16 (S&C): heavy 4-6s unlock after logged base, human confirm pending */ intermediate: {sets:4,repsLow:3,repsHigh:5}, advanced: {sets:5,repsLow:2,repsHigh:4} },
   hypertrophy: { beginner: {sets:3,repsLow:10,repsHigh:12}, intermediate: {sets:4,repsLow:8,repsHigh:12}, advanced: {sets:4,repsLow:6,repsHigh:12} },
   fatloss:     { beginner: {sets:3,repsLow:12,repsHigh:15}, intermediate: {sets:3,repsLow:12,repsHigh:20}, advanced: {sets:4,repsLow:15,repsHigh:20} },
 };
@@ -4826,9 +5189,9 @@ function generateRandomPlan() {
     generatedPlan = {
       id: 'generated_' + Date.now(),
       name: planName,
-      desc: `${days} days/week · ${goal.charAt(0).toUpperCase()+goal.slice(1)} · ${level.charAt(0).toUpperCase()+level.slice(1)} · AI-generated`,
+      desc: `${days} days/week · ${goal.charAt(0).toUpperCase()+goal.slice(1)} · ${level.charAt(0).toUpperCase()+level.slice(1)} · Generated`,
       badge: '🎲',
-      color: '#ffcc00',
+      color: '#F5C64F',
       tags: [`${days}x/week`, goal.charAt(0).toUpperCase()+goal.slice(1), level.charAt(0).toUpperCase()+level.slice(1), 'Generated'],
       schedule,
       days: dayMap,
@@ -5909,7 +6272,7 @@ const RECOMMENDATIONS = {
   row:              ['pullup','lat_pulldown','deadlift','face_pull','bicep_curl'],
   lat_pulldown:     ['row','cable_row','pullup','face_pull','bicep_curl'],
   cable_row:        ['lat_pulldown','row','face_pull','pullup','rear_delt_fly'],
-  face_pull:        ['lateral_raise','rear_delt_fly','cable_row','ohp','upright_row'],
+  face_pull:        ['lateral_raise','rear_delt_fly','cable_row','ohp'],
   hip_hinge:        ['deadlift','romanian_deadlift','squat','leg_curl','row'],
   // LEGS anchors
   squat:            ['romanian_deadlift','leg_press','lunge','calf_raise','leg_curl'],
@@ -5920,11 +6283,10 @@ const RECOMMENDATIONS = {
   leg_curl:         ['squat','romanian_deadlift','leg_press','calf_raise','lunge'],
   calf_raise:       ['squat','leg_press','leg_curl','lunge'],
   // SHOULDER anchors
-  ohp:              ['lateral_raise','face_pull','rear_delt_fly','upright_row','shrug'],
-  lateral_raise:    ['ohp','face_pull','rear_delt_fly','upright_row'],
+  ohp:              ['lateral_raise','face_pull','rear_delt_fly','shrug'],
+  lateral_raise:    ['ohp','face_pull','rear_delt_fly'],
   rear_delt_fly:    ['face_pull','lateral_raise','cable_row','ohp'],
-  upright_row:      ['lateral_raise','ohp','shrug','face_pull'],
-  shrug:            ['deadlift','upright_row','row','ohp'],
+  shrug:            ['deadlift','row','ohp'],
   // ARMS anchors
   bicep_curl:       ['hammer_curl','pullup','row','skull_crusher','tricep_pushdown'],
   hammer_curl:      ['bicep_curl','pullup','row','tricep_pushdown'],
@@ -6293,6 +6655,24 @@ function switchPlatform(platform, el) {
 //  Plyometric swaps always go lower-impact, never higher
 // ═══════════════════════════════════════════════════════════════════════════
 const EXERCISE_SWAPS = {
+  /* v2 ab/adductor additions */
+  copenhagen_plank:  [{ id:'cushion_adductor_squeeze', reason:'Gentler adductor isometric' }, { id:'hip_adductor_machine', reason:'Machine option' }, { id:'side_plank', reason:'Lateral trunk, no adductor load' }],
+  cushion_adductor_squeeze: [{ id:'hip_adductor_machine', reason:'Loaded machine option' }, { id:'glute_bridge', reason:'No-equipment hip work' }, { id:'copenhagen_plank', reason:'Harder progression' }],
+  /* FR-19 (S&C R2): swap coverage for the 14 new records */
+  hack_squat:        [{ id:'squat', reason:'Barbell pattern' }, { id:'leg_press', reason:'Machine alternative' }, { id:'goblet_squat', reason:'Lighter option' }, { id:'split_squat', reason:'Unilateral option' }],
+  leg_extension:     [{ id:'leg_press', reason:'Machine compound' }, { id:'split_squat', reason:'Free-weight quad' }, { id:'squat_bw', reason:'No-equipment option' }],
+  machine_chest_press: [{ id:'bench_press', reason:'Barbell pattern' }, { id:'incline_dumbbell', reason:'Dumbbell option' }, { id:'pushup', reason:'No-equipment option' }],
+  db_shoulder_press: [{ id:'ohp', reason:'Barbell pattern' }, { id:'pike_pushup', reason:'No-equipment option' }, { id:'lateral_raise', reason:'Lighter isolation' }],
+  cable_kickback:    [{ id:'hip_thrust', reason:'Loaded glute pattern' }, { id:'glute_bridge', reason:'No-equipment option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
+  cable_crunch:      [{ id:'dead_bug', reason:'No spinal flexion' }, { id:'plank_rotation', reason:'Anti-rotation option' }, { id:'hanging_leg_raise', reason:'Harder progression' }],
+  side_plank:        [{ id:'plank', reason:'Front pattern' }, { id:'dead_bug', reason:'Floor anti-extension' }, { id:'pallof_press', reason:'Standing anti-rotation' }],
+  hanging_leg_raise: [{ id:'dead_bug', reason:'Floor regression' }, { id:'cable_crunch', reason:'Loaded flexion option' }, { id:'plank', reason:'Isometric option' }],
+  back_extension:    [{ id:'romanian_deadlift', reason:'Loaded hinge' }, { id:'glute_bridge', reason:'Spine-neutral option' }, { id:'hip_thrust', reason:'Loaded glute option' }],
+  bike_sprint:       [{ id:'rower_interval', reason:'Low-impact interval' }, { id:'battle_ropes', reason:'Upper-body conditioning' }, { id:'bike', reason:'Steady-state option' }],
+  rower_interval:    [{ id:'bike_sprint', reason:'Leg-biased interval' }, { id:'battle_ropes', reason:'Upper-body conditioning' }, { id:'bike', reason:'Steady-state option' }],
+  sled_push:         [{ id:'bike_sprint', reason:'Zero-impact power' }, { id:'box_step_up', reason:'No-equipment option' }, { id:'rower_interval', reason:'Full-body interval' }],
+  battle_ropes:      [{ id:'bike_sprint', reason:'Leg-biased interval' }, { id:'rower_interval', reason:'Full-body interval' }, { id:'bear_crawl', reason:'No-equipment option' }],
+  bear_crawl:        [{ id:'mountain_climber', reason:'Floor conditioning' }, { id:'box_step_up', reason:'Upright low-impact' }, { id:'high_knees', reason:'Standing option' }],
   // ── Chest ────────────────────────────────────────────────────────────────
   bench_press:      [{ id:'incline_dumbbell', reason:'Dumbbell variation' }, { id:'pushup', reason:'Bodyweight option' }, { id:'cable_fly', reason:'Cable isolation' }, { id:'dips', reason:'Bodyweight compound' }],
   incline_dumbbell: [{ id:'bench_press', reason:'Flat barbell alternative' }, { id:'pushup', reason:'Bodyweight option' }, { id:'cable_fly', reason:'Cable upper chest' }],
@@ -6315,7 +6695,7 @@ const EXERCISE_SWAPS = {
   ohp:              [{ id:'incline_dumbbell', reason:'Dumbbell shoulder press' }, { id:'lateral_raise', reason:'Shoulder isolation' }, { id:'pike_pushup', reason:'Bodyweight overhead' }, { id:'cable_lateral_raise', reason:'Cable shoulder — joint-friendly constant tension' }],
   lateral_raise:    [{ id:'face_pull', reason:'Cable alternative' }, { id:'rear_delt_fly', reason:'Rear delt focus' }, { id:'ohp', reason:'Compound press' }, { id:'cable_lateral_raise', reason:'Constant tension throughout full range' }],
   rear_delt_fly:    [{ id:'face_pull', reason:'Cable version' }, { id:'cable_row', reason:'Row alternative' }, { id:'lateral_raise', reason:'Side delt focus' }],
-  shrug:            [{ id:'face_pull', reason:'Upper trap alternative' }, { id:'upright_row', reason:'Similar pattern' }],
+  shrug:            [{ id:'face_pull', reason:'Upper trap alternative' }, { id:'lateral_raise', reason:'Delt alternative' }],
 
   // ── Arms ─────────────────────────────────────────────────────────────────
   bicep_curl:       [{ id:'hammer_curl', reason:'Neutral grip option' }, { id:'cable_row', reason:'Compound pulling' }, { id:'pullup', reason:'Compound bicep' }, { id:'cable_curl', reason:'Constant tension — superior hypertrophy' }],
@@ -6366,7 +6746,7 @@ const EXERCISE_SWAPS = {
   high_knees:       [{ id:'mountain_climber', reason:'Floor version' }, { id:'jump_rope', reason:'Cardio alternative' }, { id:'treadmill_run', reason:'Running option' }],
   // ── Cable / Machine Isolation ───────────────────────────────────────────────
   hip_abductor_machine: [{ id:'lateral_hip_thrust', reason:'Unilateral glute med' }, { id:'lateral_band_walk', reason:'Band activation option' }, { id:'skater_squat', reason:'Unilateral lateral' }, { id:'cable_lateral_raise', reason:'Cable abduction variation' }],
-  hip_adductor_machine: [{ id:'sumo_squat', reason:'Adductor-heavy squat' }, { id:'lateral_band_walk', reason:'Hip stability' }, { id:'split_squat', reason:'Unilateral adductor load' }, { id:'cable_pull_through', reason:'Cable hip option' }],
+  hip_adductor_machine: [{ id:'lateral_band_walk', reason:'Hip stability' }, { id:'split_squat', reason:'Unilateral adductor load' }, { id:'cable_pull_through', reason:'Cable hip option' }],
   cable_pull_through:   [{ id:'hip_thrust', reason:'Loaded hip extension' }, { id:'romanian_deadlift', reason:'Hinge pattern' }, { id:'glute_bridge', reason:'Bodyweight version' }, { id:'deadlift', reason:'Full chain compound' }],
   lateral_band_walk:    [{ id:'hip_abductor_machine', reason:'Machine version' }, { id:'lateral_hip_thrust', reason:'Loaded lateral glute' }, { id:'skater_squat', reason:'Unilateral lateral' }, { id:'lateral_bound', reason:'Power version' }],
   cable_lateral_raise:  [{ id:'lateral_raise', reason:'Dumbbell version' }, { id:'face_pull', reason:'Rear delt option' }, { id:'rear_delt_fly', reason:'Posterior shoulder' }, { id:'ohp', reason:'Compound press' }],
@@ -6397,7 +6777,7 @@ const EXERCISE_VARIANTS = {
   squat: {
     barbell:  { label: 'Barbell', name: 'Back Squat', weight: 65, cue: 'Warm-up sets recommended: work up in 2–3 ramp sets (e.g. 50%×5, 70%×3) before your working sets. Stand with feet shoulder-width apart, bar resting on upper traps. Descend until thighs are parallel or below, keeping knees tracking over toes. Drive through heels to stand, maintaining a neutral spine throughout.' },
     dumbbell: { label: 'Dumbbell', name: 'Dumbbell Goblet Squat', weight: 40, cue: 'Hold a dumbbell vertically at chest height with both hands. Squat deep, using your elbows to push your knees apart at the bottom. Excellent technique builder and a strong loading option — you can go heavier than you think with a goblet squat.' },
-    machine:  { label: 'Machine', name: 'Hack Squat Machine', weight: 180, cue: 'Set up on the hack squat with feet shoulder-width on the platform. Lower until knees reach 90° or deeper, then press through the entire foot. The machine removes the stability demand of a barbell squat — useful for loading quads heavily without axial load on the spine.' },
+    machine:  { label: 'Machine', name: 'Machine Squat (hack pattern)', weight: 180, /* FR-21: see standalone hack_squat record */ cue: 'Set up on the hack squat with feet shoulder-width on the platform. Lower until knees reach 90° or deeper, then press through the entire foot. The machine removes the stability demand of a barbell squat — useful for loading quads heavily without axial load on the spine.' },
     bodyweight: { label: 'Bodyweight', name: 'Bodyweight Squat', weight: 0, cue: 'Stand feet shoulder-width apart, toes slightly out. Descend until thighs are parallel or below, keeping chest up and knees tracking over toes. Drive through your heels to stand. Progress by slowing the descent to 3–4 seconds or adding a pause at the bottom.' },
   },
   romanian_deadlift: {
@@ -6413,7 +6793,7 @@ const EXERCISE_VARIANTS = {
   },
   ohp: {
     barbell:  { label: 'Barbell', name: 'Overhead Press', weight: 95, cue: 'Warm-up sets recommended: 2 ramp sets before working weight. Grip the bar just outside shoulder width, elbows slightly forward. Press the bar directly overhead, moving your head back slightly to allow clearance. Fully lock out at the top, then lower to clavicle level.' },
-    dumbbell: { label: 'Dumbbell', name: 'Dumbbell Shoulder Press', weight: 40, cue: 'Sit or stand with dumbbells at shoulder height, palms facing forward. Press overhead to full extension without allowing the weights to drift inward or forward. Dumbbells require more stabiliser activation than a barbell and allow each arm to work independently — a good option if one shoulder is weaker.' },
+    dumbbell: { label: 'Dumbbell', name: 'DB Press (pair total)', weight: 40, /* FR-21: see standalone db_shoulder_press record (per-hand default) — load reconciliation pending */ cue: 'Sit or stand with dumbbells at shoulder height, palms facing forward. Press overhead to full extension without allowing the weights to drift inward or forward. Dumbbells require more stabiliser activation than a barbell and allow each arm to work independently — a good option if one shoulder is weaker.' },
     machine:  { label: 'Machine', name: 'Shoulder Press Machine', weight: 70, cue: 'Adjust the seat so handles start at shoulder height. Press to full extension and return slowly. Machines are ideal for learning the overhead pattern or for high-rep finisher sets when shoulders are already fatigued from compound work.' },
   },
   lat_pulldown: {
@@ -6450,9 +6830,37 @@ const EXERCISE_VARIANTS = {
   },
 };
 
+/* FR-04/FR-26 (S&C R1+R2): duration/distance logging metadata.
+   reps-column unit label; weightLabel overrides the lbs column where the field is repurposed.
+   Any exercise listed here never receives an add-weight progression suggestion
+   (all are increment-0 except sled_push, where added load IS the progression). */
+const LOG_TYPES = {
+  treadmill_run: { reps: 'Minutes', weight: 'Pace ×10' },
+  bike:          { reps: 'Minutes', weight: 'Resistance' },
+  jump_rope:     { reps: 'Seconds' },
+  plank:         { reps: 'Seconds' },
+  skating_hold:  { reps: 'Seconds' },
+  side_plank:    { reps: 'Seconds' },
+  bear_crawl:    { reps: 'Seconds' },
+  battle_ropes:  { reps: 'Seconds' },
+  bike_sprint:   { reps: 'Seconds' },
+  rower_interval:{ reps: 'Seconds' },
+  sled_push:     { reps: 'Meters' },
+  copenhagen_plank: { reps: 'Seconds' },
+};
+
 const WEIGHT_INCREMENTS = {
+  /* FR-18 (S&C R2): new-record increments; 0 = bodyweight/duration progression class */
+  bike_sprint: 0, rower_interval: 0, battle_ropes: 0, bear_crawl: 0, side_plank: 0,
+  hanging_leg_raise: 0, back_extension: 0, sled_push: 10, hack_squat: 20, leg_extension: 5,
+  machine_chest_press: 5, db_shoulder_press: 5, cable_kickback: 2.5, cable_crunch: 2.5,
+  copenhagen_plank: 0, cushion_adductor_squeeze: 0,
+  /* FR-18 extension: legacy gaps found by the coverage check, classed per the same
+     pattern (cable isolation 2.5, machine/compound-assist 5, band/BW 0) — S&C confirm pending */
+  cable_curl: 2.5, cable_lateral_raise: 2.5, rope_pushdown: 2.5, cable_pull_through: 5,
+  hip_abductor_machine: 5, hip_adductor_machine: 5, box_step_up: 5, lateral_band_walk: 0,
   // Lower body compounds
-  squat: 15, deadlift: 15, romanian_deadlift: 10, leg_press: 20,
+  squat: 10, deadlift: 10, romanian_deadlift: 10, leg_press: 20, /* FR-14 (S&C): 15->10, human confirm pending */
   goblet_squat: 5, lunge: 5, leg_curl: 5, calf_raise: 5, hip_hinge: 10,
   // Upper body compounds
   bench_press: 5, row: 5, pullup: 5, lat_pulldown: 5, cable_row: 5,
@@ -6591,16 +6999,20 @@ function getProgressionStatus(exId) {
   if (!ex) return null;
 
   const increment = WEIGHT_INCREMENTS[exId] ?? 5;
-  const isBW = increment === 0;
+  const logUnit = LOG_TYPES[exId] ? LOG_TYPES[exId].reps.toLowerCase() : null; // FR-04
+  const isBW = increment === 0 || (!!logUnit && logUnit !== 'meters');
 
   // Not enough data
   if (!log || log.length === 0) {
     return {
       signal: 'new',
       label: 'First Session',
-      message: ex.weight > 0
-        ? `Start at ${ex.weight} lbs — a solid foundation weight.`
-        : 'Track your reps — use this session to establish a baseline.',
+      message: logUnit
+        ? `Track your ${logUnit} — use this session to establish a baseline.`
+        : ex.weight > 0
+          /* FR-05 (S&C R1 §F, panel copy — human sign-off pending): effort-anchored, never a fixed prescription */
+          ? `Pick a weight you could do about ${(getRepRange(exId).high || ex.reps) + 3} times with good form — your first session sets the baseline, so err light. (${ex.weight} lbs is just the placeholder.)`
+          : 'Track your reps — use this session to establish a baseline.',
       suggestedWeight: ex.weight,
       history: [],
     };
@@ -6652,23 +7064,29 @@ function getProgressionStatus(exId) {
     // Bodyweight / cardio: signal based on reps only
     if (allHitTop && prevHitTop) {
       return {
-        signal: 'ready', label: 'Add a Set or Reps',
-        message: `You've hit ${repHigh}+ reps across all sets twice in a row. Try adding an extra set or increasing your target reps.`,
+        signal: 'ready', label: logUnit ? 'Add Time' : 'Add a Set or Reps',
+        message: logUnit
+          ? `You've hit your target ${logUnit} twice in a row. Add a little ${logUnit === 'minutes' ? 'time' : 'duration'} next session.`
+          : `You've hit ${repHigh}+ reps across all sets twice in a row. Try adding an extra set or increasing your target reps.`,
         suggestedWeight: 0, history: historyChips,
         lastSummary: setsSummary,
       };
     }
     if (anyDropped) {
       return {
-        signal: 'dropped', label: 'Dropped Reps',
-        message: `Some sets fell below ${repLow} reps. Maintain current volume and focus on form before pushing higher.`,
+        signal: 'dropped', label: logUnit ? 'Shorter Than Usual' : 'Dropped Reps',
+        message: logUnit
+          ? `Some sets came in under your usual ${logUnit}. Hold here — duration comes back before it grows.`
+          : `Some sets fell below ${repLow} reps. Maintain current volume and focus on form before pushing higher.`,
         suggestedWeight: 0, history: historyChips,
         lastSummary: setsSummary,
       };
     }
     return {
       signal: 'ontrack', label: 'On Track',
-      message: `Hitting ${latestReps.join('/')} reps. Aim for all sets at ${repHigh}+ to progress.`,
+      message: logUnit
+        ? `Logging ${latestReps.join('/')} ${logUnit}. Consistent sets first, longer sets second.`
+        : `Hitting ${latestReps.join('/')} reps. Aim for all sets at ${repHigh}+ to progress.`,
       suggestedWeight: 0, history: historyChips,
       lastSummary: setsSummary,
     };
@@ -6900,8 +7318,15 @@ function importBackup(file) {
   reader.onload = e => {
     try {
       const parsed = JSON.parse(e.target.result);
-      if (!parsed.state) throw new Error('Invalid backup file');
-      state = { ...state, ...parsed.state };
+      // RR-N3 remediation: validate shape before touching live state
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Invalid backup file');
+      if (!parsed.state || typeof parsed.state !== 'object' || Array.isArray(parsed.state)) throw new Error('Invalid backup file');
+      // RR-N3 remediation: pre-import snapshot (recoverable from localStorage)
+      try { localStorage.setItem('volume_pre_import_snapshot', JSON.stringify(state)); } catch (_snapErr) {}
+      // RR-N3 remediation: transactional apply — stage, verify serializable, then commit
+      const staged = { ...state, ...parsed.state };
+      JSON.stringify(staged); // throws before commit if unserializable
+      state = staged;
       saveState();
       renderToday();
       renderHistory();
@@ -6962,7 +7387,17 @@ function openSwapModal(exId) {
   swaps.forEach(({ id, reason }) => {
     if (id === currentId) return; // skip current
     const ex = EXERCISES[id];
-    if (!ex) return;
+    if (!ex) {
+      // VOL-004: never silently drop a broken reference
+      try { console.error('integrity_error', { ref_type: 'swap', from_id: exId, to_id: id }); } catch (_e) {}
+      html += `<div class="swap-option" role="alert" style="opacity:0.65;cursor:default;">
+        <div class="swap-option-icon">⚠️</div>
+        <div class="swap-option-info">
+          <div class="swap-option-name">This option isn't available — pick another</div>
+        </div>
+      </div>`;
+      return;
+    }
     html += `<div class="swap-option" onclick="confirmSwap('${exId}','${id}')">
       <div class="swap-option-icon ${ex.muscleClass}">${ex.icon}</div>
       <div class="swap-option-info">
@@ -7071,12 +7506,12 @@ function showConfirmDialog(title, message, yesLabel, noLabel, onYes, onNo) {
   ov.id = 'confirm-overlay';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;';
   ov.innerHTML =
-    '<div style="background:var(--card,#16161c);border:1px solid var(--border,#2a2a32);border-radius:16px;padding:22px;max-width:340px;width:100%;">' +
+    '<div style="background:var(--card,#1B1815);border:1px solid var(--border,#26211E);border-radius:16px;padding:22px;max-width:340px;width:100%;">' +
       '<div style="font-weight:700;font-size:16px;margin-bottom:8px;">' + title + '</div>' +
       '<div style="font-size:13.5px;line-height:1.55;opacity:0.85;margin-bottom:18px;">' + message + '</div>' +
       '<div style="display:flex;gap:10px;">' +
-        '<button id="confirm-no" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border,#2a2a32);background:transparent;color:inherit;font:inherit;font-size:13px;">' + noLabel + '</button>' +
-        '<button id="confirm-yes" style="flex:1;padding:11px;border-radius:10px;border:none;background:var(--accent,#FF5C00);color:#000;font:inherit;font-size:13px;font-weight:700;">' + yesLabel + '</button>' +
+        '<button id="confirm-no" style="flex:1;padding:11px;border-radius:10px;border:1px solid var(--border,#26211E);background:transparent;color:inherit;font:inherit;font-size:13px;">' + noLabel + '</button>' +
+        '<button id="confirm-yes" style="flex:1;padding:11px;border-radius:10px;border:none;background:var(--accent,#FF5C00);color:var(--color-brand-on-primary,#1A0D04);font:inherit;font-size:13px;font-weight:700;">' + yesLabel + '</button>' +
       '</div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -7088,13 +7523,13 @@ function showConfirmDialog(title, message, yesLabel, noLabel, onYes, onNo) {
 //  RPE GUIDE MODAL
 // ═══════════════════════════════════════════════════════════════════════════
 const RPE_SCALE = [
-  { range: '1–3', label: 'Very Easy',      color: '#16a34a', desc: 'Warm-up weight. Could do 7+ more reps. Not a training stimulus.' },
-  { range: '4–5', label: 'Easy–Moderate',  color: '#d97706', desc: 'Working but comfortable. 4–6 reps left in the tank. Good for technique work.' },
-  { range: '6',   label: 'Moderate',       color: '#d97706', desc: '3 reps left. You feel the work but fully in control. Ideal for volume sets.' },
-  { range: '7',   label: 'Hard',           color: '#ea580c', desc: '2 reps left. Your hypertrophy sweet spot — challenge without breakdown.' },
-  { range: '8',   label: 'Very Hard',      color: '#ea580c', desc: '1 rep left. Strong stimulus. Used for top sets in double progression.' },
-  { range: '9',   label: 'Near Max',       color: '#dc2626', desc: 'Could maybe squeeze 1 more with poor form. Sparingly — high fatigue cost.' },
-  { range: '10',  label: 'Max Effort',     color: '#dc2626', desc: 'True failure. Avoid in most training — recovery cost is very high.' },
+  { range: '1–3', label: 'Very Easy',      color: '#3ECF7A', desc: 'Warm-up weight. Could do 7+ more reps. Not a training stimulus.' },
+  { range: '4–5', label: 'Easy–Moderate',  color: '#FFB020', desc: 'Working but comfortable. 4–6 reps left in the tank. Good for technique work.' },
+  { range: '6',   label: 'Moderate',       color: '#FFB020', desc: '3 reps left. You feel the work but fully in control. Ideal for volume sets.' },
+  { range: '7',   label: 'Hard',           color: '#FF8A4C', desc: '2 reps left. Your hypertrophy sweet spot — challenge without breakdown.' },
+  { range: '8',   label: 'Very Hard',      color: '#FF8A4C', desc: '1 rep left. Strong stimulus. Used for top sets in double progression.' },
+  { range: '9',   label: 'Near Max',       color: '#FF6B61', desc: 'Could maybe squeeze 1 more with poor form. Sparingly — high fatigue cost.' },
+  { range: '10',  label: 'Max Effort',     color: '#FF6B61', desc: 'True failure. Avoid in most training — recovery cost is very high.' },
 ];
 
 function openRpeGuide() {
@@ -7430,6 +7865,31 @@ window.openRescheduleModal   = openRescheduleModal;
 window.closeRescheduleModal  = closeRescheduleModal;
 window.confirmReschedule     = confirmReschedule;
 window.isRescheduledRestDay  = isRescheduledRestDay;
+
+// ═══ SAFETY PATHWAY — A2-VOL-01 (PT R2 §3.1–3.2, panel-confirmed copy; licensed-PT signature pending) ═══
+function showStopRule() {
+  showModal('Safety — when to stop', `
+    <div style="font-size:13.5px;line-height:1.65;color:var(--text);">
+      <p style="margin-bottom:10px;"><b style="color:var(--color-status-danger-text);">Stop the session and get medical help now</b> if you feel chest pain or pressure, faint or nearly faint, or have sudden unusual shortness of breath.</p>
+      <p style="margin-bottom:10px;"><b style="color:var(--color-status-warning-text);">Stop the exercise and switch to an easier version</b> if you feel sharp or worsening pain, numbness or tingling, or you can’t control the movement. Soreness and effort are normal; pain that alters how you move is not.</p>
+      <p><b style="color:var(--color-status-information-text);">Dizziness:</b> sit down and let it pass. If it keeps returning when you change position or turn your head, pause training and get it checked — it’s usually fixable, and worth fixing.</p>
+    </div>`);
+}
+function maybeShowSafetyNotice() {
+  try {
+    if (localStorage.getItem('volume_safety_notice_ack') || sessionStorage.getItem('volume_safety_notice_seen')) return;
+  } catch (_e) { return; }
+  showModal('Before you start', `
+    <div style="font-size:13.5px;line-height:1.65;color:var(--text);">
+      <p style="margin-bottom:12px;">Volume gives general fitness guidance, not medical advice. It can’t know your health history. If you have a heart condition, uncontrolled blood pressure, bone-density concerns, a recent surgery or joint replacement, or a clinician has told you to limit exercise, check with them before starting a new plan. Most people can start with the easier version of any exercise here — every movement has one.</p>
+      <div style="display:flex;gap:8px;">
+        <button onclick="sessionStorage.setItem('volume_safety_notice_seen','1'); closeModal();" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Got it</button>
+        <button onclick="try{localStorage.setItem('volume_safety_notice_ack','1')}catch(_e){}; closeModal();" style="flex:1;padding:11px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);">I understand — don’t show again</button>
+      </div>
+    </div>`);
+}
+window.showStopRule = showStopRule;
+maybeShowSafetyNotice();
 </script>
 
   <!-- Reschedule Rest Day Modal -->
