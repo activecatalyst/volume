@@ -2684,6 +2684,15 @@ android {
 // ║  STATIC DATA — plans, exercises, swaps, warmups                           ║
 // ║  This section is content, not logic. Edit here to update plans/exercises  ║
 // ╚═══════════════════════════════════════════════════════════════════════════╝
+/* v2 'Category rendering' — the one UI change in the doc */
+const PLAN_CATEGORIES = [
+  { id: 'start', label: 'Start Here' },
+  { id: 'build', label: 'Build Muscle' },
+  { id: 'fatloss', label: 'Lose Fat' },
+  { id: 'power', label: 'Athletic Power' },
+  { id: 'conditioning', label: 'Conditioning' },
+];
+
 const PLANS = [
   {
     id: 'beginner_fullbody', watchType: 'Traditional Strength Training', watchTypeAlt: 'Functional Strength Training (Wed — Full Body B)',
@@ -2959,6 +2968,33 @@ const PLANS = [
     }
   },
   {
+    id: 'cut_phase_lower', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri) · Optional Sat: Zone 2 or band circuit',
+    name: 'Cut Phase: Lower Bias',
+    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk for cardio where you can. Legs grow in the next phase — this phase protects them: at goal weight, transition maintenance block → Long Track. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    badge: '🦵',
+    color: '#FF8A4C',
+    category: 'fatloss',
+    tags: ['4x/week + cardio', 'Fat Loss · Lower Bias', 'All Levels'],
+    schedule: [
+      { day: 'MON', label: 'Lower A (Quad/Glute)', rest: false },
+      { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
+      { day: 'WED', label: 'Zone 2 + Core', rest: false },
+      { day: 'THU', label: 'Lower B (Glute/Posterior)', rest: false },
+      { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
+      { day: 'SAT', label: 'Optional: Zone 2 / Band Circuit / Rest', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A (Quad/Glute)', exercises: ['leg_press','hip_thrust','leg_extension','leg_curl','hip_adductor_machine','calf_raise'] },
+      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','lateral_raise','tricep_pushdown','bike'] },
+      2: { name: 'Zone 2 + Core', exercises: ['treadmill_run','cable_crunch','side_plank'] },
+      3: { name: 'Lower B (Glute/Posterior)', exercises: ['hack_squat','back_extension','split_squat','cable_kickback','hip_abductor_machine'] },
+      4: { name: 'Upper Pull + Zone 2', exercises: ['lat_pulldown','cable_row','face_pull','bicep_curl','bike'] },
+      5: { name: 'Optional: Zone 2 / Band Circuit / Rest', note: 'Pick ONE: 30 min Zone 2, the glute band circuit, or full rest. Skip this any week the main four days felt heavy. It’s a bonus, not a requirement.', exercises: ['bike','banded_hip_thrust','lateral_band_walk','banded_seated_abduction'] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
     id: 'long_track', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Cycling (Fri bike sprints) · Indoor Walk / Stair Stepper (Tue/Sat LISS)',
     name: 'Long Track',
     desc: 'Lower-body specialization, 6 days/week. Volume-hungry — run this eating at maintenance or above. Cutting? Start with Cut Phase instead. Anchors: hip thrust and RDL — swap only within the same pattern, never remove.',
@@ -3226,6 +3262,16 @@ const EXERCISES = {
     sets: 3, reps: 15, weight: 0,
     cue: 'Lie on your back with knees bent, feet flat, and a cushion or pillow between your knees. Squeeze the cushion firmly for a 2-second hold, then release without letting it drop. Zero equipment beyond the cushion, zero balance demand — the gentlest way to load the inner thighs. Breathe normally; never hold your breath during the squeeze. Ready for more? The Copenhagen plank (short-lever) is the harder progression.'
   },
+  banded_hip_thrust: {
+    name: 'Banded Hip Thrust', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 20, weight: 0,
+    cue: 'Set up as a normal hip thrust — upper back on a bench, feet flat — with a mini-band looped just above your knees. Drive your hips up while pushing your knees OUT against the band the whole way; squeeze hard at the top for a second. The band adds glute-med work to the hip drive and keeps the knees honest. High-rep burner: 20 clean reps beats 30 sloppy ones. Breathe normally throughout.'
+  },
+  banded_seated_abduction: {
+    name: 'Banded Seated Abduction', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 2, reps: 25, weight: 0,
+    cue: 'Sit on a bench or chair with a mini-band just above your knees, feet flat. Push your knees apart against the band, pause briefly at the widest point, and control the return — never let the band snap your knees back together. Burnout format: high reps, short rest, stop one or two reps before the burn beats your form. Lean slightly forward to bias the upper glutes.'
+  },
   broad_jump: {
     name: 'Standing Broad Jump', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
     sets: 4, reps: 5, weight: 0,
@@ -3463,6 +3509,7 @@ const PLAN_PREREQUISITES = {
   'home_workout': { minExpYears: 0, minLifts: {} },
   'upper_lower_4day': { minExpYears: 1, minLifts: { bench: 135, squat: 185, deadlift: 225 } },
   'cut_phase': { minExpYears: 0, minLifts: {} },
+  'cut_phase_lower': { minExpYears: 0, minLifts: {} },
   'long_track': { minExpYears: 2, minLifts: { squat: 225 } }
 };
 
@@ -3478,6 +3525,7 @@ const PLAN_EQUIPMENT = {
   'home_workout': [],
   'upper_lower_4day': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine'],
   'cut_phase': ['Full gym (machine-biased)', 'Cardio equipment (bike, treadmill, or stairmaster)'],
+  'cut_phase_lower': ['Full gym (machine-biased)', 'Cardio equipment (stairmaster or incline treadmill preferred)', 'Mini-band (optional Sat circuit)'],
   'long_track': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine', 'Bike or stairmaster']
 };
 
@@ -5399,8 +5447,20 @@ function renderPlans() {
     }
   }
 
-  // ── Regular plans — 2×1 grid; Pure Cardio + Drive Phase full-width ───────
-  PLANS.forEach(plan => {
+  // ── Regular plans, grouped under category headers (v2 'Category rendering');
+  //    card component and click behavior unchanged; within-category order = PLANS order ──
+  PLAN_CATEGORIES.concat([{ id: '__other', label: 'Other' }]).forEach(cat => {
+    const members = PLANS.filter(p => cat.id === '__other'
+      ? !PLAN_CATEGORIES.some(c => c.id === p.category)
+      : p.category === cat.id);
+    if (!members.length) return;
+    const hdr = document.createElement('div');
+    hdr.className = 'u-section-lbl';
+    hdr.style.gridColumn = '1 / -1';
+    hdr.style.marginTop = '10px';
+    hdr.textContent = cat.label;
+    container.appendChild(hdr);
+    members.forEach(plan => {
     const isPrimary = state.primaryPlan === plan.id;
     const isSupp = state.supplementalPlan === plan.id;
     const isExpanded = expandedPlan === plan.id;
@@ -5438,6 +5498,7 @@ function renderPlans() {
         volumeNote: null,
       }));
     }
+    });
   });
 
   renderCustomStrip();
@@ -6658,6 +6719,8 @@ const EXERCISE_SWAPS = {
   /* v2 ab/adductor additions */
   copenhagen_plank:  [{ id:'cushion_adductor_squeeze', reason:'Gentler adductor isometric' }, { id:'hip_adductor_machine', reason:'Machine option' }, { id:'side_plank', reason:'Lateral trunk, no adductor load' }],
   cushion_adductor_squeeze: [{ id:'hip_adductor_machine', reason:'Loaded machine option' }, { id:'glute_bridge', reason:'No-equipment hip work' }, { id:'copenhagen_plank', reason:'Harder progression' }],
+  banded_hip_thrust: [{ id:'hip_thrust', reason:'Loaded barbell pattern' }, { id:'glute_bridge', reason:'No-band floor option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
+  banded_seated_abduction: [{ id:'hip_abductor_machine', reason:'Loaded machine option' }, { id:'glute_med_raise', reason:'Side-lying option' }, { id:'lateral_band_walk', reason:'Standing band option' }],
   /* FR-19 (S&C R2): swap coverage for the 14 new records */
   hack_squat:        [{ id:'squat', reason:'Barbell pattern' }, { id:'leg_press', reason:'Machine alternative' }, { id:'goblet_squat', reason:'Lighter option' }, { id:'split_squat', reason:'Unilateral option' }],
   leg_extension:     [{ id:'leg_press', reason:'Machine compound' }, { id:'split_squat', reason:'Free-weight quad' }, { id:'squat_bw', reason:'No-equipment option' }],
@@ -6854,7 +6917,7 @@ const WEIGHT_INCREMENTS = {
   bike_sprint: 0, rower_interval: 0, battle_ropes: 0, bear_crawl: 0, side_plank: 0,
   hanging_leg_raise: 0, back_extension: 0, sled_push: 10, hack_squat: 20, leg_extension: 5,
   machine_chest_press: 5, db_shoulder_press: 5, cable_kickback: 2.5, cable_crunch: 2.5,
-  copenhagen_plank: 0, cushion_adductor_squeeze: 0,
+  copenhagen_plank: 0, cushion_adductor_squeeze: 0, banded_hip_thrust: 0, banded_seated_abduction: 0,
   /* FR-18 extension: legacy gaps found by the coverage check, classed per the same
      pattern (cable isolation 2.5, machine/compound-assist 5, band/BW 0) — S&C confirm pending */
   cable_curl: 2.5, cable_lateral_raise: 2.5, rope_pushdown: 2.5, cable_pull_through: 5,
