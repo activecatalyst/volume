@@ -586,6 +586,12 @@
   .rpe-lighter { color: #736B61; }
   .rpe-subfive { display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
   .rpe-subfive-label { font-family: var(--font-mono); font-size: 9px; color: #736B61; text-transform: uppercase; letter-spacing: 0.4px; }
+  .demo-toggle {
+    display: block; width: 100%; margin: 8px 0 0; padding: 9px 12px; border-radius: 10px;
+    background: var(--color-surface-secondary); border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-secondary); font-family: var(--font-body); font-size: 12.5px; font-weight: 600;
+  }
+  .demo-wrap { margin-top: 8px; }
   .stall-card, .load-hint {
     margin: 8px 0 2px; padding: 9px 11px; border-radius: 10px;
     font-size: 12.5px; line-height: 1.5;
@@ -2999,7 +3005,7 @@ const PLANS = [
   {
     id: 'cut_phase_lower', blockLength: 4, /* [BOARD] deload every 4th week in a deficit */ watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri) · Optional Sat: Zone 2 or band circuit',
     name: 'Cut Phase: Lower Bias',
-    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). If either dips two weeks running: take the deload now, and check calories and sleep before changing the plan — two down weeks usually reflects recovery, not exercise selection. Effort: all working sets at RIR 2–3, never to failure in a deficit. Progress by double progression — hit the top of the rep range on every set with clean form, then add about 5 lb upper / 10 lb lower. Week 1 is an on-ramp: roughly 70% of the listed sets, full loads optional — learn the movements and log honest effort. Week 2 onward is full volume. Every 4th week is a deload: halve all sets, keep the weight. Non-negotiable. Short on time or energy? Do Day 1 and Day 4. Two lower days beats a skipped week. Machine hip thrust and supported split squat are the starting points here; barbell and free-standing are progressions. Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk; unstructured walking on rest days is unlimited and encouraged. If you haven’t had recent blood-pressure and bloodwork screening, get it before pushing heavy sets. Breathe continuously through every rep; don’t hold your breath under load. This plan runs until goal weight or about 16 weeks, whichever comes first — then an 8–12 week maintenance block before any building phase. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). If either dips two weeks running: take the deload now, and check calories and sleep before changing the plan — two down weeks usually reflects recovery, not exercise selection. Effort: all working sets at RIR 2–3, never to failure in a deficit. Progress by double progression — hit the top of the rep range on every set with clean form, then add about 5 lb upper / 10 lb lower. Week 1 is an on-ramp: roughly 70% of the listed sets, full loads optional — learn the movements and log honest effort. Week 2 onward is full volume. Every 4th week is a deload: halve all sets, keep the weight. Non-negotiable. Short on time or energy? Do Day 1 and Day 4. Two lower days beats a skipped week. Machine hip thrust and supported split squat are the starting points here; barbell and free-standing are progressions. Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk; unstructured walking on rest days is unlimited and encouraged. Core runs 2× weekly: Day 3 is the primary session covering all four trunk functions, Day 5 carries a short 3-set secondary exposure on a weekly rotation. Core recovers quickly and does not count against the lower-body recovery budget — and loadable core (ab machine, cable crunch, carries) progresses by adding weight, not just reps, like any other lift. If you haven’t had recent blood-pressure and bloodwork screening, get it before pushing heavy sets. Breathe continuously through every rep; don’t hold your breath under load. This plan runs until goal weight or about 16 weeks, whichever comes first — then an 8–12 week maintenance block before any building phase. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
     badge: '🦵',
     color: '#FF8A4C',
     category: 'fatloss',
@@ -3007,18 +3013,52 @@ const PLANS = [
     schedule: [
       { day: 'MON', label: 'Lower A (Quad/Glute)', rest: false },
       { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
-      { day: 'WED', label: 'Zone 2 + Core', rest: false },
+      { day: 'WED', label: 'Zone 2 + Core (Primary)', rest: false },
       { day: 'THU', label: 'Lower B (Glute/Posterior)', rest: false },
       { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
       { day: 'SAT', label: 'Optional: Zone 2 / Band Circuit / Rest', rest: false },
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Lower A (Quad/Glute)', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load — and cap top sets at RIR 3. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: ['leg_press','machine_hip_thrust','leg_extension','leg_curl','hip_adductor_machine','calf_raise'] },
-      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','cable_fly','lateral_raise','tricep_pushdown','bike'] },
-      2: { name: 'Zone 2 + Core', note: 'Stairmaster or incline walk preferred; alternate with the recumbent bike some weeks to spread joint load.', exercises: ['treadmill_run','cable_crunch','pallof_press'] },
-      3: { name: 'Lower B (Glute/Posterior)', note: 'Hold-the-line day. Back extension: neutral spine, driven by hips and glutes — not lumbar extension. Supported split squat is the default; free-standing is the progression.', exercises: ['hack_squat','back_extension','supported_split_squat','cable_kickback','hip_abductor_machine'] },
-      4: { name: 'Upper Pull + Zone 2', exercises: ['lat_pulldown','cable_row','face_pull','bicep_curl','bike'] },
+      0: { name: 'Lower A (Quad/Glute)', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load — and cap top sets at RIR 3. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: [
+        { id:'leg_press', sets:4, repsLow:8, repsHigh:12 },
+        { id:'machine_hip_thrust', sets:4, repsLow:8, repsHigh:10 },
+        { id:'leg_extension', sets:3, repsLow:12, repsHigh:15 },
+        { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
+        { id:'hip_adductor_machine', sets:3, repsLow:12, repsHigh:15 },
+        { id:'calf_raise', sets:2, repsLow:12, repsHigh:15 },
+      ] },
+      1: { name: 'Upper Push + Zone 2', exercises: [
+        { id:'machine_chest_press', sets:4, repsLow:8, repsHigh:12 },
+        { id:'db_shoulder_press', sets:3, repsLow:10, repsHigh:12 },
+        { id:'cable_fly', sets:2, repsLow:12, repsHigh:15 },
+        { id:'lateral_raise', sets:2, reps:15 },
+        { id:'tricep_pushdown', sets:3, reps:12 },
+        'bike',
+      ] },
+      2: { name: 'Zone 2 + Core (Primary)', note: 'Primary core session — all four trunk functions: flexion, anti-rotation, rotation, anti-lateral-flexion. Every movement is seated or standing; use the seated or tall-kneeling cable-crunch setup, no floor transitions. Zone 2: stairmaster or incline walk preferred; alternate with the recumbent bike some weeks to spread joint load. Loadable core (ab machine, cable crunch, carry) progresses by weight, not just reps.', exercises: [
+        'treadmill_run',
+        { id:'ab_crunch_machine', sets:3, repsLow:12, repsHigh:15 },
+        { id:'cable_crunch', sets:3, reps:12 },
+        { id:'pallof_press', sets:3, reps:12 },
+        { id:'machine_torso_rotation', sets:2, reps:15 },
+        { id:'suitcase_carry', sets:3, reps:30 },
+      ] },
+      3: { name: 'Lower B (Glute/Posterior)', note: 'Hold-the-line day. Back extension: neutral spine, driven by hips and glutes — not lumbar extension. Supported split squat is the default; free-standing is the progression.', exercises: [
+        { id:'hack_squat', sets:4, repsLow:8, repsHigh:12 },
+        { id:'back_extension', sets:3, repsLow:12, repsHigh:15 },
+        { id:'supported_split_squat', sets:3, reps:10 },
+        { id:'cable_kickback', sets:3, repsLow:12, repsHigh:15 },
+        { id:'hip_abductor_machine', sets:3, repsLow:15, repsHigh:20 },
+      ] },
+      4: { name: 'Upper Pull + Zone 2', note: 'Secondary core exposure (~3 sets) — rotate weekly: Suitcase Carry (shown), Standing Cable Woodchop, or Ab Crunch Machine. Pick ONE; do not stack all three. Use the Swap button on the carry to take this week\u2019s rotation. Different emphasis from Day 3 so the two exposures are not duplicates.', exercises: [
+        { id:'lat_pulldown', sets:4, repsLow:8, repsHigh:12 },
+        { id:'cable_row', sets:3, repsLow:10, repsHigh:12 },
+        { id:'face_pull', sets:3, reps:15 },
+        { id:'bicep_curl', sets:2, reps:12 },
+        { id:'suitcase_carry', sets:3, reps:30 },
+        'bike',
+      ] },
       5: { name: 'Optional: Zone 2 / Band Circuit / Rest', note: 'Bonus day. Walking is the default; the band circuit is occasional — at most twice a month. Skip it entirely any week the main four days felt heavy. If you are running the circuit weekly, this has become a 5-day plan and the recovery budget no longer holds.', exercises: ['bike','banded_hip_thrust','lateral_band_walk','banded_seated_abduction'] },
       6: { name: 'Rest', exercises: [] },
     }
@@ -3311,6 +3351,26 @@ const EXERCISES = {
     sets: 3, reps: 10, weight: 0,
     cue: 'Stand in a split stance with one hand lightly on a rack upright, TRX handle, or sturdy post. Lower the back knee toward the floor keeping the front shin near vertical, then drive up through the front heel. The support IS the exercise at this stage — it lets you load the legs without balance deciding your sets. Progress by lightening the touch, then going free-standing. Breathe normally throughout; do not hold your breath.'
   },
+  ab_crunch_machine: {
+    name: 'Ab Crunch Machine', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 15, weight: 50, targetReps: 15, rir: 3,
+    cue: 'Sit tall in the crunch machine with the pads across your chest and your feet secured. Crunch by flexing the spine — drive the ribs toward the hips — then control the return without letting the stack slam. This is loadable core: progress it by adding weight, not just reps, exactly like any other lift. Seated throughout, no floor transition. Breathe out on the crunch; never hold your breath under load.'
+  },
+  machine_torso_rotation: {
+    name: 'Machine Torso Rotation', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 2, reps: 15, weight: 40, targetReps: 15, rir: 3,
+    cue: 'Sit with hips locked into the pads and rotate the torso against the resistance, moving from the ribcage rather than throwing the arms. Control the return — the eccentric is where rotation strength is built. Start light: rotation under load is a pattern most people have never trained. Stop short of any pinching in the low back, and keep breathing throughout.'
+  },
+  standing_cable_woodchop: {
+    name: 'Standing Cable Woodchop', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 12, weight: 30, targetReps: 12, rir: 3,
+    cue: 'Set the cable high, stand side-on with feet planted, and pull the handle down and across your body — the arms stay long, the movement comes from the trunk rotating. Pivot the back foot, do not twist through a locked knee. Standing throughout, no floor transition. Control the return rather than letting the stack pull you back around.'
+  },
+  suitcase_carry: {
+    name: 'Suitcase Carry', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 3, reps: 30, weight: 35, targetReps: 30, rir: 3,
+    cue: 'Hold one heavy dumbbell at your side and walk tall — shoulders level, ribs down, no leaning away from the load. The working muscles are the ones stopping you tipping sideways (anti-lateral-flexion). Log seconds per side plus the load you carried; progress by adding weight, not just time. Set the bell down under control rather than dropping it. Breathe normally the whole way.'
+  },
   broad_jump: {
     name: 'Standing Broad Jump', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
     sets: 4, reps: 5, weight: 0,
@@ -3512,7 +3572,7 @@ const EXERCISES = {
   // ── Core / conditioning additions ─────────────────────────────────────
   cable_crunch: {
     name: 'Cable Crunch', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
-    sets: 3, reps: 12, weight: 50,
+    sets: 3, reps: 12, weight: 50, targetReps: 12, rir: 3,
     cue: 'Kneel facing the cable with a rope held at your temples. Crunch by flexing the spine — drive your elbows toward your thighs, exhaling hard. The hips stay still; motion comes from the ribcage curling down. Control the stretch on the way up. This is the loadable, progressive version of the crunch — add weight like any other lift. If you have osteoporosis or low bone density, ask a professional before loading spinal flexion — the dead bug trains the core without it.'
   },
   side_plank: {
@@ -3689,6 +3749,12 @@ let state = {
   nextLoadPrefill: {},         // exId -> suggested starting weight for the NEXT session
   rpeFloorWarnedOn: null,      // ISO date of last session-level RPE-floor note (weekly cap)
   progPromptedOn: {},          // exId -> ISO date of last double-progression prompt
+  // ── Plan-week features (additive) ──
+  planWeekAnchor: {},          // planId -> ISO date week 1 began
+  planExitPrompted: {},        // planId -> anchor date the exit prompt fired for
+  holdLineWarnedOn: null,      // ISO date of last hold-the-line warning (weekly cap)
+  bandCircuitUses: [],         // ISO dates the optional band circuit was logged
+  bandNudgedOn: null,          // ISO date of last band-circuit cap nudge
   swapNudgeDismissed: {},      // 'exId>swapId' -> true (user said no)
 };
 
@@ -3755,7 +3821,7 @@ function checkPlanPrerequisites(planId) {
   const _answers = screeningAnswers();
   if (_answers.length) {
     const _plan = PLANS.find(p => p.id === planId);
-    const _planExs = _plan ? [...new Set(Object.values(_plan.days || {}).flatMap(d => d.exercises || []))] : [];
+    const _planExs = _plan ? [...new Set(Object.values(_plan.days || {}).flatMap(d => dayExIds(d)))] : [];
     SCREENING_ROUTING.forEach(r => {
       if (!_answers.includes(r.answer)) return;
       if (!r.flagged) { warnings.push('🩺 ' + r.planLine); return; }
@@ -3824,6 +3890,8 @@ function loadPlanForReal(planId) {
   const plan = PLANS.find(p => p.id === planId);
   if (plan) {
     state.primaryPlan = plan.id;
+    if (!state.planWeekAnchor) state.planWeekAnchor = {};
+    if (!state.planWeekAnchor[plan.id]) state.planWeekAnchor[plan.id] = today();
     saveState();
     showToast('✓ ' + plan.name + ' loaded as primary plan');
     navTo('today', document.querySelector('[data-page=today]'));
@@ -3863,7 +3931,7 @@ function getDeloadSignals() {
   // 3. Stalls: multiple lifts regressing at once
   const plan = PLANS.find(function(pl) { return pl.id === state.primaryPlan; });
   if (plan) {
-    const allEx = Object.values(plan.days).reduce(function(a, d) { return a.concat(d.exercises); }, []);
+    const allEx = Object.values(plan.days).reduce(function(a, d) { return a.concat(dayExIds(d)); }, []);
     const unique = allEx.filter(function(id, i) { return allEx.indexOf(id) === i; });
     const dropped = unique.filter(function(id) {
       const st = getProgressionStatus(id);
@@ -4117,6 +4185,290 @@ function getPlan(id) {
   return null;
 }
 
+/* ═══ PER-DAY DOSE OVERRIDES ═══════════════════════════════════════════════
+   A plan day's exercises[] may contain either a plain 'exercise_id' string
+   (inherit the library default sets/reps) or an object:
+       { id:'calf_raise', sets:2, reps:15 }              // reps = top of range
+       { id:'leg_press', sets:4, repsLow:8, repsHigh:12 } // explicit range
+   Everything downstream consumes normalized days, so both forms are safe and
+   existing plans are untouched. */
+function dayExIds(day) {
+  if (!day || !Array.isArray(day.exercises)) return [];
+  return day.exercises.map(e => (typeof e === 'string' ? e : (e && e.id))).filter(Boolean);
+}
+function dayDoses(day) {
+  const out = {};
+  if (!day || !Array.isArray(day.exercises)) return out;
+  day.exercises.forEach(e => {
+    if (e && typeof e === 'object' && e.id) {
+      const d = {};
+      if (e.sets) d.sets = e.sets;
+      if (e.reps) d.reps = e.reps;
+      if (e.repsLow) d.repsLow = e.repsLow;
+      if (e.repsHigh) d.repsHigh = e.repsHigh;
+      if (Object.keys(d).length) out[e.id] = d;
+    }
+  });
+  return out;
+}
+function normalizeDay(day) {
+  if (!day || !Array.isArray(day.exercises)) return day;
+  return { ...day, exercises: dayExIds(day), doses: dayDoses(day) };
+}
+/* ═══ PLAN-WEEK FEATURES ═══════════════════════════════════════════════════
+   Turns a plan's written rules into behaviour. Only engages for plans that
+   declare `blockLength` (today: cut_phase_lower) — every other plan is
+   completely unaffected. */
+const ONRAMP_FACTOR = 0.7;      // week 1 runs at ~70% of listed sets (round down)
+const PLAN_EXIT_WEEKS = 16;     // exit-criteria prompt window
+
+function planAnchorDate(planId) {
+  const id = planId || state.primaryPlan;
+  if (!id) return null;
+  if (!state.planWeekAnchor) state.planWeekAnchor = {};
+  if (!state.planWeekAnchor[id]) { state.planWeekAnchor[id] = today(); saveState(); }
+  return state.planWeekAnchor[id];
+}
+function planWeekNumber(planId) {
+  const id = planId || state.primaryPlan;
+  const anchor = planAnchorDate(id);
+  if (!anchor) return 0;
+  const ms = new Date(today()) - new Date(anchor);
+  return Math.floor(ms / 86400000 / 7) + 1;   // day 0 = week 1
+}
+function planBlockLength(planId) {
+  const plan = getPlan(planId || state.primaryPlan);
+  return plan && plan.blockLength ? plan.blockLength : null;
+}
+function isScheduledDeloadWeek(planId) {
+  const bl = planBlockLength(planId);
+  if (!bl) return false;
+  const w = planWeekNumber(planId);
+  return w > 0 && w % bl === 0;              // every 4th week
+}
+function isOnRampWeek(planId) {
+  return !!planBlockLength(planId) && planWeekNumber(planId) === 1;
+}
+/* Anchor lift falling two weeks running → hold-the-line failure protocol */
+function anchorLiftDropping(exId) {
+  const log = ((state.exerciseLog && state.exerciseLog[exId]) || []).filter(e => !e.deload);
+  if (log.length < 3) return false;
+  const t = log.slice(0, 3).map(progTopSet);
+  if (t.some(x => !x || !x.weight)) return false;
+  return t[0].weight < t[1].weight && t[1].weight < t[2].weight;
+}
+function checkHoldTheLine() {
+  const anchors = ANCHOR_LIFTS[state.primaryPlan] || [];
+  const dropping = anchors.filter(anchorLiftDropping);
+  if (!dropping.length) return;
+  const last = state.holdLineWarnedOn ? new Date(state.holdLineWarnedOn) : null;
+  if (last && (new Date(today()) - last) / 86400000 < 7) return;
+  state.holdLineWarnedOn = today();
+  saveState();
+  const names = dropping.map(id => (EXERCISES[id] ? EXERCISES[id].name : id)).join(' and ');
+  showModal('Key lifts dipped', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:12px;">Your key lifts dipped two weeks running (' + names + '). '
+    + 'Take the deload now, and check calories and sleep before changing the plan — two down weeks in a deficit usually reflects recovery, not exercise selection.</p>'
+    + '<div style="display:flex;gap:8px;">'
+    + '<button onclick="closeModal();startDeloadWeek();" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Start deload now</button>'
+    + '<button onclick="closeModal()" style="flex:1;padding:11px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);">Later</button>'
+    + '</div></div>');
+}
+/* Exit criteria — offered once per plan run */
+function checkPlanExitCriteria() {
+  const id = state.primaryPlan;
+  if (!id || !planBlockLength(id)) return;
+  if (planWeekNumber(id) < PLAN_EXIT_WEEKS) return;
+  if (!state.planExitPrompted) state.planExitPrompted = {};
+  if (state.planExitPrompted[id] === planAnchorDate(id)) return;
+  state.planExitPrompted[id] = planAnchorDate(id);
+  saveState();
+  showModal('You\u2019ve reached the end of this block', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:12px;">This plan runs until goal weight or about ' + PLAN_EXIT_WEEKS + ' weeks — you are at week ' + planWeekNumber(id) + '.</p>'
+    + '<p style="margin-bottom:12px;"><b>Next: an 8–12 week maintenance block before starting a building phase.</b> Indefinite dieting is what drives the post-cut regain pattern.</p>'
+    + '<button onclick="closeModal()" style="width:100%;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Got it</button></div>');
+}
+
+/* Schematic movement demos — DRAFT, awaiting trainer/PT movement-depiction
+   review (each carries its own DRAFT banner). Shown on demand only. */
+const EXERCISE_DEMOS = {
+  depth_jump: `<svg style="width:100%;height:auto;display:block;border-radius:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="sans-serif">
+  <rect width="420" height="400" fill="#131110"/>
+  <text x="210" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#EDE8E0">Depth Jump</text>
+  <line x1="30" y1="290" x2="390" y2="290" stroke="#B5ACA1" stroke-width="3"/>
+  <rect x="60" y="230" width="90" height="60" fill="#26211E" stroke="#3A332C"/><text x="105" y="265" text-anchor="middle" font-size="11" fill="#B5ACA1">30-45 cm</text>
+  <g opacity="0">
+      <animate attributeName="opacity" values="1;0;0;0;1" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="108" cy="122" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="108" y1="147" x2="106" y2="193" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="108" y1="147" x2="96" y2="170" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="96" y1="170" x2="99" y2="190" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="106" y1="193" x2="112" y2="216" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="112" y1="216" x2="132" y2="224" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="132" y1="224" x2="156" y2="222" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">1 · STEP off — lead foot past the edge, never jump</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="185" cy="140" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="185" y1="165" x2="182" y2="210" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="185" y1="165" x2="172" y2="186" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="172" y1="186" x2="176" y2="204" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="182" y1="210" x2="190" y2="240" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="190" y1="240" x2="192" y2="265" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="192" y1="265" x2="206" y2="268" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">2 · Drop — knees soft, eyes forward</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="240" cy="175" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="240" y1="198" x2="234" y2="238" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="240" y1="198" x2="226" y2="216" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="226" y1="216" x2="232" y2="232" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="234" y1="238" x2="250" y2="262" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="250" y1="262" x2="248" y2="287" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="248" y1="287" x2="266" y2="289" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">3 · Land QUIET — absorb into quarter squat</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="310" cy="95" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="310" y1="120" x2="310" y2="170" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="310" y1="120" x2="322" y2="105" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="322" y1="105" x2="330" y2="88" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="310" y1="170" x2="312" y2="205" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="312" y1="205" x2="310" y2="235" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="310" y1="235" x2="322" y2="240" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">4 · Explode straight up immediately</text>
+    </g>
+  <text x="210" y="352" text-anchor="middle" font-size="11.5" fill="#FFB020">First in session, never fatigued · ≤20 depth-jump landings · all jumps ≤80 contacts per session</text>
+  <g><rect x="65" y="366" width="290" height="24" rx="6" fill="#321413"/>
+     <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#FF9A92">DRAFT v2 — AWAITING TRAINER/PT REVIEW</text></g>
+</svg>`,
+  nordic_curl: `<svg style="width:100%;height:auto;display:block;border-radius:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="sans-serif">
+  <rect width="420" height="400" fill="#131110"/>
+  <text x="210" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#EDE8E0">Nordic Curl</text>
+  <line x1="30" y1="290" x2="390" y2="290" stroke="#B5ACA1" stroke-width="3"/>
+  <rect x="300" y="270" width="70" height="20" rx="6" fill="#26211E" stroke="#3A332C"/><text x="335" y="264" text-anchor="middle" font-size="11" fill="#B5ACA1">ankles anchored</text>
+  <g opacity="0">
+      <animate attributeName="opacity" values="1;0;0;0;1" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="250" cy="120" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="250" y1="145" x2="255" y2="215" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="250" y1="145" x2="238" y2="172" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="238" y1="172" x2="242" y2="194" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="255" y1="215" x2="265" y2="268" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="265" y1="268" x2="320" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="320" y1="275" x2="340" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">1 · Tall kneel, straight line ear-to-knee</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="178" cy="168" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="182" y1="190" x2="232" y2="240" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="182" y1="190" x2="166" y2="212" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="166" y1="212" x2="158" y2="232" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="232" y1="240" x2="262" y2="270" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="262" y1="270" x2="320" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="320" y1="275" x2="340" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">2 · Lower SLOW — ~5 seconds, hips open</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="115" cy="236" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="126" y1="252" x2="210" y2="262" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="126" y1="252" x2="108" y2="268" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="108" y1="268" x2="100" y2="284" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="210" y1="262" x2="258" y2="272" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="258" y1="272" x2="320" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="320" y1="275" x2="340" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">3 · Catch yourself with your hands</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0.000;0.250;0.500;0.750;1" dur="6.4s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="170" cy="175" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="176" y1="196" x2="228" y2="244" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="176" y1="196" x2="155" y2="222" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="155" y1="222" x2="140" y2="250" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="228" y1="244" x2="260" y2="270" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="260" y1="270" x2="320" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="320" y1="275" x2="340" y2="275" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">4 · Push back up with arms — that is the plan</text>
+    </g>
+  <text x="210" y="352" text-anchor="middle" font-size="11.5" fill="#FFB020">Wks 1–3 eccentric only · wks 4–6 partial range · never freefall</text>
+  <g><rect x="65" y="366" width="290" height="24" rx="6" fill="#321413"/>
+     <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#FF9A92">DRAFT v2 — AWAITING TRAINER/PT REVIEW</text></g>
+</svg>`,
+  lateral_bound: `<svg style="width:100%;height:auto;display:block;border-radius:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="sans-serif">
+  <rect width="420" height="400" fill="#131110"/>
+  <text x="210" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#EDE8E0">Lateral Bound</text>
+  <line x1="30" y1="290" x2="390" y2="290" stroke="#B5ACA1" stroke-width="3"/>
+  <line x1="300" y1="250" x2="300" y2="290" stroke="#3ECF7A" stroke-width="2" stroke-dasharray="4 4"/><text x="352" y="270" text-anchor="middle" font-size="10" fill="#3ECF7A">knee tracks</text><text x="352" y="282" text-anchor="middle" font-size="10" fill="#3ECF7A">straight</text>
+  <g opacity="0">
+      <animate attributeName="opacity" values="1;0;0;1" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="126" cy="172" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="126" y1="194" x2="114" y2="230" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="126" y1="194" x2="108" y2="212" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="108" y1="212" x2="112" y2="230" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="114" y1="230" x2="104" y2="260" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="104" y1="260" x2="116" y2="285" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="116" y1="285" x2="102" y2="288" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">1 · Load DEEP on one leg — hips back and down</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="210" cy="120" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="210" y1="145" x2="210" y2="192" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="210" y1="145" x2="228" y2="164" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="228" y1="164" x2="238" y2="150" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="210" y1="192" x2="222" y2="222" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="222" y1="222" x2="228" y2="248" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="228" y1="248" x2="242" y2="250" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">2 · Bound sideways — arms drive</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="300" cy="150" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="300" y1="175" x2="300" y2="222" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="300" y1="175" x2="316" y2="196" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="316" y1="196" x2="312" y2="214" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="300" y1="222" x2="302" y2="255" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="302" y1="255" x2="300" y2="285" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="300" y1="285" x2="314" y2="288" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">3 · Land SOFT on one leg · stick 1 full second</text>
+    </g>
+  <text x="210" y="352" text-anchor="middle" font-size="11.5" fill="#FFB020">Knee tracks over toes — never caving inward · quiet landing</text>
+  <g><rect x="65" y="366" width="290" height="24" rx="6" fill="#321413"/>
+     <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#FF9A92">DRAFT v2 — AWAITING TRAINER/PT REVIEW</text></g>
+</svg>`,
+  skater_squat: `<svg style="width:100%;height:auto;display:block;border-radius:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="sans-serif">
+  <rect width="420" height="400" fill="#131110"/>
+  <text x="210" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#EDE8E0">Skater Squat</text>
+  <line x1="30" y1="290" x2="390" y2="290" stroke="#B5ACA1" stroke-width="3"/>
+  <line x1="70" y1="120" x2="70" y2="290" stroke="#3A332C" stroke-width="8"/><text x="70" y="110" text-anchor="middle" font-size="11" fill="#B5ACA1">support</text>
+  <g opacity="0">
+      <animate attributeName="opacity" values="1;0;0;1" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="160" cy="130" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="160" y1="155" x2="160" y2="205" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="160" y1="155" x2="120" y2="172" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="120" y1="172" x2="74" y2="168" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="160" y1="205" x2="160" y2="245" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="160" y1="245" x2="160" y2="283" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="160" y1="283" x2="176" y2="286" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">1 · One leg, fingertips on support — standard, not cheating</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="168" cy="168" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="168" y1="190" x2="172" y2="232" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="168" y1="190" x2="124" y2="198" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="124" y1="198" x2="74" y2="192" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="172" y1="232" x2="180" y2="262" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="180" y1="262" x2="172" y2="286" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="172" y1="286" x2="188" y2="288" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">2 · Hinge and bend — rear leg trails</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="175" cy="196" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="175" y1="216" x2="182" y2="250" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="175" y1="216" x2="128" y2="220" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="128" y1="220" x2="74" y2="214" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="182" y1="250" x2="196" y2="276" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="196" y1="276" x2="178" y2="287" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="178" y1="287" x2="194" y2="289" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><path d="M 182 250 Q 220 262 232 284" fill="none" stroke="#B5ACA1" stroke-width="6" stroke-linecap="round"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">3 · Rear knee hovers to floor — press back up</text>
+    </g>
+  <text x="210" y="352" text-anchor="middle" font-size="12" fill="#FFB020">Fingertip support IS the exercise · progress by lightening the touch</text>
+  <g><rect x="65" y="366" width="290" height="24" rx="6" fill="#321413"/>
+     <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#FF9A92">DRAFT — AWAITING TRAINER/PT REVIEW</text></g>
+</svg>`,
+  ab_wheel: `<svg style="width:100%;height:auto;display:block;border-radius:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 400" font-family="sans-serif">
+  <rect width="420" height="400" fill="#131110"/>
+  <text x="210" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#EDE8E0">Ab Wheel Rollout</text>
+  <line x1="30" y1="290" x2="390" y2="290" stroke="#B5ACA1" stroke-width="3"/>
+  <line x1="80" y1="298" x2="150" y2="298" stroke="#FFB020" stroke-width="3"/><text x="115" y="312" text-anchor="middle" font-size="10" fill="#FFB020">add range gradually</text>
+  <g opacity="0">
+      <animate attributeName="opacity" values="1;0;0;1" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="150" cy="175" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="155" y1="196" x2="210" y2="240" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="155" y1="196" x2="150" y2="225" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="150" y1="225" x2="150" y2="262" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="210" y1="240" x2="238" y2="272" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="238" y1="272" x2="280" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="280" y1="278" x2="298" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><circle cx="150" cy="278" r="13" fill="none" stroke="#FF5C00" stroke-width="5"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">1 · Kneel — wheel under shoulders, hips tucked</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="122" cy="196" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="130" y1="214" x2="205" y2="246" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="130" y1="214" x2="118" y2="240" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="118" y1="240" x2="112" y2="264" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="205" y1="246" x2="238" y2="272" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="238" y1="272" x2="280" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="280" y1="278" x2="298" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><circle cx="112" cy="278" r="13" fill="none" stroke="#FF5C00" stroke-width="5"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">2 · SHORT range first — stop while hips stay level</text>
+    </g><g opacity="0">
+      <animate attributeName="opacity" values="0;0;1;0" keyTimes="0.000;0.333;0.667;1" dur="4.800000000000001s" repeatCount="indefinite" calcMode="discrete"/>
+      <circle cx="95" cy="220" r="14" fill="none" stroke="#EDE8E0" stroke-width="6"/><line x1="105" y1="234" x2="198" y2="254" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="105" y1="234" x2="90" y2="254" stroke="#FF5C00" stroke-width="7" stroke-linecap="round"/><line x1="90" y1="254" x2="80" y2="268" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="198" y1="254" x2="238" y2="272" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="238" y1="272" x2="280" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><line x1="280" y1="278" x2="298" y2="278" stroke="#EDE8E0" stroke-width="7" stroke-linecap="round"/><circle cx="80" cy="278" r="13" fill="none" stroke="#FF5C00" stroke-width="5"/>
+      <text x="210" y="322" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#B5ACA1">3 · Longer only when spine stays neutral</text>
+    </g>
+  <text x="210" y="352" text-anchor="middle" font-size="12" fill="#FFB020">Stop the rep before the lower back sags — range is the progression</text>
+  <g><rect x="65" y="366" width="290" height="24" rx="6" fill="#321413"/>
+     <text x="210" y="382" text-anchor="middle" font-size="12" font-weight="700" fill="#FF9A92">DRAFT — AWAITING TRAINER/PT REVIEW</text></g>
+</svg>`,
+};
+
+/* ═══ BAND-CIRCUIT CAP (v3 Day 6) ═════════════════════════════════════════
+   The optional band circuit is a bonus, not a 5th training day. Capped at
+   2 uses per rolling 30 days; the 3rd use raises a nudge. */
+const BAND_CIRCUIT_EXERCISES = ['banded_hip_thrust', 'lateral_band_walk', 'banded_seated_abduction'];
+const BAND_CIRCUIT_CAP = 2;
+
+function recordBandCircuitUse(completedExs) {
+  if (!ANCHOR_LIFTS[state.primaryPlan]) return;          // only the plans that define the rule
+  const used = (completedExs || []).some(e => BAND_CIRCUIT_EXERCISES.includes(e.id));
+  if (!used) return;
+  if (!Array.isArray(state.bandCircuitUses)) state.bandCircuitUses = [];
+  if (!state.bandCircuitUses.includes(today())) state.bandCircuitUses.push(today());
+  // keep the list tidy — 90 days is plenty for a 30-day window
+  state.bandCircuitUses = state.bandCircuitUses.filter(d => (new Date(today()) - new Date(d)) / 86400000 <= 90);
+  saveState();
+  maybeBandCircuitNudge();
+}
+function bandCircuitUsesThisMonth() {
+  if (!Array.isArray(state.bandCircuitUses)) return 0;
+  return state.bandCircuitUses.filter(d => (new Date(today()) - new Date(d)) / 86400000 < 30).length;
+}
+function maybeBandCircuitNudge() {
+  const uses = bandCircuitUsesThisMonth();
+  if (uses <= BAND_CIRCUIT_CAP) return;
+  const last = state.bandNudgedOn ? new Date(state.bandNudgedOn) : null;
+  if (last && (new Date(today()) - last) / 86400000 < 7) return;
+  state.bandNudgedOn = today();
+  saveState();
+  showModal('That is the third band circuit this month', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:12px;">The band circuit is meant to be occasional — at most twice a month. You have run it ' + uses + ' times in the last 30 days.</p>'
+    + '<p style="margin-bottom:12px;">If it is becoming weekly, this has quietly turned into a 5-day plan and the recovery budget no longer holds. Walking is the default for that day.</p>'
+    + '<button onclick="closeModal()" style="width:100%;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Understood</button></div>');
+}
+
+/* Dose for an exercise on today's session (primary or supplemental) */
+function todayDose(exId) {
+  for (const pid of [state.primaryPlan, state.supplementalPlan]) {
+    if (!pid) continue;
+    const w = getTodayWorkout(pid);
+    if (w && w.doses && w.doses[exId]) return w.doses[exId];
+  }
+  return null;
+}
+function doseSets(exId, ex) {
+  const d = todayDose(exId);
+  const base = (d && d.sets) ? d.sets : (ex ? ex.sets : 3);
+  // Week-1 on-ramp (~70%, round down) and scheduled deload (halve) are plan rules,
+  // not suggestions — they change the prescription itself. Never below 1 set.
+  if (isOnRampWeek()) return Math.max(1, Math.floor(base * ONRAMP_FACTOR));
+  if (isScheduledDeloadWeek()) return Math.max(1, Math.floor(base / 2));
+  return base;
+}
+function doseReps(exId, ex) {
+  const d = todayDose(exId);
+  return (d && (d.reps || d.repsHigh)) ? (d.reps || d.repsHigh) : (ex ? ex.reps : 10);
+}
+
 function getTodayWorkout(planId) {
   const id = planId || state.primaryPlan;
   if (!id) return null;
@@ -4125,9 +4477,9 @@ function getTodayWorkout(planId) {
   const dow = getDayOfWeek();
   if (plan.generated) {
     const dayData = plan.days[String(dow)] ?? plan.days[dow];
-    return dayData || { name: 'Rest', exercises: [] };
+    return normalizeDay(dayData) || { name: 'Rest', exercises: [] };
   }
-  return plan.days[dow];
+  return normalizeDay(plan.days[dow]);
 }
 
 // Count active training days in a plan (used for compatibility check)
@@ -4433,6 +4785,30 @@ function renderToday() {
     }
   })();
 
+  // Plan-week banner — on-ramp (week 1) and scheduled deload (every blockLength-th week)
+  (function() {
+    const page = document.getElementById('page-today');
+    const existing = document.getElementById('planweek-banner');
+    const onRamp = isOnRampWeek(), sched = isScheduledDeloadWeek();
+    if ((onRamp || sched) && page) {
+      let el = existing;
+      if (!el) {
+        el = document.createElement('div');
+        el.id = 'planweek-banner';
+        el.style.cssText = 'margin:0 0 12px;padding:11px 14px;border-radius:12px;font-size:12.5px;line-height:1.5;'
+          + 'border:1px solid var(--color-status-information-border);background:var(--color-status-information-background);color:var(--color-status-information-text);';
+        page.insertBefore(el, page.firstChild);
+      }
+      el.innerHTML = sched
+        ? '🔋 <b>Deload week</b> (week ' + planWeekNumber() + ') — sets are halved, keep the weight. Non-negotiable: this is how the block keeps working.'
+        : '🌱 <b>Week 1 is an on-ramp</b> — fewer sets, learn the movements, log honest effort. Full volume from week 2.';
+    } else if (existing) {
+      existing.remove();
+    }
+    checkHoldTheLine();
+    checkPlanExitCriteria();
+  })();
+
   try {
   const dateKey = today();
   const d = new Date();
@@ -4464,7 +4840,7 @@ function renderToday() {
       const ex = EXERCISES[exId];
       if (!ex || log[exId]) return;
       log[exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
+        sets: Array.from({length: doseSets(exId, ex)}, () => ({ weight: startingWeight(exId, ex), reps: doseReps(exId, ex), done: false })),
         complete: false
       };
     });
@@ -4615,7 +4991,7 @@ function renderToday() {
     if (!ex || log[exId]) return;
     const numSets = setCount || ex.sets;
     log[exId] = {
-      sets: Array.from({length: numSets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
+      sets: Array.from({length: setCount || doseSets(exId, ex)}, () => ({ weight: startingWeight(exId, ex), reps: doseReps(exId, ex), done: false })),
       complete: false
     };
   });
@@ -4708,7 +5084,7 @@ function renderToday() {
     const resolvedId = getSwappedExId(exId);
     const ex = EXERCISES[resolvedId];
     if (!ex) return;
-    list.appendChild(buildExCard(exId, ex, log[exId] || { sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })), complete: false }, volumeOverride, resolvedId !== exId));
+    list.appendChild(buildExCard(exId, ex, log[exId] || { sets: Array.from({length: doseSets(exId, ex)}, () => ({ weight: startingWeight(exId, ex), reps: doseReps(exId, ex), done: false })), complete: false }, volumeOverride, resolvedId !== exId));
   });
 
   // Auto-open first incomplete exercise
@@ -4738,7 +5114,7 @@ function renderToday() {
       const ex = EXERCISES[exId];
       if (!ex || log[exId]) return;
       log[exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
+        sets: Array.from({length: doseSets(exId, ex)}, () => ({ weight: startingWeight(exId, ex), reps: doseReps(exId, ex), done: false })),
         complete: false,
         isSupplemental: true
       };
@@ -4830,6 +5206,7 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
       ${buildProgPanel(exId)}
       ${buildStallCard(exId)}
       ${buildLoadHint(exId)}
+      ${buildDemoBlock(exId)}
       <div class="ex-cue">${effectiveEx.cue}</div>
       ${screeningCardLines(exId).map(l => `<div class="ex-cue" role="note" style="color:var(--color-status-warning-text);background:var(--color-status-warning-background);border-radius:8px;padding:8px 10px;">🩺 ${l}</div>`).join('')}
       <a href="https://www.google.com/search?q=${encodeURIComponent(effectiveEx.name + ' exercise how to')}"
@@ -4854,7 +5231,7 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
             <input class="set-input" type="number" inputmode="decimal" placeholder="${startingWeight(exId, effectiveEx) || 'BW'}"
               value="${s.weight || ''}"
               onchange="updateSet('${exId}', ${i}, 'weight', this.value)">
-            <input class="set-input" type="number" inputmode="decimal" placeholder="${volumeOverride ? volumeOverride.repsHigh : effectiveEx.reps}"
+            <input class="set-input" type="number" inputmode="decimal" placeholder="${volumeOverride ? volumeOverride.repsHigh : doseReps(exId, effectiveEx)}"
               value="${s.reps || ''}"
               onchange="updateSet('${exId}', ${i}, 'reps', this.value)">
             <div class="set-check ${s.done ? 'checked' : ''}" id="setcheck-${exId}-${i}"
@@ -5436,7 +5813,7 @@ function renderPlans() {
       const dayIdx = dayKeys.indexOf(s.day);
       const dayData = days && dayIdx >= 0 ? (days[dayIdx] || days[String(dayIdx)]) : null;
       const exercises = (!s.rest && dayData && dayData.exercises && dayData.exercises.length)
-        ? dayData.exercises : [];
+        ? dayExIds(dayData) : [];
 
       const exChips = exercises.length
         ? `<div class="sched-ex-list">${exercises.map(exId => {
@@ -5587,6 +5964,8 @@ function setPrimaryPlan(planId) {
   if (state.supplementalPlan === planId) state.supplementalPlan = null;
   state.primaryPlan = planId;
   state.todayLog = {};
+  if (!state.planWeekAnchor) state.planWeekAnchor = {};
+  state.planWeekAnchor[planId] = today();   // week 1 starts now
   saveState();
   expandedPlan = null;
   // Compatibility check
@@ -6672,7 +7051,7 @@ function launchCustomDay() {
     if (!ex) return;
     if (!state.todayLog[dateKey][exId]) {
       state.todayLog[dateKey][exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
+        sets: Array.from({length: doseSets(exId, ex)}, () => ({ weight: startingWeight(exId, ex), reps: doseReps(exId, ex), done: false })),
         complete: false
       };
     }
@@ -6721,6 +7100,7 @@ function autoSaveSession() {
     }
     writeExerciseLog(completedExs, dateKey);
   checkRpeFloor(completedExs);   // session-level RPE floor note (max 1×/week)
+  recordBandCircuitUse(completedExs);   // v3 Day 6: band-circuit cap tracking + nudge
     saveState();
     return;
   }
@@ -6766,6 +7146,7 @@ function autoSaveSession() {
   }
   writeExerciseLog(completedExs, dateKey);
   checkRpeFloor(completedExs);   // session-level RPE floor note (max 1×/week)
+  recordBandCircuitUse(completedExs);   // v3 Day 6: band-circuit cap tracking + nudge
   // Clear push offset on workout completion — plan resyncs to real schedule
   if (state.planPushOffset) { state.planPushOffset = 0; }
   saveState();
@@ -6800,6 +7181,11 @@ const EXERCISE_SWAPS = {
   /* v2 ab/adductor additions */
   copenhagen_plank:  [{ id:'cushion_adductor_squeeze', reason:'Gentler adductor isometric' }, { id:'hip_adductor_machine', reason:'Machine option' }, { id:'side_plank', reason:'Lateral trunk, no adductor load' }],
   cushion_adductor_squeeze: [{ id:'hip_adductor_machine', reason:'Loaded machine option' }, { id:'glute_bridge', reason:'No-equipment hip work' }, { id:'copenhagen_plank', reason:'Harder progression' }],
+  /* v3 core block — Day 5 weekly rotation is offered through these swap lists */
+  ab_crunch_machine:      [{ id:'cable_crunch', reason:'Cable loaded flexion' }, { id:'suitcase_carry', reason:'Rotation option — anti-lateral-flexion' }, { id:'standing_cable_woodchop', reason:'Rotation option — rotation' }],
+  machine_torso_rotation: [{ id:'standing_cable_woodchop', reason:'Standing rotation' }, { id:'pallof_press', reason:'Anti-rotation instead' }, { id:'cable_crunch', reason:'Loaded flexion instead' }],
+  standing_cable_woodchop:[{ id:'machine_torso_rotation', reason:'Seated machine rotation' }, { id:'suitcase_carry', reason:'Rotation option — carry' }, { id:'ab_crunch_machine', reason:'Rotation option — flexion' }],
+  suitcase_carry:         [{ id:'standing_cable_woodchop', reason:'Rotation option — woodchop' }, { id:'ab_crunch_machine', reason:'Rotation option — ab machine' }, { id:'pallof_press', reason:'Standing anti-rotation' }],
   machine_hip_thrust: [{ id:'hip_thrust', reason:'Barbell version — the progression' }, { id:'glute_bridge', reason:'Feet-elevated, no machine' }, { id:'banded_hip_thrust', reason:'Band burnout option' }],
   supported_split_squat: [{ id:'split_squat', reason:'Free-standing — the progression' }, { id:'leg_press', reason:'Machine, zero balance demand' }, { id:'box_step_up', reason:'Step pattern option' }],
   banded_hip_thrust: [{ id:'hip_thrust', reason:'Loaded barbell pattern' }, { id:'glute_bridge', reason:'No-band floor option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
@@ -6993,6 +7379,7 @@ const LOG_TYPES = {
   rower_interval:{ reps: 'Seconds' },
   sled_push:     { reps: 'Meters' },
   copenhagen_plank: { reps: 'Seconds' },
+  suitcase_carry: { reps: 'Seconds' },   // loadable: weight column stays lbs
 };
 
 const WEIGHT_INCREMENTS = {
@@ -7002,6 +7389,7 @@ const WEIGHT_INCREMENTS = {
   machine_chest_press: 5, db_shoulder_press: 5, cable_kickback: 2.5, cable_crunch: 2.5,
   copenhagen_plank: 0, cushion_adductor_squeeze: 0, banded_hip_thrust: 0, banded_seated_abduction: 0,
   machine_hip_thrust: 10, supported_split_squat: 5,
+  ab_crunch_machine: 5, machine_torso_rotation: 5, standing_cable_woodchop: 2.5, suitcase_carry: 5,
   /* FR-18 extension: legacy gaps found by the coverage check, classed per the same
      pattern (cable isolation 2.5, machine/compound-assist 5, band/BW 0) — S&C confirm pending */
   cable_curl: 2.5, cable_lateral_raise: 2.5, rope_pushdown: 2.5, cable_pull_through: 5,
@@ -7064,6 +7452,12 @@ function getRepRange(exId) {
     const dow = getDayOfWeek();
     const dayData = state.generatedPlanData.days[dow] || state.generatedPlanData.days[String(dow)];
     if (dayData && dayData.repsLow) return { low: dayData.repsLow, high: dayData.repsHigh };
+  }
+  // Per-day dose override on a preset plan takes precedence over library defaults
+  const d = todayDose(exId);
+  if (d) {
+    if (d.repsLow && d.repsHigh) return { low: d.repsLow, high: d.repsHigh };
+    if (d.reps) return { low: Math.max(1, d.reps - 2), high: d.reps };
   }
   // Default: ±2 around the library default rep count
   return { low: Math.max(1, ex.reps - 2), high: ex.reps + 2 };
@@ -7399,7 +7793,9 @@ const STARTING_LOAD_HINTS = {
 };
 const GENERIC_LOAD_HINT = 'First session is a calibration session — find the weight where the last 2 reps slow down.';
 
+const LOAD_TRACKED_DURATION = ['suitcase_carry'];   // logs time AND load — progresses by weight
 function progIsLoadTracked(exId) {
+  if (LOAD_TRACKED_DURATION.includes(exId)) return (WEIGHT_INCREMENTS[exId] ?? 5) > 0;
   if (typeof LOG_TYPES !== 'undefined' && LOG_TYPES[exId]) return false;   // duration/distance
   return (WEIGHT_INCREMENTS[exId] ?? 5) > 0;                              // skip bodyweight
 }
@@ -7487,6 +7883,17 @@ function buildStallCard(exId) {
   return '<div class="stall-card ' + tone + '" role="note">📈 ' + msg + action + '</div>';
 }
 /* First logged session of a movement → starting-load guidance */
+function buildDemoBlock(exId) {
+  if (!EXERCISE_DEMOS[exId]) return '';
+  return '<button class="demo-toggle" onclick="event.stopPropagation();toggleDemo(\'' + exId + '\')">'
+    + '▶ Watch the movement <span style="opacity:.7;font-weight:400;">(draft)</span></button>'
+    + '<div class="demo-wrap" id="demo-' + exId + '" style="display:none;">' + EXERCISE_DEMOS[exId] + '</div>';
+}
+function toggleDemo(exId) {
+  const el = document.getElementById('demo-' + exId);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
 function buildLoadHint(exId) {
   const logged = state.exerciseLog && state.exerciseLog[exId] && state.exerciseLog[exId].length;
   if (logged) return '';

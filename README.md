@@ -8,9 +8,10 @@ Volume is a single-file progressive web app — one `index.html`, no build step,
 ## Features
 
 - **12 preset plans** across five groups — Start Here, Build Muscle, Lose Fat, Athletic Power, Conditioning — from a 3-day beginner full-body to a 6-day lower-body specialization, plus deficit-friendly Cut Phase and Cut Phase: Lower Bias.
-- **90-exercise library** with coaching cues, safety notes, swap options for every plan exercise, and regressions for the risky stuff. Every exercise card links to a web search for form videos.
+- **96-exercise library** with coaching cues, safety notes, swap options for every plan exercise, and regressions for the risky stuff. Every exercise card links to a web search for form videos.
 - **Plan generator** — pick days, goal, and level; get a balanced week with compound lifts first.
 - **Progression engine** — double progression with rep-range logic, RPE back-off signals, multi-signal deload triggers, and honest units (minutes, seconds, and meters log as what they are, not fake reps).
+- **Progression feedback** — RPE is logged as *reps left in the tank*, not a vague effort score. The app watches your logs: a lift stuck at the same weight and reps for three sessions raises a card that tells you whether to add load (low effort) or deload (genuine plateau), with a one-tap prefill for next session. Hitting the top of a rep range prompts a load bump; a session logged well below working intensity gets a quiet note. Your review shows a Progression block — last session vs this one, with direction.
 - **Safety pathway** — first-run health notice, a "when to stop" rule reachable from every workout and the rest timer, and an injury/condition screening that actually changes what the app suggests.
 - **Rest timer, Travel Mode** (bodyweight plan swap with auto-restore), **workout history**, and an **analytics dashboard**.
 - **Backup & restore** — export/import your full history as JSON. Import is transactional with a pre-import snapshot; a bad file can't corrupt your data.
