@@ -579,6 +579,35 @@
     flex-shrink: 0;
   }
   .rpe-pill.selected-rpe { border-color: currentColor; background: rgba(0,0,0,0.06); }
+  /* ── Progression feedback layer ── */
+  .rpe-pill { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.05; }
+  .rpe-pill-num { font-weight: 700; font-size: 12px; }
+  .rpe-pill-sub { font-size: 7.5px; letter-spacing: 0.2px; opacity: 0.85; text-transform: none; white-space: nowrap; }
+  .rpe-lighter { color: #736B61; }
+  .rpe-subfive { display: flex; align-items: center; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+  .rpe-subfive-label { font-family: var(--font-mono); font-size: 9px; color: #736B61; text-transform: uppercase; letter-spacing: 0.4px; }
+  .stall-card, .load-hint {
+    margin: 8px 0 2px; padding: 9px 11px; border-radius: 10px;
+    font-size: 12.5px; line-height: 1.5;
+  }
+  .stall-card.warn { background: var(--color-status-warning-background); color: var(--color-status-warning-text); border: 1px solid var(--color-status-warning-border); }
+  .stall-card.info { background: var(--color-status-information-background); color: var(--color-status-information-text); border: 1px solid var(--color-status-information-border); }
+  .load-hint { background: var(--color-surface-secondary); color: var(--color-text-secondary); border: 1px solid var(--color-border-subtle); }
+  .prog-prefill-btn {
+    display: block; margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+    background: var(--color-action-primary); color: var(--color-brand-on-primary);
+    font-family: var(--font-body); font-size: 12px; font-weight: 700; width: 100%;
+  }
+  .prog-review { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--color-border-subtle); }
+  .prog-review-title { font-family: var(--font-mono); font-size: 9px; color: var(--accent); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .prog-review-row { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; padding: 3px 0; font-size: 12px; }
+  .prog-review-name { font-weight: 600; color: var(--color-text-primary); }
+  .prog-review-cmp { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-secondary); }
+  .prog-review-at { font-size: 10.5px; color: var(--color-text-tertiary); margin-left: auto; }
+  .prog-dir { font-weight: 700; }
+  .prog-dir.up { color: var(--color-status-success); }
+  .prog-dir.down { color: var(--color-status-danger); }
+  .prog-dir.flat { color: var(--color-text-tertiary); }
   .rpe-1, .rpe-2, .rpe-3  { color: #1E7F4D; }
   .rpe-4, .rpe-5, .rpe-6  { color: #7A5200; }
   .rpe-7, .rpe-8           { color: #C24A00; }
@@ -2968,9 +2997,9 @@ const PLANS = [
     }
   },
   {
-    id: 'cut_phase_lower', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri) · Optional Sat: Zone 2 or band circuit',
+    id: 'cut_phase_lower', blockLength: 4, /* [BOARD] deload every 4th week in a deficit */ watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri) · Optional Sat: Zone 2 or band circuit',
     name: 'Cut Phase: Lower Bias',
-    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk for cardio where you can. Legs grow in the next phase — this phase protects them: at goal weight, transition maintenance block → Long Track. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). If either dips two weeks running: take the deload now, and check calories and sleep before changing the plan — two down weeks usually reflects recovery, not exercise selection. Effort: all working sets at RIR 2–3, never to failure in a deficit. Progress by double progression — hit the top of the rep range on every set with clean form, then add about 5 lb upper / 10 lb lower. Week 1 is an on-ramp: roughly 70% of the listed sets, full loads optional — learn the movements and log honest effort. Week 2 onward is full volume. Every 4th week is a deload: halve all sets, keep the weight. Non-negotiable. Short on time or energy? Do Day 1 and Day 4. Two lower days beats a skipped week. Machine hip thrust and supported split squat are the starting points here; barbell and free-standing are progressions. Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk; unstructured walking on rest days is unlimited and encouraged. If you haven’t had recent blood-pressure and bloodwork screening, get it before pushing heavy sets. Breathe continuously through every rep; don’t hold your breath under load. This plan runs until goal weight or about 16 weeks, whichever comes first — then an 8–12 week maintenance block before any building phase. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
     badge: '🦵',
     color: '#FF8A4C',
     category: 'fatloss',
@@ -2985,12 +3014,12 @@ const PLANS = [
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Lower A (Quad/Glute)', exercises: ['leg_press','hip_thrust','leg_extension','leg_curl','hip_adductor_machine','calf_raise'] },
-      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','lateral_raise','tricep_pushdown','bike'] },
-      2: { name: 'Zone 2 + Core', exercises: ['treadmill_run','cable_crunch','side_plank'] },
-      3: { name: 'Lower B (Glute/Posterior)', exercises: ['hack_squat','back_extension','split_squat','cable_kickback','hip_abductor_machine'] },
+      0: { name: 'Lower A (Quad/Glute)', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load — and cap top sets at RIR 3. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: ['leg_press','machine_hip_thrust','leg_extension','leg_curl','hip_adductor_machine','calf_raise'] },
+      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','cable_fly','lateral_raise','tricep_pushdown','bike'] },
+      2: { name: 'Zone 2 + Core', note: 'Stairmaster or incline walk preferred; alternate with the recumbent bike some weeks to spread joint load.', exercises: ['treadmill_run','cable_crunch','pallof_press'] },
+      3: { name: 'Lower B (Glute/Posterior)', note: 'Hold-the-line day. Back extension: neutral spine, driven by hips and glutes — not lumbar extension. Supported split squat is the default; free-standing is the progression.', exercises: ['hack_squat','back_extension','supported_split_squat','cable_kickback','hip_abductor_machine'] },
       4: { name: 'Upper Pull + Zone 2', exercises: ['lat_pulldown','cable_row','face_pull','bicep_curl','bike'] },
-      5: { name: 'Optional: Zone 2 / Band Circuit / Rest', note: 'Pick ONE: 30 min Zone 2, the glute band circuit, or full rest. Skip this any week the main four days felt heavy. It’s a bonus, not a requirement.', exercises: ['bike','banded_hip_thrust','lateral_band_walk','banded_seated_abduction'] },
+      5: { name: 'Optional: Zone 2 / Band Circuit / Rest', note: 'Bonus day. Walking is the default; the band circuit is occasional — at most twice a month. Skip it entirely any week the main four days felt heavy. If you are running the circuit weekly, this has become a 5-day plan and the recovery budget no longer holds.', exercises: ['bike','banded_hip_thrust','lateral_band_walk','banded_seated_abduction'] },
       6: { name: 'Rest', exercises: [] },
     }
   },
@@ -3271,6 +3300,16 @@ const EXERCISES = {
     name: 'Banded Seated Abduction', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
     sets: 2, reps: 25, weight: 0,
     cue: 'Sit on a bench or chair with a mini-band just above your knees, feet flat. Push your knees apart against the band, pause briefly at the widest point, and control the return — never let the band snap your knees back together. Burnout format: high reps, short rest, stop one or two reps before the burn beats your form. Lean slightly forward to bias the upper glutes.'
+  },
+  machine_hip_thrust: {
+    name: 'Machine Hip Thrust', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 4, reps: 10, weight: 90,
+    cue: 'Sit into the hip-thrust machine with the pad across your hips and your back against the support. Drive through your heels until your hips are fully extended, squeeze the glutes hard for a second, then lower under control. This is the recommended starting point for the pattern — the machine handles the setup, so there is no loading a barbell over your lap and no balance demand. Breathe continuously: exhale on the drive, never hold your breath under load. The barbell hip thrust is the progression from here, not the entry point. No machine? The feet-elevated glute bridge trains the same pattern.'
+  },
+  supported_split_squat: {
+    name: 'Supported Split Squat', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
+    sets: 3, reps: 10, weight: 0,
+    cue: 'Stand in a split stance with one hand lightly on a rack upright, TRX handle, or sturdy post. Lower the back knee toward the floor keeping the front shin near vertical, then drive up through the front heel. The support IS the exercise at this stage — it lets you load the legs without balance deciding your sets. Progress by lightening the touch, then going free-standing. Breathe normally throughout; do not hold your breath.'
   },
   broad_jump: {
     name: 'Standing Broad Jump', muscle: 'Legs', icon: '🦵', muscleClass: 'muscle-legs',
@@ -3644,6 +3683,12 @@ let state = {
   injuryScreeningCompleted: false,
   planOverrides: {},           // planId -> { exId: newExId } permanent swaps
   swapHistory: {},             // 'exId>swapId' -> count of times swapped
+  // ── Progression feedback layer (additive; never rewrites logged history) ──
+  rpeOnboarded: false,         // one-time reps-left explainer shown
+  rpeCalibrationOffered: false,// one-time "take one set to failure" prompt
+  nextLoadPrefill: {},         // exId -> suggested starting weight for the NEXT session
+  rpeFloorWarnedOn: null,      // ISO date of last session-level RPE-floor note (weekly cap)
+  progPromptedOn: {},          // exId -> ISO date of last double-progression prompt
   swapNudgeDismissed: {},      // 'exId>swapId' -> true (user said no)
 };
 
@@ -4419,7 +4464,7 @@ function renderToday() {
       const ex = EXERCISES[exId];
       if (!ex || log[exId]) return;
       log[exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: ex.weight, reps: ex.reps, done: false })),
+        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
         complete: false
       };
     });
@@ -4570,7 +4615,7 @@ function renderToday() {
     if (!ex || log[exId]) return;
     const numSets = setCount || ex.sets;
     log[exId] = {
-      sets: Array.from({length: numSets}, () => ({ weight: ex.weight, reps: ex.reps, done: false })),
+      sets: Array.from({length: numSets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
       complete: false
     };
   });
@@ -4663,7 +4708,7 @@ function renderToday() {
     const resolvedId = getSwappedExId(exId);
     const ex = EXERCISES[resolvedId];
     if (!ex) return;
-    list.appendChild(buildExCard(exId, ex, log[exId] || { sets: Array.from({length: ex.sets}, () => ({ weight: ex.weight, reps: ex.reps, done: false })), complete: false }, volumeOverride, resolvedId !== exId));
+    list.appendChild(buildExCard(exId, ex, log[exId] || { sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })), complete: false }, volumeOverride, resolvedId !== exId));
   });
 
   // Auto-open first incomplete exercise
@@ -4693,7 +4738,7 @@ function renderToday() {
       const ex = EXERCISES[exId];
       if (!ex || log[exId]) return;
       log[exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: ex.weight, reps: ex.reps, done: false })),
+        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
         complete: false,
         isSupplemental: true
       };
@@ -4783,6 +4828,8 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
         ${effectiveEx.weight > 0 ? `<div class="rec-chip">⚖️ ${suggestedW} lbs</div>` : ''}
       </div>
       ${buildProgPanel(exId)}
+      ${buildStallCard(exId)}
+      ${buildLoadHint(exId)}
       <div class="ex-cue">${effectiveEx.cue}</div>
       ${screeningCardLines(exId).map(l => `<div class="ex-cue" role="note" style="color:var(--color-status-warning-text);background:var(--color-status-warning-background);border-radius:8px;padding:8px 10px;">🩺 ${l}</div>`).join('')}
       <a href="https://www.google.com/search?q=${encodeURIComponent(effectiveEx.name + ' exercise how to')}"
@@ -4804,7 +4851,7 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
         ${logEntry.sets.map((s, i) => `
           <div class="set-row" id="setrow-${exId}-${i}">
             <div class="set-num">${i+1}</div>
-            <input class="set-input" type="number" inputmode="decimal" placeholder="${effectiveEx.weight || 'BW'}"
+            <input class="set-input" type="number" inputmode="decimal" placeholder="${startingWeight(exId, effectiveEx) || 'BW'}"
               value="${s.weight || ''}"
               onchange="updateSet('${exId}', ${i}, 'weight', this.value)">
             <input class="set-input" type="number" inputmode="decimal" placeholder="${volumeOverride ? volumeOverride.repsHigh : effectiveEx.reps}"
@@ -4818,9 +4865,26 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
           <div class="set-rpe-row">
             <div class="rpe-label" onclick="openRpeGuide()" title="What is RPE?" style="cursor:pointer;text-decoration:underline dotted;text-underline-offset:2px;">RPE</div>
             <div class="rpe-pills" id="rpe-${exId}-${i}">
-              ${[1,2,3,4,5,6,7,8,9,10].map(n => `
-                <div class="rpe-pill rpe-${n} ${s.rpe === n ? 'selected-rpe' : ''}"
-                  onclick="setRpe('${exId}', ${i}, ${n}, this)">${n}</div>
+              ${[6,7,8,9,10].map(n => `
+                <div class="rpe-pill rpe-${n} ${s.rpe === n ? 'selected-rpe' : ''}" data-rpe="${n}"
+                  onclick="setRpe('${exId}', ${i}, ${n}, this)">
+                  <span class="rpe-pill-sub">${RIR_LABELS[n]}</span><span class="rpe-pill-num">${n}</span>
+                </div>
+              `).join('')}
+              <div class="rpe-pill rpe-5 ${s.rpe === 5 ? 'selected-rpe' : ''}" data-rpe="5"
+                onclick="setRpe('${exId}', ${i}, 5, this)">
+                <span class="rpe-pill-sub">warm-up</span><span class="rpe-pill-num">5</span>
+              </div>
+              <div class="rpe-pill rpe-lighter ${s.rpe !== null && s.rpe < 5 ? 'selected-rpe' : ''}"
+                onclick="toggleSubFive('${exId}', ${i}, this)" title="Lighter than a working set">
+                <span class="rpe-pill-sub">lighter</span><span class="rpe-pill-num">${s.rpe !== null && s.rpe < 5 ? s.rpe : '‹5'}</span>
+              </div>
+            </div>
+            <div class="rpe-subfive" id="rpesub-${exId}-${i}" style="display:${s.rpe !== null && s.rpe < 5 ? 'flex' : 'none'};">
+              <span class="rpe-subfive-label">lighter than a working set:</span>
+              ${[1,2,3,4].map(n => `
+                <div class="rpe-pill rpe-${n} ${s.rpe === n ? 'selected-rpe' : ''}" data-rpe="${n}"
+                  onclick="setRpe('${exId}', ${i}, ${n}, this)"><span class="rpe-pill-num">${n}</span></div>
               `).join('')}
             </div>
             <input class="set-notes-input" type="text" placeholder="note…"
@@ -4874,15 +4938,28 @@ function setRpe(exId, idx, val, el) {
   // Toggle off if tapping same value
   s.rpe = s.rpe === val ? null : val;
   saveState();
-  // Update pill UI
+  // Update pill UI (data-rpe keyed — pill order is no longer 1..10)
   const container = document.getElementById(`rpe-${exId}-${idx}`);
-  if (container) {
-    container.querySelectorAll('.rpe-pill').forEach(p => p.classList.remove('selected-rpe'));
-    if (s.rpe !== null) {
-      const pills = container.querySelectorAll('.rpe-pill');
-      if (pills[val - 1]) pills[val - 1].classList.add('selected-rpe');
+  const sub = document.getElementById(`rpesub-${exId}-${idx}`);
+  [container, sub].forEach(c => { if (c) c.querySelectorAll('.rpe-pill').forEach(p => p.classList.remove('selected-rpe')); });
+  if (s.rpe !== null) {
+    [container, sub].forEach(c => {
+      if (!c) return;
+      const hit = c.querySelector(`.rpe-pill[data-rpe="${s.rpe}"]`);
+      if (hit) hit.classList.add('selected-rpe');
+    });
+    if (container && s.rpe < 5) {
+      const lighter = container.querySelector('.rpe-lighter');
+      if (lighter) { lighter.classList.add('selected-rpe'); const n = lighter.querySelector('.rpe-pill-num'); if (n) n.textContent = s.rpe; }
     }
+    maybeRpeOnboarding();   // one-time reps-left explainer, then one-time calibration offer
   }
+}
+
+/* Reveal the sub-5 row ("lighter than a working set") */
+function toggleSubFive(exId, idx, el) {
+  const sub = document.getElementById(`rpesub-${exId}-${idx}`);
+  if (sub) sub.style.display = sub.style.display === 'none' ? 'flex' : 'none';
 }
 
 function toggleSet(exId, idx) {
@@ -4911,6 +4988,7 @@ function toggleExComplete(exId) {
     showToast('💪 Exercise complete!');
   }
   saveState();
+  if (entry.complete) setTimeout(() => checkDoubleProgression(exId), 400);  // double-progression check
 
   // Update card DOM
   const card = document.getElementById('excard-' + exId);
@@ -5997,6 +6075,7 @@ function renderHistory() {
       </div>
       <div class="hist-body" id="histbody-${si}">
         ${exRows || '<div style="color:var(--muted);font-size:12px;padding:4px 0;">No exercises logged</div>'}
+        ${buildProgressionReview(session)}
       </div>
     `;
     list.appendChild(card);
@@ -6593,7 +6672,7 @@ function launchCustomDay() {
     if (!ex) return;
     if (!state.todayLog[dateKey][exId]) {
       state.todayLog[dateKey][exId] = {
-        sets: Array.from({length: ex.sets}, () => ({ weight: ex.weight, reps: ex.reps, done: false })),
+        sets: Array.from({length: ex.sets}, () => ({ weight: startingWeight(exId, ex), reps: ex.reps, done: false })),
         complete: false
       };
     }
@@ -6641,6 +6720,7 @@ function autoSaveSession() {
       if (state.history.length > 120) state.history = state.history.slice(0, 120);
     }
     writeExerciseLog(completedExs, dateKey);
+  checkRpeFloor(completedExs);   // session-level RPE floor note (max 1×/week)
     saveState();
     return;
   }
@@ -6685,6 +6765,7 @@ function autoSaveSession() {
     if (state.history.length > 120) state.history = state.history.slice(0, 120);
   }
   writeExerciseLog(completedExs, dateKey);
+  checkRpeFloor(completedExs);   // session-level RPE floor note (max 1×/week)
   // Clear push offset on workout completion — plan resyncs to real schedule
   if (state.planPushOffset) { state.planPushOffset = 0; }
   saveState();
@@ -6719,6 +6800,8 @@ const EXERCISE_SWAPS = {
   /* v2 ab/adductor additions */
   copenhagen_plank:  [{ id:'cushion_adductor_squeeze', reason:'Gentler adductor isometric' }, { id:'hip_adductor_machine', reason:'Machine option' }, { id:'side_plank', reason:'Lateral trunk, no adductor load' }],
   cushion_adductor_squeeze: [{ id:'hip_adductor_machine', reason:'Loaded machine option' }, { id:'glute_bridge', reason:'No-equipment hip work' }, { id:'copenhagen_plank', reason:'Harder progression' }],
+  machine_hip_thrust: [{ id:'hip_thrust', reason:'Barbell version — the progression' }, { id:'glute_bridge', reason:'Feet-elevated, no machine' }, { id:'banded_hip_thrust', reason:'Band burnout option' }],
+  supported_split_squat: [{ id:'split_squat', reason:'Free-standing — the progression' }, { id:'leg_press', reason:'Machine, zero balance demand' }, { id:'box_step_up', reason:'Step pattern option' }],
   banded_hip_thrust: [{ id:'hip_thrust', reason:'Loaded barbell pattern' }, { id:'glute_bridge', reason:'No-band floor option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
   banded_seated_abduction: [{ id:'hip_abductor_machine', reason:'Loaded machine option' }, { id:'glute_med_raise', reason:'Side-lying option' }, { id:'lateral_band_walk', reason:'Standing band option' }],
   /* FR-19 (S&C R2): swap coverage for the 14 new records */
@@ -6918,6 +7001,7 @@ const WEIGHT_INCREMENTS = {
   hanging_leg_raise: 0, back_extension: 0, sled_push: 10, hack_squat: 20, leg_extension: 5,
   machine_chest_press: 5, db_shoulder_press: 5, cable_kickback: 2.5, cable_crunch: 2.5,
   copenhagen_plank: 0, cushion_adductor_squeeze: 0, banded_hip_thrust: 0, banded_seated_abduction: 0,
+  machine_hip_thrust: 10, supported_split_squat: 5,
   /* FR-18 extension: legacy gaps found by the coverage check, classed per the same
      pattern (cable isolation 2.5, machine/compound-assist 5, band/BW 0) — S&C confirm pending */
   cable_curl: 2.5, cable_lateral_raise: 2.5, rope_pushdown: 2.5, cable_pull_through: 5,
@@ -7293,6 +7377,229 @@ function build1RMPanel(exId) {
 }
 
 // Build the HTML for the progression panel
+
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║  PROGRESSION FEEDBACK LAYER — closes the loop a static plan can't see:     ║
+// ║  RPE captured as reps-left, stall detection, double-progression prompts,   ║
+// ║  session RPE floor, anchor-lift stagnation, first-session load hints.      ║
+// ║  Read-only over logged history — never rewrites or deletes a logged set.   ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+const RIR_LABELS = { 10: '0 more', 9: '1 more', 8: '2 more', 7: '3 more', 6: '4+ more', 5: 'warm-up' };
+const RIR_FULL = {
+  10: "couldn't do another rep", 9: '1 more rep', 8: '2 more reps',
+  7: '3 more reps', 6: '4+ more reps', 5: 'warm-up / easy',
+};
+/* Anchor ("hold the line") lifts per plan — engine metadata, not PLANS content */
+const ANCHOR_LIFTS = { cut_phase_lower: ['machine_hip_thrust', 'hip_thrust', 'leg_press'] };
+const STARTING_LOAD_HINTS = {
+  leg_press: 'Pick a weight where rep 12 is genuinely hard. If all 4 sets feel easy, it is too light — add 20–30 lb next time.',
+  machine_hip_thrust: 'Find a load where the last 2 reps need a real squeeze. Easy top sets mean the weight is too light.',
+  hip_thrust: 'Find a load where the last 2 reps need a real squeeze. Easy top sets mean the weight is too light.',
+  hack_squat: 'Stop where your knees are comfortable, but pick a load where the last 2 reps slow down.',
+};
+const GENERIC_LOAD_HINT = 'First session is a calibration session — find the weight where the last 2 reps slow down.';
+
+function progIsLoadTracked(exId) {
+  if (typeof LOG_TYPES !== 'undefined' && LOG_TYPES[exId]) return false;   // duration/distance
+  return (WEIGHT_INCREMENTS[exId] ?? 5) > 0;                              // skip bodyweight
+}
+function startingWeight(exId, ex) {
+  const p = state.nextLoadPrefill && state.nextLoadPrefill[exId];
+  return (typeof p === 'number' && p > 0) ? p : (ex ? ex.weight : 0);
+}
+function setNextLoad(exId, w) {
+  if (!state.nextLoadPrefill) state.nextLoadPrefill = {};
+  state.nextLoadPrefill[exId] = w;
+  saveState();
+  showToast('✓ ' + w + ' lbs prefilled for next session');
+  if (typeof closeModal === 'function') closeModal();
+}
+function progTopSet(entry) {
+  const sets = (entry.sets || []).filter(s => (s.r || 0) > 0);
+  if (!sets.length) return null;
+  return {
+    weight: Math.max(...sets.map(s => s.w || 0)),
+    totalReps: sets.reduce((a, s) => a + (s.r || 0), 0),
+    rpes: sets.map(s => s.rpe).filter(v => typeof v === 'number'),
+  };
+}
+/* Suggested bump: +10% machine/lower-body, +5 lb upper-body isolation */
+function suggestedStallLoad(exId, weight) {
+  const ex = EXERCISES[exId];
+  const lowerOrMachine = (ex && ex.muscle === 'Legs') || /machine|press|squat|thrust/.test(exId);
+  if (lowerOrMachine) return Math.max(weight + 5, Math.round((weight * 1.10) / 5) * 5);
+  return weight + 5;
+}
+function isAnchorLift(exId) {
+  const list = ANCHOR_LIFTS[state.primaryPlan] || [];
+  return list.includes(exId);
+}
+/* Stall = same top-set weight AND same total reps for 3+ consecutive sessions */
+function detectStall(exId) {
+  if (!progIsLoadTracked(exId)) return null;
+  const log = ((state.exerciseLog && state.exerciseLog[exId]) || []).filter(e => !e.deload);
+  if (log.length < 3) return null;
+  const first = progTopSet(log[0]);
+  if (!first || !first.weight) return null;
+  let count = 0, rpes = [];
+  for (const entry of log) {
+    const t = progTopSet(entry);
+    if (!t || t.weight !== first.weight || t.totalReps !== first.totalReps) break;
+    count++; rpes = rpes.concat(t.rpes);
+  }
+  if (count < 3) return null;
+  const avgRpe = rpes.length ? rpes.reduce((a, b) => a + b, 0) / rpes.length : null;
+  const anchorStagnation = isAnchorLift(exId) && count >= 4 && avgRpe !== null && avgRpe < 6;
+  return {
+    sessions: count, weight: first.weight, reps: first.totalReps, avgRpe,
+    suggested: suggestedStallLoad(exId, first.weight),
+    branch: avgRpe !== null && avgRpe < 6 ? 'underloaded'
+          : avgRpe !== null && avgRpe >= 8 ? 'plateau' : 'flat',
+    anchorStagnation,
+  };
+}
+function buildStallCard(exId) {
+  const st = detectStall(exId);
+  if (!st) return '';
+  const name = EXERCISES[exId] ? EXERCISES[exId].name : exId;
+  const rpeTxt = st.avgRpe !== null ? ' at RPE ' + (Math.round(st.avgRpe * 10) / 10) : '';
+  let msg, tone, action = '';
+  if (st.anchorStagnation) {
+    tone = 'warn';
+    msg = 'Holding the line means the number stays or climbs. ' + name + ' is flat at ' + st.weight
+        + ' lb for ' + st.sessions + ' sessions' + rpeTxt + ' — low effort. Add load before the next session.';
+  } else if (st.branch === 'underloaded') {
+    tone = 'warn';
+    const left = st.avgRpe !== null ? ' — about ' + Math.max(0, Math.round(10 - st.avgRpe)) + ' reps left in the tank' : '';
+    msg = name + ' has been ' + st.weight + ' lb × ' + st.reps + ' for ' + st.sessions + ' sessions' + rpeTxt + left + '. Add weight.';
+  } else if (st.branch === 'plateau') {
+    tone = 'info';
+    msg = name + ' has held at ' + st.weight + ' lb × ' + st.reps + ' for ' + st.sessions
+        + ' sessions at high effort. That is a genuine plateau — consider a deload or a swap.';
+  } else {
+    tone = 'info';
+    msg = name + ' has been ' + st.weight + ' lb × ' + st.reps + ' for ' + st.sessions + ' sessions' + rpeTxt + '.';
+  }
+  if (st.branch !== 'plateau') {
+    action = '<button class="prog-prefill-btn" onclick="event.stopPropagation();setNextLoad(\'' + exId + '\',' + st.suggested
+           + ')">Use ' + st.suggested + ' lbs next time</button>';
+  }
+  return '<div class="stall-card ' + tone + '" role="note">📈 ' + msg + action + '</div>';
+}
+/* First logged session of a movement → starting-load guidance */
+function buildLoadHint(exId) {
+  const logged = state.exerciseLog && state.exerciseLog[exId] && state.exerciseLog[exId].length;
+  if (logged) return '';
+  return '<div class="load-hint" role="note">🎯 ' + (STARTING_LOAD_HINTS[exId] || GENERIC_LOAD_HINT) + '</div>';
+}
+/* Double progression — evaluated when an exercise is marked complete */
+function checkDoubleProgression(exId) {
+  if (!progIsLoadTracked(exId)) return;
+  const dateKey = today();
+  const entry = state.todayLog[dateKey] && state.todayLog[dateKey][exId];
+  if (!entry) return;
+  if (state.progPromptedOn && state.progPromptedOn[exId] === dateKey) return;
+  const sets = (entry.sets || []).filter(s => (s.reps || 0) > 0);
+  if (sets.length < 2) return;
+  const { low, high } = getRepRange(exId);
+  const rpes = sets.map(s => s.rpe).filter(v => typeof v === 'number');
+  const name = EXERCISES[exId] ? EXERCISES[exId].name : exId;
+  const topWeight = Math.max(...sets.map(s => s.weight || 0));
+  const inc = suggestedStallLoad(exId, topWeight) - topWeight;
+  const markPrompted = () => { if (!state.progPromptedOn) state.progPromptedOn = {}; state.progPromptedOn[exId] = dateKey; saveState(); };
+
+  const allTop = sets.every(s => (s.reps || 0) >= high);
+  const easy = rpes.length && rpes.every(v => v <= 7);
+  const belowRange = sets.filter(s => (s.reps || 0) < low).length;
+
+  if (allTop && easy && topWeight > 0) {
+    markPrompted();
+    showModal('Top of the range', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+      + '<p style="margin-bottom:12px;">That is the top of the range' + (rpes.length ? ' at RPE ' + Math.max(...rpes) : '')
+      + ' on every set of ' + name + '. Add about ' + inc + ' lb next session?</p>'
+      + '<div style="display:flex;gap:8px;">'
+      + '<button onclick="setNextLoad(\'' + exId + '\',' + (topWeight + inc) + ')" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Use '
+      + (topWeight + inc) + ' lbs next time</button>'
+      + '<button onclick="closeModal()" style="flex:1;padding:11px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);">Not yet</button>'
+      + '</div></div>');
+  } else if (belowRange >= 2) {
+    markPrompted();
+    showToast('Below the target range — hold this weight next session and build reps.');
+  }
+}
+/* Session-level RPE floor note — max once per week */
+function checkRpeFloor(completedExs) {
+  const working = [];
+  completedExs.forEach(e => (e.sets || []).forEach(s => { if ((s.r || 0) > 0 && typeof s.rpe === 'number') working.push(s.rpe); }));
+  if (working.length < 3) return;
+  const belowFloor = working.filter(v => v < 5).length;
+  if (belowFloor / working.length < 0.7) return;
+  const last = state.rpeFloorWarnedOn ? new Date(state.rpeFloorWarnedOn) : null;
+  if (last && (new Date(today()) - last) / 86400000 < 7) return;
+  state.rpeFloorWarnedOn = today();
+  saveState();
+  showModal('About today\'s effort', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:10px;">Most of today\'s sets were logged well below working intensity. In a deficit, sets need to reach RPE 7–8 to hold onto muscle.</p>'
+    + '<p style="margin-bottom:12px;">Either the loads are light, or the RPE scale needs recalibrating.</p>'
+    + '<button onclick="closeModal();openRpeGuide();" style="width:100%;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">See the reps-left guide</button></div>');
+}
+/* One-time reps-left explainer + one-time calibration offer */
+function maybeRpeOnboarding() {
+  if (state.rpeOnboarded) { maybeCalibrationPrompt(); return; }
+  state.rpeOnboarded = true;
+  saveState();
+  const rows = [10, 9, 8, 7, 6, 5].map(n =>
+    '<div style="display:flex;gap:10px;padding:5px 0;border-bottom:1px solid var(--color-border-subtle);">'
+    + '<div style="font-family:var(--font-mono);font-weight:700;min-width:28px;color:var(--accent);">' + n + '</div>'
+    + '<div>' + RIR_FULL[n] + '</div></div>').join('');
+  showModal('How to log RPE', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:10px;">RPE here means <b>reps left in the tank</b> — not how hard it felt.</p>'
+    + rows
+    + '<p style="margin-top:12px;">If you are unsure between two numbers, pick the lower one.</p>'
+    + '<button onclick="closeModal()" style="width:100%;margin-top:12px;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Got it</button></div>');
+}
+function maybeCalibrationPrompt() {
+  if (state.rpeCalibrationOffered) return;
+  state.rpeCalibrationOffered = true;
+  saveState();
+  showModal('Calibrate your 10', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
+    + '<p style="margin-bottom:12px;">Optional, once: take one <b>machine</b> set to true failure to learn what a 10 actually feels like. Everything else calibrates off it.</p>'
+    + '<button onclick="closeModal()" style="width:100%;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Got it</button></div>');
+}
+/* Progression block for the workout review (history card) — anchors first */
+function buildProgressionReview(session) {
+  const exs = (session.exercises || []).filter(e => progIsLoadTracked(e.id));
+  if (!exs.length) return '';
+  exs.sort((a, b) => (isAnchorLift(b.id) ? 1 : 0) - (isAnchorLift(a.id) ? 1 : 0));
+  const rows = exs.map(ex => {
+    const log = ((state.exerciseLog && state.exerciseLog[ex.id]) || []).filter(e => !e.deload);
+    const idx = log.findIndex(e => e.date === session.date);
+    if (idx === -1) return '';
+    const cur = progTopSet(log[idx]);
+    const prev = idx + 1 < log.length ? progTopSet(log[idx + 1]) : null;
+    if (!cur) return '';
+    let dir = '—', cls = 'flat';
+    if (prev) {
+      if (cur.weight > prev.weight || (cur.weight === prev.weight && cur.totalReps > prev.totalReps)) { dir = '↑'; cls = 'up'; }
+      else if (cur.weight < prev.weight || (cur.weight === prev.weight && cur.totalReps < prev.totalReps)) { dir = '↓'; cls = 'down'; }
+    }
+    let atLoad = 0;
+    for (let i = idx; i < log.length; i++) {
+      const t = progTopSet(log[i]);
+      if (!t || t.weight !== cur.weight) break;
+      atLoad++;
+    }
+    return '<div class="prog-review-row">'
+      + '<div class="prog-review-name">' + (isAnchorLift(ex.id) ? '⚓ ' : '') + ex.name + '</div>'
+      + '<div class="prog-review-cmp">' + (prev ? prev.weight + '×' + prev.totalReps + ' → ' : '')
+      + cur.weight + '×' + cur.totalReps + ' <span class="prog-dir ' + cls + '">' + dir + '</span></div>'
+      + '<div class="prog-review-at">' + atLoad + ' session' + (atLoad === 1 ? '' : 's') + ' at this load</div>'
+      + '</div>';
+  }).join('');
+  if (!rows) return '';
+  return '<div class="prog-review"><div class="prog-review-title">Progression</div>' + rows + '</div>';
+}
+
 function buildProgPanel(exId) {
   const status = getProgressionStatus(exId);
   if (!status) return '';
@@ -7586,13 +7893,12 @@ function showConfirmDialog(title, message, yesLabel, noLabel, onYes, onNo) {
 //  RPE GUIDE MODAL
 // ═══════════════════════════════════════════════════════════════════════════
 const RPE_SCALE = [
-  { range: '1–3', label: 'Very Easy',      color: '#3ECF7A', desc: 'Warm-up weight. Could do 7+ more reps. Not a training stimulus.' },
-  { range: '4–5', label: 'Easy–Moderate',  color: '#FFB020', desc: 'Working but comfortable. 4–6 reps left in the tank. Good for technique work.' },
-  { range: '6',   label: 'Moderate',       color: '#FFB020', desc: '3 reps left. You feel the work but fully in control. Ideal for volume sets.' },
-  { range: '7',   label: 'Hard',           color: '#FF8A4C', desc: '2 reps left. Your hypertrophy sweet spot — challenge without breakdown.' },
-  { range: '8',   label: 'Very Hard',      color: '#FF8A4C', desc: '1 rep left. Strong stimulus. Used for top sets in double progression.' },
-  { range: '9',   label: 'Near Max',       color: '#FF6B61', desc: 'Could maybe squeeze 1 more with poor form. Sparingly — high fatigue cost.' },
-  { range: '10',  label: 'Max Effort',     color: '#FF6B61', desc: 'True failure. Avoid in most training — recovery cost is very high.' },
+  { range: '10',  label: "Couldn't do another rep", color: '#FF6B61', desc: '0 reps left. True failure — rare in a deficit; recovery cost is high.' },
+  { range: '9',   label: '1 more rep',              color: '#FF6B61', desc: '1 rep left. Strong stimulus, used sparingly on top sets.' },
+  { range: '8',   label: '2 more reps',             color: '#FF8A4C', desc: '2 reps left. The working-set target for most sets.' },
+  { range: '7',   label: '3 more reps',             color: '#FF8A4C', desc: '3 reps left. Productive volume work.' },
+  { range: '6',   label: '4+ more reps',            color: '#FFB020', desc: '4 or more left. Below working intensity — usually means add load.' },
+  { range: '5 or below', label: 'Warm-up / easy',   color: '#3ECF7A', desc: 'Not a working set. If a working set lands here, the weight is too light.' },
 ];
 
 function openRpeGuide() {
