@@ -1852,7 +1852,7 @@
       </div>
     </div>
 
-    <!-- Deload nudge banner — shown after 6 consecutive weeks -->
+    <!-- Deload nudge banner — shown when deload signals are present (same signals as the deload prompt) -->
     <div id="deload-nudge" style="display:none;margin:0 20px 4px;">
       <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;
         background:rgba(255,138,61,0.07);border:1px solid rgba(255,138,61,0.25);
@@ -1860,7 +1860,7 @@
         <span style="font-size:18px;flex-shrink:0;">🔄</span>
         <div style="flex:1;min-width:0;">
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px;">Consider a deload week</div>
-          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);" id="deload-nudge-sub">Reduce volume by 40%, keep intensity. Prioritise sleep &amp; protein.</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);" id="deload-nudge-sub">Half the sets, keep the weight. Prioritise sleep &amp; protein.</div>
         </div>
         <button onclick="dismissDeload()"
           style="font-family:var(--font-mono);font-size:10px;padding:5px 10px;
@@ -2725,7 +2725,9 @@ const PLAN_CATEGORIES = [
   { id: 'start', label: 'Start Here' },
   { id: 'build', label: 'Build Muscle' },
   { id: 'fatloss', label: 'Lose Fat' },
-  { id: 'power', label: 'Athletic Power' },
+  { id: 'maintain', label: 'Maintain' },
+  { id: 'addon', label: 'Add-ons (alongside a main plan)' },
+  { id: 'power', label: 'Athletic Power' },          // retired plans only — shown while active
   { id: 'conditioning', label: 'Conditioning' },
 ];
 
@@ -2733,10 +2735,11 @@ const PLANS = [
   {
     id: 'beginner_fullbody', watchType: 'Traditional Strength Training', watchTypeAlt: 'Functional Strength Training (Wed — Full Body B)',
     name: 'Beginner Full Body',
-    desc: '3-day full body for beginners. Dumbbells and bodyweight. Balanced upper/lower work.',
+    desc: '3-day full body for beginners. Dumbbells, bodyweight and one pulldown station. Balanced upper/lower work; after about 12 training weeks the app offers Upper/Lower 4-Day as the next step.',
     badge: '🌱',
     color: '#5FC9B2',
     category: 'start',
+    exitWeeks: 12,   /* F13: then Upper/Lower 4-Day */
     tags: ['3x/week', 'Strength', 'Beginner'],
     schedule: [
       { day: 'MON', label: 'Full Body A', rest: false },
@@ -2750,10 +2753,114 @@ const PLANS = [
     days: {
       0: { name: 'Full Body A', exercises: ['goblet_squat','pushup','row','romanian_deadlift','dead_bug'] },
       1: { name: 'Rest', exercises: [] },
-      2: { name: 'Full Body B', exercises: ['glute_bridge','pike_pushup','lat_pulldown','lunge','lateral_raise','glute_med_raise'] },
+      2: { name: 'Full Body B', exercises: ['glute_bridge','pike_pushup','lat_pulldown','lunge','lateral_raise','glute_med_raise',{ id:'suitcase_carry', sets:2, reps:30 }] },
       3: { name: 'Rest', exercises: [] },
       4: { name: 'Full Body A', exercises: ['goblet_squat','pushup','row','romanian_deadlift','dead_bug'] },
       5: { name: 'Active Recovery', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'full_body_3day', watchType: 'Traditional Strength Training',
+    name: '3-Day Full Body (Machine)',
+    desc: 'For busy seasons: three full-body sessions a week, machine-based, about an hour each. Every muscle gets trained three times, so a missed day costs little. Any three non-consecutive days work — set them where your gym time actually is. Pair with daily walking for fat loss.',
+    badge: '⏱️',
+    color: '#5FC9B2',
+    category: 'start',
+    tags: ['3x/week', 'Full Body', 'All Levels'],
+    schedule: [
+      { day: 'MON', label: 'Full Body A', rest: false },
+      { day: 'TUE', label: 'Rest / Walk', rest: true },
+      { day: 'WED', label: 'Full Body B', rest: false },
+      { day: 'THU', label: 'Rest / Walk', rest: true },
+      { day: 'FRI', label: 'Full Body C', rest: false },
+      { day: 'SAT', label: 'Rest', rest: true },
+      { day: 'SUN', label: 'Long Walk', rest: true },
+    ],
+    days: {
+      0: { name: 'Full Body A', exercises: [
+        { id:'leg_press', sets:3, repsLow:8, repsHigh:12 },
+        { id:'machine_chest_press', sets:3, repsLow:8, repsHigh:12 },
+        { id:'lat_pulldown', sets:3, repsLow:8, repsHigh:12 },
+        { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
+        { id:'lateral_raise', sets:2, repsLow:12, repsHigh:15 },
+        { id:'cable_crunch', sets:2, reps:12 },
+      ] },
+      1: { name: 'Rest', exercises: [] },
+      2: { name: 'Full Body B', exercises: [
+        { id:'machine_hip_thrust', sets:3, repsLow:8, repsHigh:10 },
+        { id:'hack_squat', sets:3, repsLow:8, repsHigh:12 },
+        { id:'cable_row', sets:3, repsLow:10, repsHigh:12 },
+        { id:'db_shoulder_press', sets:3, repsLow:10, repsHigh:12 },
+        { id:'hip_abductor_machine', sets:2, repsLow:15, repsHigh:20 },
+        { id:'pallof_press', sets:2, reps:12 },
+      ] },
+      3: { name: 'Rest', exercises: [] },
+      4: { name: 'Full Body C', exercises: [
+        { id:'romanian_deadlift', sets:3, repsLow:8, repsHigh:10 },
+        { id:'leg_extension', sets:3, repsLow:12, repsHigh:15 },
+        { id:'incline_dumbbell', sets:3, repsLow:10, repsHigh:12 },
+        { id:'lat_pulldown', sets:3, repsLow:10, repsHigh:12 },
+        { id:'hip_adductor_machine', sets:2, repsLow:12, repsHigh:15 },
+        { id:'bicep_curl', sets:2, reps:12 },
+        { id:'tricep_pushdown', sets:2, reps:12 },
+      ] },
+      5: { name: 'Rest', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'home_workout', watchType: 'Functional Strength Training', watchTypeAlt: 'Functional Strength Training (Fri — Full Body Conditioning circuit)',
+    name: 'Home Workout',
+    desc: 'Bodyweight full body. Minimal equipment — a sturdy table or doorframe bar for pulls.',
+    badge: '🏠',
+    color: '#5FC9B2',
+    category: 'start',
+    tags: ['4x/week', 'Bodyweight', 'All Levels'],
+    schedule: [
+      { day: 'MON', label: 'Upper Body Push', rest: false },
+      { day: 'TUE', label: 'Lower Body', rest: false },
+      { day: 'WED', label: 'Rest / Stretch', rest: true },
+      { day: 'THU', label: 'Upper Body Pull + Core', rest: false },
+      { day: 'FRI', label: 'Full Body Conditioning', rest: false },
+      { day: 'SAT', label: 'Active Recovery', rest: true },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Upper Push', exercises: ['pushup','pike_pushup','tricep_dip_chair','plank','dead_bug'] },
+      1: { name: 'Lower Body', exercises: ['split_squat','lunge_bw','glute_bridge','single_leg_rdl_bw','calf_raise_bw','glute_med_raise','cushion_adductor_squeeze'] },
+      2: { name: 'Rest / Stretch', exercises: [] },
+      3: { name: 'Upper Pull + Core', exercises: ['inverted_row','pullup_bw','plank_rotation','dead_bug'] },
+      4: { name: 'Full Body Conditioning', exercises: ['box_step_up','pushup','inverted_row','single_leg_rdl_bw'] },
+      5: { name: 'Active Recovery', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'upper_lower_4day', watchType: 'Traditional Strength Training',
+    name: 'Upper/Lower 4-Day',
+    desc: 'The default recommendation for building muscle and strength: upper/lower split, every muscle twice a week, 4 days. Full gym; machine versions of every barbell lift are on the Swap list, so you do not need barbell numbers to start.',
+    badge: '🏋️',
+    color: '#7AB8FF',
+    category: 'build',
+    isDefault: true,
+    tags: ['Recommended', '4x/week', 'Hypertrophy', 'All Levels'],
+    schedule: [
+      { day: 'MON', label: 'Upper A', rest: false },
+      { day: 'TUE', label: 'Lower A', rest: false },
+      { day: 'WED', label: 'Rest', rest: true },
+      { day: 'THU', label: 'Upper B', rest: false },
+      { day: 'FRI', label: 'Lower B', rest: false },
+      { day: 'SAT', label: 'Rest', rest: true },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Upper A', exercises: ['bench_press','row','ohp','lat_pulldown',{ id:'lateral_raise', sets:3, reps:15 },'tricep_pushdown'] },
+      1: { name: 'Lower A', exercises: ['squat','romanian_deadlift','leg_curl','hip_adductor_machine',{ id:'calf_raise', sets:3, reps:15 },'pallof_press'] } /* FR-25 correction: earlier pallof addition mis-landed on int_ppl Leg Day (identical list) */,
+      2: { name: 'Rest', exercises: [] },
+      3: { name: 'Upper B', exercises: ['machine_chest_press','pullup','incline_dumbbell','cable_row','bicep_curl','face_pull'] },
+      4: { name: 'Lower B', exercises: ['hip_thrust','hack_squat','split_squat','leg_curl','hip_abductor_machine',{ id:'calf_raise', sets:3, reps:15 }] },
+      5: { name: 'Rest', exercises: [] },
       6: { name: 'Rest', exercises: [] },
     }
   },
@@ -2775,22 +2882,50 @@ const PLANS = [
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Push Day', exercises: ['bench_press','incline_dumbbell','lateral_raise','cable_fly','skull_crusher'] },
-      1: { name: 'Pull Day', exercises: ['pullup','row','cable_row','face_pull','hammer_curl'] },
-      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','calf_raise','pallof_press','hip_abductor_machine'] },
-      3: { name: 'Push Day B', exercises: ['ohp','dips','incline_dumbbell','cable_lateral_raise','tricep_pushdown'] },
-      4: { name: 'Pull Day B', exercises: ['deadlift','lat_pulldown','cable_row','rear_delt_fly','bicep_curl'] },
-      5: { name: 'Leg Day B', exercises: ['hip_thrust','hack_squat','split_squat','leg_press','leg_curl','hip_adductor_machine'] },
+      0: { name: 'Push Day', exercises: ['bench_press','incline_dumbbell',{ id:'lateral_raise', sets:3, reps:15 },'cable_fly','skull_crusher'] },
+      1: { name: 'Pull Day', exercises: ['pullup','row','face_pull','hammer_curl'] },
+      2: { name: 'Leg Day', exercises: ['squat','romanian_deadlift','leg_curl',{ id:'calf_raise', sets:3, reps:15 },'pallof_press','hip_abductor_machine'] },
+      3: { name: 'Push Day B', exercises: ['ohp','dips','incline_dumbbell',{ id:'cable_lateral_raise', sets:2, reps:15 },'tricep_pushdown'] },
+      4: { name: 'Pull Day B', exercises: ['deadlift','lat_pulldown','cable_row','bicep_curl'] },
+      5: { name: 'Leg Day B', exercises: ['hip_thrust','hack_squat','split_squat','leg_curl','hip_adductor_machine'] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'long_track', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Cycling (Sat bike sprints) · Indoor Walk / Stair Stepper (Tue/Sat LISS)',
+    name: 'Long Track',
+    desc: 'Lower-body specialization, 6 days/week. Volume-hungry — run this eating at maintenance or above. Cutting? Start with Cut Phase instead. Anchors: hip thrust and RDL — swap only within the same pattern, never remove. Hamstrings get a curl on two days and a hinge on two days so quads do not run away with the plan.',
+    badge: '⛸️',
+    color: '#7AB8FF',
+    category: 'build',
+    tags: ['6x/week', 'Lower-Body Specialization', 'Advanced'],
+    schedule: [
+      { day: 'MON', label: 'Lower A (Quad Power)', rest: false },
+      { day: 'TUE', label: 'Upper Push + LISS', rest: false },
+      { day: 'WED', label: 'Lower B (Glute/Ham)', rest: false },
+      { day: 'THU', label: 'Upper Pull + Core', rest: false },
+      { day: 'FRI', label: 'Lower C (Glute Volume)', rest: false },
+      { day: 'SAT', label: 'Conditioning (sprints + core)', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A (Quad Power)', exercises: ['squat','leg_press','leg_extension','leg_curl','calf_raise'] },
+      1: { name: 'Upper Push + LISS', exercises: ['bench_press','ohp','incline_dumbbell','cable_lateral_raise','skull_crusher','bike'] },
+      2: { name: 'Lower B (Glute/Ham)', exercises: ['hip_thrust','romanian_deadlift','split_squat','leg_curl','hip_abductor_machine'] },
+      3: { name: 'Upper Pull + Core', exercises: ['pullup','row','cable_row','face_pull','bicep_curl','cable_crunch','pallof_press'] },
+      4: { name: 'Lower C (Glute Volume)', exercises: ['hack_squat','cable_pull_through','cable_kickback','hip_adductor_machine','calf_raise'] },
+      5: { name: 'Conditioning', exercises: ['bike_sprint','incline_walk','hanging_leg_raise','side_plank'] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
     id: 'advanced_split', watchType: 'Traditional Strength Training',
     name: 'Classic Body-Part Split',
-    desc: '5-day body-part split for experienced lifters. Full gym access. Strength and muscle focus.',
+    desc: 'Retired from the catalog — Upper/Lower 4-Day or Intermediate PPL trains each muscle twice a week. 5-day body-part split for experienced lifters. Full gym access. Strength and muscle focus.',
     badge: '⚡',
     color: '#7AB8FF',
     category: 'build',
+    hidden: true,   /* F15: retired from the catalog; stays available to anyone already running it */
     tags: ['5x/week', 'Strength+Size', 'Advanced'],
     schedule: [
       { day: 'MON', label: 'Back', rest: false },
@@ -2812,16 +2947,139 @@ const PLANS = [
     }
   },
   {
-    id: 'weight_loss_cardio', watchType: 'Traditional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Tue HIIT · Fri Low-Impact Circuit) · Indoor Run or Indoor Cycling (Sat)',
-    name: 'Weight Loss Cardio Mix',
-    desc: 'Cardio + strength mix for fat loss. Gym cardio equipment used for intervals — every piece is swappable. 5 days/week. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    id: 'cut_phase', blockLength: 4, exitWeeks: 16, /* [BOARD] deload every 4th training week in a deficit */
+    watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri, optional Sat)',
+    name: 'Cut Phase',
+    formerNames: ['Cut Phase: Lower Bias'],   /* F9: both cut plans merged; history under either name still counts */
+    desc: 'Four lifting days plus easy Zone 2, built for a calorie deficit. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (upper accessories go first if recovery forces a cut). If either dips two weeks running: take the deload now, and check calories and sleep before changing the plan. Effort: all working sets at RIR 2–3, never to failure in a deficit. Progress by double progression — top of the rep range on every set, then add about 5 lb upper / 10 lb lower. Week 1 is an on-ramp (about 70% of the sets). Every 4th training week is a deload: half the sets, keep the weight. Short on time? Do Day 1 and Day 4 — two lower days beats a skipped week. Turn on Lower-Body Bias in the plan options to shift volume to legs and glutes. Zone 2: incline walk or stairmaster; unstructured walking on rest days is unlimited. Breathe continuously through every rep. Runs until goal weight or about 16 training weeks, then the Maintenance plan for 8–12 weeks before any building phase. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
+    badge: '✂️',
+    color: '#FF8A4C',
+    category: 'fatloss',
+    tags: ['4x/week + cardio', 'Fat Loss', 'All Levels'],
+    options: [
+      { key: 'lowerBias', label: 'Lower-Body Bias', default: false,
+        desc: 'More leg and glute volume while upper body holds steady. For lifters whose priority is the lower body.' },
+    ],
+    schedule: [
+      { day: 'MON', label: 'Lower A', rest: false },
+      { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
+      { day: 'WED', label: 'Zone 2 + Core', rest: false },
+      { day: 'THU', label: 'Lower B', rest: false },
+      { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
+      { day: 'SAT', label: 'Optional: Zone 2 / Rest', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: [
+        { id:'leg_press', sets:4, repsLow:8, repsHigh:12 },
+        { id:'machine_hip_thrust', sets:3, repsLow:8, repsHigh:10 },
+        { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
+        { id:'leg_extension', sets:2, repsLow:12, repsHigh:15 },
+        { id:'calf_raise', sets:2, repsLow:12, repsHigh:15 },
+      ] },
+      1: { name: 'Upper Push + Zone 2', exercises: [
+        { id:'machine_chest_press', sets:4, repsLow:8, repsHigh:12 },
+        { id:'db_shoulder_press', sets:3, repsLow:10, repsHigh:12 },
+        { id:'cable_fly', sets:2, repsLow:12, repsHigh:15 },
+        { id:'lateral_raise', sets:2, reps:15 },
+        { id:'tricep_pushdown', sets:2, reps:12 },
+        'incline_walk',
+      ] },
+      2: { name: 'Zone 2 + Core', note: 'Primary core session, 10 sets: one flexion (cable crunch), one anti-extension (incline plank), one anti-rotation (Pallof), one carry. All seated, standing or hands-on-bench — no floor transitions. Loadable core progresses by adding weight, not just reps.', exercises: [
+        'incline_walk',
+        { id:'cable_crunch', sets:3, reps:12 },
+        { id:'incline_plank', sets:2, reps:30 },
+        { id:'pallof_press', sets:3, reps:12 },
+        { id:'suitcase_carry', sets:2, reps:30 },
+      ] },
+      3: { name: 'Lower B', note: 'Hold-the-line day. RDL: hinge at the hips with a neutral spine. Supported split squat is the default; free-standing is the progression.', exercises: [
+        { id:'hack_squat', sets:4, repsLow:8, repsHigh:12 },
+        { id:'romanian_deadlift', sets:3, repsLow:8, repsHigh:10 },
+        { id:'supported_split_squat', sets:3, reps:10 },
+        { id:'leg_curl', sets:2, repsLow:10, repsHigh:12 },
+        { id:'hip_abductor_machine', sets:2, repsLow:15, repsHigh:20 },
+      ] },
+      4: { name: 'Upper Pull + Zone 2', exercises: [
+        { id:'lat_pulldown', sets:4, repsLow:8, repsHigh:12 },
+        { id:'cable_row', sets:3, repsLow:10, repsHigh:12 },
+        { id:'face_pull', sets:3, reps:15 },
+        { id:'bicep_curl', sets:2, reps:12 },
+        'incline_walk',
+      ] },
+      5: { name: 'Optional: Zone 2 / Rest', note: 'Bonus day. Walking is the default. Skip it any week the main four days felt heavy.', exercises: ['incline_walk'] },
+      6: { name: 'Rest', exercises: [] },
+    },
+    variants: {
+      /* Lower-Body Bias (formerly the separate "Cut Phase: Lower Bias" plan), with the review fixes:
+         a hinge and a second curl on Lower B instead of kickbacks (F7), a 10-set core day and no
+         Saturday band circuit (F10). Quad:ham about 1.5. */
+      lowerBias: {
+        schedule: [
+          { day: 'MON', label: 'Lower A (Quad/Glute)', rest: false },
+          { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
+          { day: 'WED', label: 'Zone 2 + Core', rest: false },
+          { day: 'THU', label: 'Lower B (Glute/Posterior)', rest: false },
+          { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
+          { day: 'SAT', label: 'Optional: Zone 2 / Rest', rest: false },
+          { day: 'SUN', label: 'Rest', rest: true },
+        ],
+        days: {
+          0: { name: 'Lower A (Quad/Glute)', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: [
+            { id:'leg_press', sets:4, repsLow:8, repsHigh:12 },
+            { id:'machine_hip_thrust', sets:4, repsLow:8, repsHigh:10 },
+            { id:'leg_extension', sets:3, repsLow:12, repsHigh:15 },
+            { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
+            { id:'hip_adductor_machine', sets:3, repsLow:12, repsHigh:15 },
+            { id:'calf_raise', sets:2, repsLow:12, repsHigh:15 },
+          ] },
+          1: { name: 'Upper Push + Zone 2', exercises: [
+            { id:'machine_chest_press', sets:4, repsLow:8, repsHigh:12 },
+            { id:'db_shoulder_press', sets:3, repsLow:10, repsHigh:12 },
+            { id:'cable_fly', sets:2, repsLow:12, repsHigh:15 },
+            { id:'lateral_raise', sets:2, reps:15 },
+            { id:'tricep_pushdown', sets:3, reps:12 },
+            'incline_walk',
+          ] },
+          2: { name: 'Zone 2 + Core', note: 'Primary core session, 10 sets: one flexion (cable crunch), one anti-extension (incline plank), one anti-rotation (Pallof), one carry. All seated, standing or hands-on-bench — no floor transitions. Loadable core progresses by adding weight, not just reps.', exercises: [
+            'incline_walk',
+            { id:'cable_crunch', sets:3, reps:12 },
+            { id:'incline_plank', sets:2, reps:30 },
+            { id:'pallof_press', sets:3, reps:12 },
+            { id:'suitcase_carry', sets:2, reps:30 },
+          ] },
+          3: { name: 'Lower B (Glute/Posterior)', note: 'Hold-the-line day. RDL: hinge at the hips with a neutral spine. Supported split squat is the default; free-standing is the progression.', exercises: [
+            { id:'hack_squat', sets:4, repsLow:8, repsHigh:12 },
+            { id:'romanian_deadlift', sets:3, repsLow:8, repsHigh:10 },
+            { id:'supported_split_squat', sets:3, reps:10 },
+            { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
+            { id:'hip_abductor_machine', sets:3, repsLow:15, repsHigh:20 },
+          ] },
+          4: { name: 'Upper Pull + Zone 2', exercises: [
+            { id:'lat_pulldown', sets:4, repsLow:8, repsHigh:12 },
+            { id:'cable_row', sets:3, repsLow:10, repsHigh:12 },
+            { id:'face_pull', sets:3, reps:15 },
+            { id:'bicep_curl', sets:2, reps:12 },
+            'incline_walk',
+          ] },
+          5: { name: 'Optional: Zone 2 / Rest', note: 'Bonus day. Walking is the default. Skip it any week the main four days felt heavy.', exercises: ['incline_walk'] },
+          6: { name: 'Rest', exercises: [] },
+        },
+      },
+    },
+  },
+  {
+    id: 'weight_loss_cardio', watchType: 'Traditional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Tue intervals · Fri Low-Impact Circuit) · Indoor Walk or Indoor Cycling (Sat)',
+    name: 'Fat Loss Starter',
+    formerNames: ['Weight Loss Cardio Mix'],
+    exitWeeks: 12,   /* F13: then Upper/Lower 4-Day, or Cut Phase if fat loss is still the goal */
+    desc: 'For beginners and returning lifters: two full-body strength days, one short interval session and easy cardio. Every cardio piece is swappable. 5 days/week. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
     badge: '🏃',
     color: '#FF8A4C',
     category: 'fatloss',
     tags: ['5x/week', 'Fat Loss', 'All Levels'],
     schedule: [
       { day: 'MON', label: 'Resistance A', rest: false },
-      { day: 'TUE', label: 'HIIT Circuit', rest: false },
+      { day: 'TUE', label: 'Intervals (bike + rower)', rest: false },
       { day: 'WED', label: 'Rest / Walk', rest: true },
       { day: 'THU', label: 'Resistance B', rest: false },
       { day: 'FRI', label: 'Low-Impact Circuit', rest: false },
@@ -2829,49 +3087,146 @@ const PLANS = [
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Resistance A', exercises: ['goblet_squat','bench_press','row','bicep_curl','dead_bug','lateral_band_walk'] },
-      1: { name: 'HIIT Circuit', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
+      0: { name: 'Resistance A', exercises: ['goblet_squat','hip_hinge','bench_press','row','bicep_curl','dead_bug','lateral_band_walk'] },
+      1: { name: 'Intervals', note: 'Two tools, not five: alternate hard and easy efforts on the bike, then the rower. Stop the session if form or breathing falls apart.', exercises: ['bike_sprint','rower_interval'] },
       2: { name: 'Rest / Walk', exercises: [] },
-      3: { name: 'Resistance B', exercises: ['romanian_deadlift','ohp','lat_pulldown','cable_row','plank_rotation'] },
+      3: { name: 'Resistance B', exercises: ['romanian_deadlift','incline_dumbbell','ohp','lat_pulldown','cable_row','plank_rotation'] },
       4: { name: 'Low-Impact Circuit', exercises: ['box_step_up','squat_bw','plank_rotation','bike'] },
-      5: { name: 'Steady-State', exercises: ['treadmill_run','bike'] },
+      5: { name: 'Steady-State', exercises: ['incline_walk','bike'] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
-    id: 'cardio_only', watchType: 'High Intensity Interval Training', watchTypeAlt: 'Indoor Run (treadmill) or Outdoor Run (outside) (Mon/Sat) · Indoor Cycling (Wed)',
-    name: 'Pure Cardio',
-    desc: 'Daily cardio-only training. HIIT, steady-state, intervals. Zero weights needed. Best paired with 2×/week strength work — consider layering this onto a strength plan.',
-    badge: '❤️',
-    color: '#B39DDB',
-    category: 'conditioning',
-    tags: ['6x/week', 'Cardio', 'Intermediate'],
+    id: 'maintenance', exitWeeks: 10, watchType: 'Traditional Strength Training',
+    name: 'Maintenance',
+    desc: 'The block after a cut: 8–12 weeks at maintenance calories, so the new body weight settles and the post-diet rebound does not happen. Upper/lower, every muscle twice a week, moderate volume at RIR 2–3. Upper body gets back the frequency a cut took away. Friday is optional. Then move to a building plan.',
+    badge: '⚖️',
+    color: '#7FB77E',
+    category: 'maintain',
+    tags: ['3–4x/week', 'Maintenance', 'All Levels'],
     schedule: [
-      { day: 'MON', label: 'Steady-State Run', rest: false },
-      { day: 'TUE', label: 'HIIT Blast', rest: false },
-      { day: 'WED', label: 'Interval Bike', rest: false },
-      { day: 'THU', label: 'Active Recovery & Mobility', rest: true },
-      { day: 'FRI', label: 'HIIT Blast', rest: false },
-      { day: 'SAT', label: 'Long Run / Bike', rest: false },
+      { day: 'MON', label: 'Lower A', rest: false },
+      { day: 'TUE', label: 'Upper A', rest: false },
+      { day: 'WED', label: 'Zone 2 + Core (optional)', rest: false },
+      { day: 'THU', label: 'Lower B', rest: false },
+      { day: 'FRI', label: 'Upper B (optional)', rest: false },
+      { day: 'SAT', label: 'Rest', rest: true },
+      { day: 'SUN', label: 'Long Walk', rest: true },
+    ],
+    days: {
+      0: { name: 'Lower A', exercises: [
+        { id:'leg_press', sets:3, repsLow:8, repsHigh:12 },
+        { id:'romanian_deadlift', sets:3, repsLow:8, repsHigh:10 },
+        { id:'leg_extension', sets:2, repsLow:12, repsHigh:15 },
+        { id:'leg_curl', sets:2, repsLow:10, repsHigh:12 },
+        { id:'calf_raise', sets:2, repsLow:12, repsHigh:15 },
+      ] },
+      1: { name: 'Upper A', exercises: [
+        { id:'machine_chest_press', sets:3, repsLow:8, repsHigh:12 },
+        { id:'lat_pulldown', sets:3, repsLow:8, repsHigh:12 },
+        { id:'db_shoulder_press', sets:2, repsLow:10, repsHigh:12 },
+        { id:'cable_row', sets:2, repsLow:10, repsHigh:12 },
+        { id:'lateral_raise', sets:2, repsLow:12, repsHigh:15 },
+        { id:'tricep_pushdown', sets:2, reps:12 },
+      ] },
+      2: { name: 'Zone 2 + Core', exercises: [
+        'incline_walk',
+        { id:'cable_crunch', sets:2, reps:12 },
+        { id:'pallof_press', sets:2, reps:12 },
+        { id:'suitcase_carry', sets:2, reps:30 },
+      ] },
+      3: { name: 'Lower B', exercises: [
+        { id:'machine_hip_thrust', sets:3, repsLow:8, repsHigh:10 },
+        { id:'hack_squat', sets:3, repsLow:8, repsHigh:12 },
+        { id:'leg_curl', sets:2, repsLow:10, repsHigh:12 },
+        { id:'hip_abductor_machine', sets:2, repsLow:15, repsHigh:20 },
+        { id:'hip_adductor_machine', sets:2, repsLow:12, repsHigh:15 },
+      ] },
+      4: { name: 'Upper B', exercises: [
+        { id:'incline_dumbbell', sets:3, repsLow:10, repsHigh:12 },
+        { id:'row', sets:3, repsLow:10, repsHigh:12 },
+        { id:'face_pull', sets:2, reps:15 },
+        { id:'bicep_curl', sets:2, reps:12 },
+        { id:'lateral_raise', sets:2, repsLow:12, repsHigh:15 },
+      ] },
+      5: { name: 'Rest', exercises: [] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'athletic_power', watchType: 'High Intensity Interval Training',
+    name: 'Athletic Power',
+    desc: 'Add-on: two short power sessions a week — jumps, lateral power and hamstring resilience — layered onto a main plan as a Supplemental. Do them first, fresh, or on a non-lifting day. Stop a set the moment landings get loud or sloppy. Needs a clean injury screen; anyone with a recent fall, bone-density concern or joint surgery should start from the supported versions on the Swap list. Replaces Drive Phase and PPL + Drive Phase.',
+    badge: '🚀',
+    color: '#FF5C00',
+    category: 'addon',
+    addOn: true,
+    tags: ['Add-on', '+2x/week', 'Power'],
+    schedule: [
+      { day: 'MON', label: 'Rest', rest: true },
+      { day: 'TUE', label: 'Rest', rest: true },
+      { day: 'WED', label: 'Power A — Jumps', rest: false },
+      { day: 'THU', label: 'Rest', rest: true },
+      { day: 'FRI', label: 'Rest', rest: true },
+      { day: 'SAT', label: 'Power B — Lateral', rest: false },
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Steady-State Run', exercises: ['treadmill_run','bike'] },
-      1: { name: 'HIIT Blast', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
-      2: { name: 'Interval Bike', exercises: ['bike'] },
-      3: { name: 'Active Recovery & Mobility', exercises: [] },
-      4: { name: 'HIIT Blast', exercises: ['bike_sprint','rower_interval','sled_push','battle_ropes','mountain_climber'] },
-      5: { name: 'Long Run', exercises: ['treadmill_run'] },
+      0: { name: 'Rest', exercises: [] },
+      1: { name: 'Rest', exercises: [] },
+      2: { name: 'Power A — Jumps', exercises: [
+        { id:'box_jump', sets:3, reps:5 },
+        { id:'lateral_bound', sets:3, reps:6 },
+        { id:'single_leg_rdl', sets:3, repsLow:8, repsHigh:10 },
+        { id:'pallof_press', sets:2, reps:12 },
+      ] },
+      3: { name: 'Rest', exercises: [] },
+      4: { name: 'Rest', exercises: [] },
+      5: { name: 'Power B — Lateral', exercises: [
+        { id:'lateral_hurdle_hop', sets:3, reps:6 },
+        { id:'skater_squat', sets:3, reps:6 },
+        { id:'copenhagen_plank', sets:2, reps:20 },
+        { id:'nordic_curl', sets:2, reps:5 },
+      ] },
+      6: { name: 'Rest', exercises: [] },
+    }
+  },
+  {
+    id: 'cardio_only', watchType: 'High Intensity Interval Training', watchTypeAlt: 'Indoor Walk (Mon) · High Intensity Interval Training (Wed) · Indoor or Outdoor Run (Sat)',
+    name: 'Pure Cardio',
+    desc: 'Add-on: three cardio sessions a week — easy, intervals, and one longer effort — layered onto any strength plan as a Supplemental. Zero weights. Already running it as your only plan? It still works; it just leaves strength on the table.',
+    badge: '❤️',
+    color: '#B39DDB',
+    category: 'addon',
+    addOn: true,
+    tags: ['Add-on', '+3x/week', 'Cardio'],
+    schedule: [
+      { day: 'MON', label: 'Easy Zone 2', rest: false },
+      { day: 'TUE', label: 'Rest', rest: true },
+      { day: 'WED', label: 'Intervals', rest: false },
+      { day: 'THU', label: 'Rest', rest: true },
+      { day: 'FRI', label: 'Rest', rest: true },
+      { day: 'SAT', label: 'Long Easy Session', rest: false },
+      { day: 'SUN', label: 'Rest', rest: true },
+    ],
+    days: {
+      0: { name: 'Easy Zone 2', exercises: ['incline_walk','bike'] },
+      1: { name: 'Rest', exercises: [] },
+      2: { name: 'Intervals', exercises: ['bike_sprint','rower_interval'] },
+      3: { name: 'Rest', exercises: [] },
+      4: { name: 'Rest', exercises: [] },
+      5: { name: 'Long Easy Session', exercises: ['treadmill_run'] },
       6: { name: 'Rest', exercises: [] },
     }
   },
   {
     id: 'drive_phase', watchType: 'Functional Strength Training', watchTypeAlt: 'High Intensity Interval Training (Thu Plyometric only) · Functional Strength Training (Tue Lateral Power)',
     name: 'Drive Phase',
-    desc: 'Athletic power development. Lower body focus. Strength + plyometrics. 4 days/week.',
+    desc: 'Retired — now the Athletic Power add-on. Athletic power development. Lower body focus. Strength + plyometrics. 4 days/week.',
     badge: '🚀',
     color: '#FF5C00',
     category: 'power',
+    hidden: true,   /* F24: merged into the Athletic Power add-on; kept for anyone already running it */
     tags: ['4x/week', 'Power', 'Intermediate'],
     schedule: [
       { day: 'MON', label: 'Strength', rest: false },
@@ -2895,199 +3250,30 @@ const PLANS = [
   {
     id: 'ppl_athletic', watchType: 'Traditional Strength Training', watchTypeAlt: 'Functional Strength Training (Sat/Sun) · High Intensity Interval Training (Wed Plyometric)',
     name: 'PPL + Drive Phase',
-    desc: 'Hybrid strength + power. For experienced lifters only. 6 days/week, high volume.',
+    desc: 'Retired — now the Athletic Power add-on alongside a main plan. Hybrid strength + power for experienced lifters, 5 days/week, lower-body days 48 hours apart.',
     badge: '💥',
     color: '#FF5C00',
     category: 'power',
-    tags: ['6x/week', 'Hypertrophy+Power', 'Advanced'],
+    hidden: true,   /* F24: merged into the Athletic Power add-on; kept for anyone already running it */
+    tags: ['5x/week', 'Hypertrophy+Power', 'Advanced'],
     schedule: [
       { day: 'MON', label: 'Legs (Heavy)', rest: false },
       { day: 'TUE', label: 'Push (Chest/Shoulders/Tris)', rest: false },
-      { day: 'WED', label: 'Plyometric', rest: false },
-      { day: 'THU', label: 'Rest', rest: true },
-      { day: 'FRI', label: 'Pull (Deadlift)', rest: false },
-      { day: 'SAT', label: 'Lateral Power', rest: false },
-      { day: 'SUN', label: 'Posterior Chain + Drive', rest: false },
-    ],
-    days: {
-      /* Week order per S&C R2 verdict #4 (+PT A2-VOL-22 concurrence): upper day precedes
-         plyo; Fri-Sun descends in axial load (heavy hinge -> low-axial lateral -> posterior).
-         S&C + PT human signatures still outstanding (VOL-001). */
-      0: { name: 'Legs (Heavy)', exercises: ['squat','leg_press','romanian_deadlift','leg_curl','calf_raise'] },
-      1: { name: 'Push Day', exercises: ['bench_press','ohp','incline_dumbbell','cable_fly','lateral_raise','tricep_pushdown'] },
-      2: { name: 'Plyometric', exercises: ['depth_jump','box_jump','lateral_hurdle_hop'] /* VOL-001 R2: depth jump first (own-cue rule), jump_squat removed; Σcontacts 57 ≤ 80 */ },
-      3: { name: 'Rest', exercises: [] },
-      4: { name: 'Pull Day', exercises: ['deadlift','pullup','row','lat_pulldown','face_pull','bicep_curl'] },
-      5: { name: 'Lateral Power', exercises: ['lateral_band_walk','split_squat','lateral_bound','skater_squat','lateral_hip_thrust','skating_hold','copenhagen_plank'] },
-      6: { name: 'Posterior Chain + Drive', note: 'Third consecutive training day — cut a set before you cut depth or control.', exercises: ['nordic_curl','hip_thrust','cable_pull_through','pallof_press','dead_bug','hip_abductor_machine'] },
-    }
-  },
-  {
-    id: 'home_workout', watchType: 'Functional Strength Training', watchTypeAlt: 'Functional Strength Training (Fri — Full Body Conditioning, standing low-impact circuit)',
-    name: 'Home Workout',
-    desc: 'Bodyweight full body. Minimal equipment — a sturdy table or doorframe bar for pulls.',
-    badge: '🏠',
-    color: '#5FC9B2',
-    category: 'start',
-    tags: ['4x/week', 'Bodyweight', 'All Levels'],
-    schedule: [
-      { day: 'MON', label: 'Upper Body Push', rest: false },
-      { day: 'TUE', label: 'Lower Body', rest: false },
-      { day: 'WED', label: 'Rest / Stretch', rest: true },
-      { day: 'THU', label: 'Upper Body Pull + Core', rest: false },
-      { day: 'FRI', label: 'Full Body Conditioning', rest: false },
-      { day: 'SAT', label: 'Active Recovery', rest: true },
-      { day: 'SUN', label: 'Rest', rest: true },
-    ],
-    days: {
-      0: { name: 'Upper Push', exercises: ['pushup','pike_pushup','tricep_dip_chair','plank','dead_bug'] },
-      1: { name: 'Lower Body', exercises: ['split_squat','lunge_bw','glute_bridge','single_leg_rdl_bw','calf_raise_bw','glute_med_raise','cushion_adductor_squeeze'] },
-      2: { name: 'Rest / Stretch', exercises: [] },
-      3: { name: 'Upper Pull + Core', exercises: ['inverted_row','pullup_bw','plank_rotation','dead_bug'] },
-      4: { name: 'Full Body Conditioning', exercises: ['box_step_up','inverted_row','squat_bw','bear_crawl'] },
-      5: { name: 'Active Recovery', exercises: [] },
-      6: { name: 'Rest', exercises: [] },
-    }
-  },
-  {
-    id: 'upper_lower_4day', watchType: 'Traditional Strength Training',
-    name: 'Upper/Lower 4-Day',
-    desc: 'Upper/lower split, 4 days/week. The default recommendation for building muscle and strength. Full gym required.',
-    badge: '🏋️',
-    color: '#7AB8FF',
-    category: 'build',
-    tags: ['4x/week', 'Hypertrophy', 'Intermediate'],
-    schedule: [
-      { day: 'MON', label: 'Upper A', rest: false },
-      { day: 'TUE', label: 'Lower A', rest: false },
-      { day: 'WED', label: 'Rest', rest: true },
-      { day: 'THU', label: 'Upper B', rest: false },
-      { day: 'FRI', label: 'Lower B', rest: false },
+      { day: 'WED', label: 'Plyometric + Lateral Power', rest: false },
+      { day: 'THU', label: 'Pull (Back/Biceps)', rest: false },
+      { day: 'FRI', label: 'Posterior Chain + Deadlift', rest: false },
       { day: 'SAT', label: 'Rest', rest: true },
       { day: 'SUN', label: 'Rest', rest: true },
     ],
     days: {
-      0: { name: 'Upper A', exercises: ['bench_press','row','ohp','lat_pulldown','lateral_raise','tricep_pushdown'] },
-      1: { name: 'Lower A', exercises: ['squat','romanian_deadlift','leg_press','leg_curl','hip_adductor_machine','calf_raise','pallof_press'] } /* FR-25 correction: earlier pallof addition mis-landed on int_ppl Leg Day (identical list) */,
-      2: { name: 'Rest', exercises: [] },
-      3: { name: 'Upper B', exercises: ['ohp','pullup','incline_dumbbell','cable_row','bicep_curl','face_pull'] },
-      4: { name: 'Lower B', exercises: ['hip_thrust','hack_squat','split_squat','leg_curl','hip_abductor_machine','calf_raise','dead_bug'] },
+      /* F6: lower-body/hip days Mon, Wed, Fri — always 48 h apart, two full rest days.
+         Replaces the Fri-Sun-Mon run of four straight lower/hip days. */
+      0: { name: 'Legs (Heavy)', exercises: ['squat','leg_press','romanian_deadlift','leg_curl','calf_raise'] },
+      1: { name: 'Push Day', exercises: ['bench_press','ohp','incline_dumbbell','cable_fly','lateral_raise','tricep_pushdown'] },
+      2: { name: 'Plyometric + Lateral Power', note: 'Jumps first, fresh. Stop a set the moment landings get loud or sloppy.', exercises: ['box_jump','lateral_hurdle_hop','lateral_bound','skater_squat','lateral_hip_thrust','copenhagen_plank'] },
+      3: { name: 'Pull Day', exercises: ['pullup','row','lat_pulldown','face_pull','bicep_curl'] },
+      4: { name: 'Posterior Chain + Deadlift', exercises: ['deadlift','nordic_curl','hip_thrust','pallof_press','hip_abductor_machine'] },
       5: { name: 'Rest', exercises: [] },
-      6: { name: 'Rest', exercises: [] },
-    }
-  },
-  {
-    id: 'cut_phase', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Indoor Cycling (Zone 2 blocks — Tue/Wed/Fri/Sat)',
-    name: 'Cut Phase',
-    desc: 'Four lifting days plus easy Zone-2 cardio, built for a calorie deficit. In a deficit you defend muscle, you don’t chase it — the goal is holding your key lift numbers while weight drops. Machines carry more of the load so you can train hard without a spotter. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
-    badge: '✂️',
-    color: '#FF8A4C',
-    category: 'fatloss',
-    tags: ['4x/week + cardio', 'Fat Loss', 'All Levels'],
-    schedule: [
-      { day: 'MON', label: 'Lower A', rest: false },
-      { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
-      { day: 'WED', label: 'Zone 2 + Core', rest: false },
-      { day: 'THU', label: 'Lower B', rest: false },
-      { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
-      { day: 'SAT', label: 'Optional: Zone 2 / Rest', rest: false },
-      { day: 'SUN', label: 'Rest', rest: true },
-    ],
-    days: {
-      0: { name: 'Lower A', exercises: ['leg_press','hip_thrust','leg_curl','hip_adductor_machine','calf_raise'] },
-      1: { name: 'Upper Push + Zone 2', exercises: ['machine_chest_press','db_shoulder_press','cable_fly','lateral_raise','tricep_pushdown','bike'] },
-      2: { name: 'Zone 2 + Core', exercises: ['treadmill_run','cable_crunch','side_plank'] },
-      3: { name: 'Lower B', exercises: ['hack_squat','back_extension','split_squat','hip_abductor_machine'] },
-      4: { name: 'Upper Pull + Zone 2', exercises: ['lat_pulldown','cable_row','face_pull','bicep_curl','rear_delt_fly','bike'] },
-      5: { name: 'Optional: Zone 2 / Rest', exercises: ['bike'] },
-      6: { name: 'Rest', exercises: [] },
-    }
-  },
-  {
-    id: 'cut_phase_lower', blockLength: 4, /* [BOARD] deload every 4th week in a deficit */ watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Walk / Stair Stepper (Zone 2 — Tue/Wed/Fri) · Optional Sat: Zone 2 or band circuit',
-    name: 'Cut Phase: Lower Bias',
-    desc: 'The cut IS the leg plan: fat loss reveals the lower body you’re protecting. Volume is biased to legs and glutes so the deficit takes fat, not leg muscle. In a deficit you defend muscle, you don’t chase it — hold your Hip Thrust and Leg Press numbers while the weight drops (those two never give way; upper accessories go first if recovery forces a cut). If either dips two weeks running: take the deload now, and check calories and sleep before changing the plan — two down weeks usually reflects recovery, not exercise selection. Effort: all working sets at RIR 2–3, never to failure in a deficit. Progress by double progression — hit the top of the rep range on every set with clean form, then add about 5 lb upper / 10 lb lower. Week 1 is an on-ramp: roughly 70% of the listed sets, full loads optional — learn the movements and log honest effort. Week 2 onward is full volume. Every 4th week is a deload: halve all sets, keep the weight. Non-negotiable. Short on time or energy? Do Day 1 and Day 4. Two lower days beats a skipped week. Machine hip thrust and supported split squat are the starting points here; barbell and free-standing are progressions. Hip Thrust swaps only within its pattern — never removable. Prefer the stairmaster or incline walk; unstructured walking on rest days is unlimited and encouraged. Core runs 2× weekly: Day 3 is the primary session covering all four trunk functions, Day 5 carries a short 3-set secondary exposure on a weekly rotation. Core recovers quickly and does not count against the lower-body recovery budget — and loadable core (ab machine, cable crunch, carries) progresses by adding weight, not just reps, like any other lift. If you haven’t had recent blood-pressure and bloodwork screening, get it before pushing heavy sets. Breathe continuously through every rep; don’t hold your breath under load. This plan runs until goal weight or about 16 weeks, whichever comes first — then an 8–12 week maintenance block before any building phase. Starting from a long layoff, or managing a health condition? A quick check-in with your clinician first is a smart move.',
-    badge: '🦵',
-    color: '#FF8A4C',
-    category: 'fatloss',
-    tags: ['4x/week + cardio', 'Fat Loss · Lower Bias', 'All Levels'],
-    schedule: [
-      { day: 'MON', label: 'Lower A (Quad/Glute)', rest: false },
-      { day: 'TUE', label: 'Upper Push + Zone 2', rest: false },
-      { day: 'WED', label: 'Zone 2 + Core (Primary)', rest: false },
-      { day: 'THU', label: 'Lower B (Glute/Posterior)', rest: false },
-      { day: 'FRI', label: 'Upper Pull + Zone 2', rest: false },
-      { day: 'SAT', label: 'Optional: Zone 2 / Band Circuit / Rest', rest: false },
-      { day: 'SUN', label: 'Rest', rest: true },
-    ],
-    days: {
-      0: { name: 'Lower A (Quad/Glute)', note: 'Hold-the-line day. Breathe continuously on the leg press — no breath-holding under load — and cap top sets at RIR 3. Machine hip thrust is the default; the barbell version is a progression, not a starting point.', exercises: [
-        { id:'leg_press', sets:4, repsLow:8, repsHigh:12 },
-        { id:'machine_hip_thrust', sets:4, repsLow:8, repsHigh:10 },
-        { id:'leg_extension', sets:3, repsLow:12, repsHigh:15 },
-        { id:'leg_curl', sets:3, repsLow:10, repsHigh:12 },
-        { id:'hip_adductor_machine', sets:3, repsLow:12, repsHigh:15 },
-        { id:'calf_raise', sets:2, repsLow:12, repsHigh:15 },
-      ] },
-      1: { name: 'Upper Push + Zone 2', exercises: [
-        { id:'machine_chest_press', sets:4, repsLow:8, repsHigh:12 },
-        { id:'db_shoulder_press', sets:3, repsLow:10, repsHigh:12 },
-        { id:'cable_fly', sets:2, repsLow:12, repsHigh:15 },
-        { id:'lateral_raise', sets:2, reps:15 },
-        { id:'tricep_pushdown', sets:3, reps:12 },
-        'bike',
-      ] },
-      2: { name: 'Zone 2 + Core (Primary)', note: 'Primary core session — all four trunk functions: flexion, anti-rotation, rotation, anti-lateral-flexion. Every movement is seated or standing; use the seated or tall-kneeling cable-crunch setup, no floor transitions. Zone 2: stairmaster or incline walk preferred; alternate with the recumbent bike some weeks to spread joint load. Loadable core (ab machine, cable crunch, carry) progresses by weight, not just reps.', exercises: [
-        'treadmill_run',
-        { id:'ab_crunch_machine', sets:3, repsLow:12, repsHigh:15 },
-        { id:'cable_crunch', sets:3, reps:12 },
-        { id:'pallof_press', sets:3, reps:12 },
-        { id:'machine_torso_rotation', sets:2, reps:15 },
-        { id:'suitcase_carry', sets:3, reps:30 },
-      ] },
-      3: { name: 'Lower B (Glute/Posterior)', note: 'Hold-the-line day. Back extension: neutral spine, driven by hips and glutes — not lumbar extension. Supported split squat is the default; free-standing is the progression.', exercises: [
-        { id:'hack_squat', sets:4, repsLow:8, repsHigh:12 },
-        { id:'back_extension', sets:3, repsLow:12, repsHigh:15 },
-        { id:'supported_split_squat', sets:3, reps:10 },
-        { id:'cable_kickback', sets:3, repsLow:12, repsHigh:15 },
-        { id:'hip_abductor_machine', sets:3, repsLow:15, repsHigh:20 },
-      ] },
-      4: { name: 'Upper Pull + Zone 2', note: 'Secondary core exposure (~3 sets) — rotate weekly: Suitcase Carry (shown), Standing Cable Woodchop, or Ab Crunch Machine. Pick ONE; do not stack all three. Use the Swap button on the carry to take this week\u2019s rotation. Different emphasis from Day 3 so the two exposures are not duplicates.', exercises: [
-        { id:'lat_pulldown', sets:4, repsLow:8, repsHigh:12 },
-        { id:'cable_row', sets:3, repsLow:10, repsHigh:12 },
-        { id:'face_pull', sets:3, reps:15 },
-        { id:'bicep_curl', sets:2, reps:12 },
-        { id:'suitcase_carry', sets:3, reps:30 },
-        'bike',
-      ] },
-      5: { name: 'Optional: Zone 2 / Band Circuit / Rest', note: 'Bonus day. Walking is the default; the band circuit is occasional — at most twice a month. Skip it entirely any week the main four days felt heavy. If you are running the circuit weekly, this has become a 5-day plan and the recovery budget no longer holds.', exercises: ['bike','banded_hip_thrust','lateral_band_walk','banded_seated_abduction'] },
-      6: { name: 'Rest', exercises: [] },
-    }
-  },
-  {
-    id: 'long_track', watchType: 'Traditional Strength Training', watchTypeAlt: 'Indoor Cycling (Fri bike sprints) · Indoor Walk / Stair Stepper (Tue/Sat LISS)',
-    name: 'Long Track',
-    desc: 'Lower-body specialization, 6 days/week. Volume-hungry — run this eating at maintenance or above. Cutting? Start with Cut Phase instead. Anchors: hip thrust and RDL — swap only within the same pattern, never remove.',
-    badge: '⛸️',
-    color: '#7AB8FF',
-    category: 'build',
-    tags: ['6x/week', 'Lower-Body Specialization', 'Advanced'],
-    schedule: [
-      { day: 'MON', label: 'Lower A (Quad Power)', rest: false },
-      { day: 'TUE', label: 'Upper Push + LISS', rest: false },
-      { day: 'WED', label: 'Lower B (Glute/Ham)', rest: false },
-      { day: 'THU', label: 'Upper Pull + Core', rest: false },
-      { day: 'FRI', label: 'Lower C (Glute Volume)', rest: false },
-      { day: 'SAT', label: 'Conditioning', rest: false },
-      { day: 'SUN', label: 'Rest', rest: true },
-    ],
-    days: {
-      0: { name: 'Lower A (Quad Power)', exercises: ['squat','leg_press','lunge','leg_extension','calf_raise'] },
-      1: { name: 'Upper Push + LISS', exercises: ['bench_press','ohp','incline_dumbbell','cable_lateral_raise','skull_crusher','bike'] },
-      2: { name: 'Lower B (Glute/Ham)', exercises: ['hip_thrust','romanian_deadlift','split_squat','leg_curl','hip_abductor_machine'] },
-      3: { name: 'Upper Pull + Core', exercises: ['pullup','row','lat_pulldown','face_pull','bicep_curl','cable_crunch','pallof_press'] },
-      4: { name: 'Lower C (Glute Volume)', exercises: ['hack_squat','leg_press','cable_kickback','hip_adductor_machine','calf_raise','bike_sprint'] },
-      5: { name: 'Conditioning', exercises: ['treadmill_run','hanging_leg_raise','back_extension','side_plank'] },
       6: { name: 'Rest', exercises: [] },
     }
   }
@@ -3414,6 +3600,16 @@ const EXERCISES = {
     sets: 4, reps: 8, weight: 0,
     cue: 'Stand facing a sturdy box or step (12-18 inches). Step one foot onto the box and drive through that heel to stand fully upright on top — do not push off the trailing foot on the ground. Step down with control, return to start, complete all reps on the same leg before switching. Zero impact landing — trains the same quad and glute development as a box jump without ground reaction forces. This makes it the preferred option at higher body weights, during fatigue, or when plyometric landing mechanics are not yet established. Add dumbbells in each hand to progressively load. Use as a warm-up primer before plyometric sessions to activate hip extensors without CNS fatigue.'
   },
+  incline_walk: {
+    name: 'Incline Walk / Stairmaster', muscle: 'Cardio', icon: '🚶', muscleClass: 'muscle-cardio',
+    sets: 1, reps: 25, weight: 0,
+    cue: 'Zone 2: a pace you could hold a conversation at — breathing harder, never gasping. Treadmill at 8–12% incline or a stairmaster at a steady step. Log total MINUTES in the Reps field. Hands off the rails unless you need them for balance. The low-impact default for Zone 2 in the cut and maintenance plans.'
+  },
+  incline_plank: {
+    name: 'Incline Plank (hands on bench)', muscle: 'Core', icon: '🔲', muscleClass: 'muscle-core',
+    sets: 2, reps: 30, weight: 0,
+    cue: 'Anti-extension without getting on the floor: hands on a bench or box, body in one straight line, ribs down, glutes squeezed. Do not let the lower back sag. Log seconds as reps. Lower the bench over the weeks to make it harder; the floor plank is the progression.'
+  },
   treadmill_run: {
     name: 'Treadmill / Outdoor Run', muscle: 'Cardio', icon: '🏃', muscleClass: 'muscle-cardio',
     sets: 1, reps: 20, weight: 0,
@@ -3607,9 +3803,11 @@ const PLAN_PREREQUISITES = {
   'drive_phase': { minExpYears: 2, minLifts: { squat: 225, deadlift: 315 } },
   'ppl_athletic': { minExpYears: 3, minLifts: { bench: 225, squat: 315, deadlift: 405, pullups: 5 } },
   'home_workout': { minExpYears: 0, minLifts: {} },
-  'upper_lower_4day': { minExpYears: 1, minLifts: { bench: 135, squat: 185, deadlift: 225 } },
+  'upper_lower_4day': { minExpYears: 0, minLifts: {} },   // F14: the default plan must be reachable by anyone
+  'full_body_3day': { minExpYears: 0, minLifts: {} },
+  'maintenance': { minExpYears: 0, minLifts: {} },
+  'athletic_power': { minExpYears: 1, minLifts: {} },
   'cut_phase': { minExpYears: 0, minLifts: {} },
-  'cut_phase_lower': { minExpYears: 0, minLifts: {} },
   'long_track': { minExpYears: 2, minLifts: { squat: 225 } }
 };
 
@@ -3624,8 +3822,10 @@ const PLAN_EQUIPMENT = {
   'ppl_athletic': ['Full gym', 'Squat rack', 'Boxes', 'Hurdles', 'Bands', 'Cables'],
   'home_workout': [],
   'upper_lower_4day': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine'],
-  'cut_phase': ['Full gym (machine-biased)', 'Cardio equipment (bike, treadmill, or stairmaster)'],
-  'cut_phase_lower': ['Full gym (machine-biased)', 'Cardio equipment (stairmaster or incline treadmill preferred)', 'Mini-band (optional Sat circuit)'],
+  'cut_phase': ['Full gym (machine-biased)', 'Incline treadmill or stairmaster (bike works too)'],
+  'full_body_3day': ['Full gym (machine-biased)'],
+  'maintenance': ['Full gym (machine-biased)', 'Incline treadmill or stairmaster'],
+  'athletic_power': ['Plyo box (12–24")', 'Low hurdles or a line on the floor', 'Bench or box for Copenhagen planks'],
   'long_track': ['Full gym', 'Squat rack', 'Barbells', 'Cable machine', 'Bike or stairmaster']
 };
 
@@ -3688,8 +3888,11 @@ function screeningCardLines(exId) {
 const DELOAD_EVERY_N_WEEKS = 4;      // time-based trigger
 const DELOAD_READINESS_FLOOR = 2.5;  // avg readiness (last 5 check-ins) below this -> suggest
 const DELOAD_STALL_COUNT = 2;        // this many lifts regressing at once -> suggest
-const DELOAD_INTENSITY = 0.8;        // deload = 80% of working weight
-const DELOAD_SET_CAP = 3;            // and no more than 3 sets
+// F2: ONE deload prescription for the whole app (a plan may override via plan.deload).
+// Halve the sets, keep the weight — the written rule in Cut Phase: Lower Bias.
+const DEFAULT_DELOAD = { setFactor: 0.5, loadFactor: 1.0 };
+// F3: a re-entry week (on-ramp volume) after this many full weeks with no session on the plan
+const REENTRY_EMPTY_WEEKS = 2;
 
 // Readiness Scoring Scale
 const READINESS_SCALE = {
@@ -3707,7 +3910,6 @@ const DEFAULT_REST_SECONDS       = 90;     // default rest timer duration
 const MAX_PUSH_OFFSET            = 6;      // max days plan can be pushed forward
 const TOAST_DURATION_MS          = 2200;   // how long toasts stay visible
 const RPE_PROGRESSION_THRESHOLD  = 9;      // RPE at/above triggers back-off signal
-const DELOAD_TRIGGER_WEEKS       = 6;      // consecutive weeks before deload nudge
 const MAX_HISTORY_DISPLAY        = 10;     // max history sessions shown in list
 const STATE_KEY                  = 'forge_state'; // localStorage key
 const VOLATILE_STATE_KEY         = 'forge_volatile'; // localStorage key for frequent saves
@@ -3806,14 +4008,14 @@ function skipInjuryScreening() {
   closeModal();
 }
 
-function checkPlanPrerequisites(planId) {
+function checkPlanPrerequisites(planId, role) {
   const prereq = PLAN_PREREQUISITES[planId] || { minExpYears: 0, minLifts: {} };
   const warnings = [];
 
   // Check injury conflicts (warn if ANY injury selected and plan is high-impact)
   if (state.injuryHistory && state.injuryHistory.types && state.injuryHistory.types.length > 0) {
     const hasInjury = state.injuryHistory.types.some(t => t !== 'None / No injuries');
-    if (hasInjury && (planId === 'drive_phase' || planId === 'ppl_athletic')) {
+    if (hasInjury && (planId === 'drive_phase' || planId === 'ppl_athletic' || planId === 'athletic_power')) {
       warnings.push('⚠️ This plan includes plyometrics and power work. High impact. Your reported injuries: ' + state.injuryHistory.types.filter(t => t !== 'None / No injuries').join(', '));
     }
   }
@@ -3821,7 +4023,7 @@ function checkPlanPrerequisites(planId) {
   // A2-VOL-02 routing (PT R2 §3.3 rows 2-5): screening answers surface plan-specific flags
   const _answers = screeningAnswers();
   if (_answers.length) {
-    const _plan = PLANS.find(p => p.id === planId);
+    const _plan = getPlan(planId);
     const _planExs = _plan ? [...new Set(Object.values(_plan.days || {}).flatMap(d => dayExIds(d)))] : [];
     SCREENING_ROUTING.forEach(r => {
       if (!_answers.includes(r.answer)) return;
@@ -3842,7 +4044,7 @@ function checkPlanPrerequisites(planId) {
     const liftNames = { bench: 'bench', squat: 'squat', deadlift: 'deadlift', pullups: 'pull-ups' };
     const liftUnits = { pullups: ' reps' };
     const lifts = Object.entries(prereq.minLifts).map(([l, w]) => (liftNames[l] || l) + ' ' + w + (liftUnits[l] || ' lb')).join(', ');
-    warnings.push('ℹ️ This plan assumes about ' + prereq.minExpYears + '+ year' + (prereq.minExpYears === 1 ? '' : 's') + ' of consistent training' + (lifts ? ' and working lifts around: ' + lifts : '') + '. Not there yet? An earlier plan will progress you faster.');
+    warnings.push('ℹ️ This plan assumes about ' + prereq.minExpYears + '+ year' + (prereq.minExpYears === 1 ? '' : 's') + ' of consistent training' + (lifts ? ' and working lifts around: ' + lifts : '') + '. Machine equivalents count (leg press or hack squat for squat, machine chest press for bench). Not there yet? An earlier plan will progress you faster.');
   }
 
   if (warnings.length > 0) {
@@ -3850,7 +4052,7 @@ function checkPlanPrerequisites(planId) {
       <p>Before you load this plan:</p>
       ${warnings.map(w => '<p>' + w + '</p>').join('')}
       <div style="margin-top: 16px; display:flex; gap:8px;">
-        <button onclick="closeModal(); loadPlanForReal('${planId}')">I understand, proceed</button>
+        <button onclick="closeModal(); ${role === 'supp' ? `setSupplementalPlan('${planId}', true)` : `if (checkEquipmentAvailable('${planId}')) loadPlanForReal('${planId}')`}">I understand, proceed</button>
         <button onclick="closeModal()" style="background:transparent; border:1px solid var(--border); color:var(--text);">Cancel</button>
       </div>
     `);
@@ -3868,7 +4070,7 @@ function checkEquipmentAvailable(planId) {
   
   // First time: ask user
   showModal('Equipment Check', `
-    <p><strong>${PLANS.find(p => p.id === planId)?.name}</strong> requires:</p>
+    <p><strong>${getPlan(planId)?.name}</strong> requires:</p>
     <ul>${equipment.map(e => '<li>' + e + '</li>').join('')}</ul>
     <p>Do you have access to all of this?</p>
     <div style="margin-top: 16px; display:flex; gap:8px;">
@@ -3887,37 +4089,85 @@ function recordEquipment(planId, status) {
 }
 
 function loadPlanForReal(planId) {
-  // Actually load the plan (this would be the original selectPlan logic)
-  const plan = PLANS.find(p => p.id === planId);
-  if (plan) {
-    state.primaryPlan = plan.id;
-    if (!state.planWeekAnchor) state.planWeekAnchor = {};
-    if (!state.planWeekAnchor[plan.id]) state.planWeekAnchor[plan.id] = today();
-    saveState();
-    showToast('✓ ' + plan.name + ' loaded as primary plan');
-    navTo('today', document.querySelector('[data-page=today]'));
-  }
+  // One apply path for every "Set as Primary" (gated or not)
+  const plan = getPlan(planId);
+  if (!plan) return;
+  setPrimaryPlan(planId);
+  if (state.primaryPlan === planId) navTo('today', document.querySelector('[data-page=today]'));
 }
 
-function weeksSinceDeloadAnchor() {
-  // Anchor = last deload, else first time we ever checked (stored once)
+/* ── F3: plan weeks are TRAINED weeks, not calendar weeks ──────────────────
+   A week counts once it has at least one logged session on the plan. Missed
+   weeks no longer advance the on-ramp, the deload schedule or the exit prompt. */
+function weekKey(dateStr) {               // Monday-start week id, local time, 'YYYY-MM-DD'
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function sessionMatchesPlan(h, plan) {    // exact name (or name + supplemental) — 'Cut Phase' must not match 'Cut Phase: Lower Bias'
+  if (!h || !h.date || !h.planName || !plan || !plan.name) return false;
+  return [plan.name].concat(plan.formerNames || []).some(n => h.planName === n || h.planName.indexOf(n + ' + ') === 0);
+}
+function planSessionDates(planId) {
+  const plan = getPlan(planId || state.primaryPlan);
+  if (!plan) return [];
+  return [...new Set((state.history || []).filter(h => sessionMatchesPlan(h, plan)).map(h => h.date))].sort();
+}
+/* Distinct trained weeks before the current week. fromDate's week is included
+   when inclusive, excluded otherwise (used for "weeks since the last deload"). */
+function trainedWeeksSince(planId, fromDate, inclusive) {
+  const cur = weekKey(today());
+  const from = fromDate ? weekKey(fromDate) : null;
+  const weeks = new Set();
+  planSessionDates(planId).forEach(d => {
+    const k = weekKey(d);
+    if (k >= cur) return;
+    if (from && (inclusive ? k < from : k <= from)) return;
+    weeks.add(k);
+  });
+  return weeks.size;
+}
+function deloadTrack(planId) {
   if (!state.deloadTracking) state.deloadTracking = {};
-  let t = state.deloadTracking[state.primaryPlan];
-  if (!t) { t = {}; state.deloadTracking[state.primaryPlan] = t; }
-  const anchor = t.lastDeloadDate || t.anchorDate;
-  if (!anchor) { t.anchorDate = today(); saveState(); return 0; }
-  const ms = new Date(today()) - new Date(anchor);
-  return Math.floor(ms / (7 * 24 * 60 * 60 * 1000));
+  const id = planId || state.primaryPlan;
+  if (!state.deloadTracking[id]) state.deloadTracking[id] = {};
+  return state.deloadTracking[id];
+}
+/* Trained weeks since the last deload (or since the plan anchor if none yet) */
+function weeksSinceDeload(planId) {
+  const id = planId || state.primaryPlan;
+  if (!id) return 0;
+  const t = deloadTrack(id);
+  if (t.lastDeloadDate) return trainedWeeksSince(id, t.lastDeloadDate, false);
+  const anchor = planAnchorDate(id);
+  return anchor ? trainedWeeksSince(id, anchor, true) : 0;
+}
+/* ── F2: one deload spec, one notion of "this is a deload week" ────────── */
+function deloadSpec(planId) {
+  const plan = getPlan(planId || state.primaryPlan);
+  return Object.assign({}, DEFAULT_DELOAD, (plan && plan.deload) || {});
+}
+function deloadSpecText(planId) {
+  const sp = deloadSpec(planId);
+  const sets = sp.setFactor === 0.5 ? 'half the sets' : Math.round(sp.setFactor * 100) + '% of the sets';
+  const load = sp.loadFactor >= 1 ? 'keep the weight' : 'weights at ' + Math.round(sp.loadFactor * 100) + '%';
+  return sets + ', ' + load;
+}
+function inDeloadWeek() {
+  return isDeloadActive() || isScheduledDeloadWeek();
 }
 
 function getDeloadSignals() {
   if (!state.primaryPlan) return [];
   const signals = [];
 
-  // 1. Time: every N weeks of continuous training since last deload
-  const weeks = weeksSinceDeloadAnchor();
-  if (weeks >= DELOAD_EVERY_N_WEEKS) {
-    signals.push('Week ' + (weeks + 1) + ' since your last deload');
+  // 1. Time: N trained weeks since last deload. Plans with a fixed block
+  //    (blockLength) schedule their own deload week, so they skip this signal.
+  if (!planBlockLength(state.primaryPlan)) {
+    const weeks = weeksSinceDeload(state.primaryPlan);
+    if (weeks >= DELOAD_EVERY_N_WEEKS) {
+      signals.push(weeks + ' training weeks since your last deload');
+    }
   }
 
   // 2. Readiness trend: recent check-ins averaging low
@@ -3930,7 +4180,7 @@ function getDeloadSignals() {
   }
 
   // 3. Stalls: multiple lifts regressing at once
-  const plan = PLANS.find(function(pl) { return pl.id === state.primaryPlan; });
+  const plan = getPlan(state.primaryPlan);
   if (plan) {
     const allEx = Object.values(plan.days).reduce(function(a, d) { return a.concat(dayExIds(d)); }, []);
     const unique = allEx.filter(function(id, i) { return allEx.indexOf(id) === i; });
@@ -3960,11 +4210,12 @@ function startDeloadWeek() {
   const until = new Date();
   until.setDate(until.getDate() + 7);
   state.deloadMode = { planId: state.primaryPlan, until: until.toISOString().slice(0, 10) };
-  if (!state.deloadTracking[state.primaryPlan]) state.deloadTracking[state.primaryPlan] = {};
-  state.deloadTracking[state.primaryPlan].lastDeloadDate = today();
-  state.deloadTracking[state.primaryPlan].deloadPromptDismissed = null;
+  const t = deloadTrack(state.primaryPlan);
+  t.lastDeloadDate = today();
+  t.lastDeloadKind = 'manual';
+  t.deloadPromptDismissed = null;
   saveState();
-  showToast('🔋 Deload active through ' + state.deloadMode.until + ' \u2014 weights auto-reduced');
+  showToast('🔋 Deload active through ' + state.deloadMode.until + ' \u2014 ' + deloadSpecText());
   renderToday();
 }
 
@@ -3973,11 +4224,13 @@ function checkDeloadWeek() {
   if (isDeloadActive()) return;
   const t = state.deloadTracking[state.primaryPlan] || {};
   if (t.deloadPromptDismissed === today()) return; // don't re-ask same day
+  // Never stack: a scheduled deload, the on-ramp or a re-entry week already lightens the week
+  if (isScheduledDeloadWeek() || isOnRampWeek() || isReentryWeek()) return;
   const signals = getDeloadSignals();
   if (!signals.length) return;
   showConfirmDialog(
     '🔋 Deload suggested',
-    signals.join(' \u00b7 ') + '. Run a deload week? Weights drop to ' + (DELOAD_INTENSITY * 100) + '%, cap ' + DELOAD_SET_CAP + ' sets, for 7 days.',
+    signals.join(' \u00b7 ') + '. Run a deload week? For 7 days: ' + deloadSpecText() + '.',
     'Start Deload', 'Not Yet',
     startDeloadWeek,
     function() {
@@ -4075,27 +4328,17 @@ function saveReadiness() {
   }
 }
 
-function showPlanRecommendations() {
-  const current = PLANS.find(p => p.id === state.primaryPlan);
-  if (!current) return;
-  
-  const currentIndex = PLANS.findIndex(p => p.id === state.primaryPlan);
-  const progression = [
-    { level: 'Beginner', plans: ['beginner_fullbody'] },
-    { level: 'Intermediate', plans: ['intermediate_ppl', 'weight_loss_cardio', 'pure_cardio', 'home_workout'] },
-    { level: 'Advanced', plans: ['drive_phase', 'advanced_split', 'ppl_athletic'] }
-  ];
-  
-  // Find current level
-  let currentLevel = 0;
-  progression.forEach((p, i) => {
-    if (p.plans.includes(state.primaryPlan)) currentLevel = i;
-  });
-  
-  if (currentLevel < progression.length - 1) {
-    const nextLevel = progression[currentLevel + 1];
-    console.log('Progression recommendation: Ready to try ' + nextLevel.level + ' plans');
-  }
+/* F13: the path through the catalog — Start → Upper/Lower → Build ⇄ Cut → Maintain → Build.
+   Offered by the exit prompt when a plan with exitWeeks reaches its end. */
+const PLAN_PATH = {
+  beginner_fullbody: 'upper_lower_4day',
+  weight_loss_cardio: 'upper_lower_4day',
+  cut_phase: 'maintenance',
+  maintenance: 'upper_lower_4day',
+};
+function nextPlanFor(planId) {
+  const next = PLAN_PATH[planId];
+  return next ? getPlan(next) : null;
 }
 
 function loadState() {
@@ -4121,6 +4364,8 @@ function loadState() {
     if (!state.deloadTracking) state.deloadTracking = {};
     if (!state.readinessLog) state.readinessLog = [];
     if (!state.planProgressionPath) state.planProgressionPath = null;
+    if (!state.planOptions) state.planOptions = {};
+    try { if (migratePlanIds()) saveState(); } catch (_mErr) {}
 
   }
 
@@ -4177,10 +4422,64 @@ function getDayOfWeek() {
   return (base + offset) % 7;
 }
 
+/* F9: plan options (e.g. Cut Phase → Lower-Body Bias) swap in a variant's schedule/days */
+function planOptionOn(planId, key) {
+  const o = state.planOptions && state.planOptions[planId];
+  if (o && Object.prototype.hasOwnProperty.call(o, key)) return !!o[key];
+  const plan = PLANS.find(p => p.id === planId);
+  const opt = plan && (plan.options || []).find(x => x.key === key);
+  return !!(opt && opt.default);
+}
+function resolvePlanOptions(plan) {
+  if (!plan.options || !plan.variants) return plan;
+  let out = plan;
+  plan.options.forEach(o => { if (planOptionOn(plan.id, o.key) && plan.variants[o.key]) out = Object.assign({}, out, plan.variants[o.key]); });
+  return out;
+}
+function setPlanOption(planId, key, on) {
+  if (!state.planOptions) state.planOptions = {};
+  if (!state.planOptions[planId]) state.planOptions[planId] = {};
+  state.planOptions[planId][key] = !!on;
+  if (state.todayLog) state.todayLog = {};   // today's card list follows the new variant
+  saveState();
+  renderPlans();
+  if (typeof renderToday === 'function') renderToday();
+  const plan = PLANS.find(p => p.id === planId);
+  const opt = plan && (plan.options || []).find(x => x.key === key);
+  showToast((on ? '✓ ' : '○ ') + (opt ? opt.label : key) + (on ? ' on' : ' off'));
+}
+/* Retired / merged plan ids → their replacement. Runs on load and after a backup import. */
+const PLAN_ID_MIGRATIONS = {
+  cut_phase_lower: { to: 'cut_phase', options: { lowerBias: true } },
+};
+function migratePlanIds() {
+  let changed = false;
+  Object.entries(PLAN_ID_MIGRATIONS).forEach(([from, m]) => {
+    let active = false;
+    ['primaryPlan', 'supplementalPlan', 'activePlan'].forEach(k => {
+      if (state[k] === from) { state[k] = m.to; active = true; changed = true; }
+    });
+    ['planWeekAnchor', 'deloadTracking', 'planOverrides', 'planExitPrompted', 'equipmentAvailable', 'planOptions'].forEach(k => {
+      const o = state[k];
+      if (o && o[from] !== undefined) {
+        if (o[m.to] === undefined || active) o[m.to] = o[from];
+        delete o[from];
+        changed = true;
+      }
+    });
+    if (state.deloadMode && state.deloadMode.planId === from) { state.deloadMode.planId = m.to; changed = true; }
+    if (active && m.options) {
+      if (!state.planOptions) state.planOptions = {};
+      state.planOptions[m.to] = Object.assign({}, m.options, state.planOptions[m.to] || {});
+    }
+  });
+  return changed;
+}
+
 function getPlan(id) {
   // Check static plans first
   const found = PLANS.find(p => p.id === id);
-  if (found) return found;
+  if (found) return resolvePlanOptions(found);
   // Fall through to generated plan stored in state
   if (state.generatedPlanData && state.generatedPlanData.id === id) return state.generatedPlanData;
   return null;
@@ -4218,10 +4517,9 @@ function normalizeDay(day) {
 }
 /* ═══ PLAN-WEEK FEATURES ═══════════════════════════════════════════════════
    Turns a plan's written rules into behaviour. Only engages for plans that
-   declare `blockLength` (today: cut_phase_lower) — every other plan is
+   declare `blockLength` (today: cut_phase) — every other plan is
    completely unaffected. */
 const ONRAMP_FACTOR = 0.7;      // week 1 runs at ~70% of listed sets (round down)
-const PLAN_EXIT_WEEKS = 16;     // exit-criteria prompt window
 
 /* A returning user — or anyone importing a backup made before plan-week
    tracking existed — has no stored anchor. Deriving it from their logged
@@ -4230,7 +4528,7 @@ function derivePlanAnchor(planId) {
   const plan = getPlan(planId);
   if (!plan || !plan.name) return null;
   const dates = (state.history || [])
-    .filter(h => h && h.date && h.planName && h.planName.indexOf(plan.name) !== -1)
+    .filter(h => sessionMatchesPlan(h, plan))
     .map(h => h.date)
     .sort();
   return dates.length ? dates[0] : null;   // first session logged on this plan
@@ -4270,9 +4568,12 @@ function reconcileImportedHistory() {
   const deloads = priorDeloadCount();
   const bits = ['<p style="margin-bottom:10px;">Restored <b>' + sessions + ' session' + (sessions === 1 ? '' : 's') + '</b> of history.</p>'];
   if (plan && bl) {
-    bits.push('<p style="margin-bottom:10px;">You are on <b>week ' + wk + '</b> of ' + plan.name
-      + ' — so the week-1 on-ramp does not apply' + (wk % bl === 0 ? ', and this is a scheduled deload week' : '')
-      + '. Next deload: week ' + (Math.floor((wk - 1) / bl) + 1) * bl + '.</p>');
+    const _sched = isScheduledDeloadWeek(id);
+    const _left = Math.max(0, bl - 1 - weeksSinceDeload(id));
+    bits.push('<p style="margin-bottom:10px;">You are on <b>training week ' + wk + '</b> of ' + plan.name
+      + (wk > 1 ? ' — so the week-1 on-ramp does not apply' : '')
+      + (_sched ? ', and this is a scheduled deload week' : '. Next deload: after ' + _left + ' more training week' + (_left === 1 ? '' : 's'))
+      + '. Only weeks you actually trained count.</p>');
   }
   if (deloads) {
     bits.push('<p style="margin-bottom:10px;">Found <b>' + deloads + ' previous deload session' + (deloads === 1 ? '' : 's')
@@ -4287,34 +4588,71 @@ function planWeekNumber(planId) {
   const id = planId || state.primaryPlan;
   const anchor = planAnchorDate(id);
   if (!anchor) return 0;
-  const ms = new Date(today()) - new Date(anchor);
-  return Math.floor(ms / 86400000 / 7) + 1;   // day 0 = week 1
+  return trainedWeeksSince(id, anchor, true) + 1;   // F3: trained weeks so far + this week
 }
 function planBlockLength(planId) {
   const plan = getPlan(planId || state.primaryPlan);
   return plan && plan.blockLength ? plan.blockLength : null;
 }
 function isScheduledDeloadWeek(planId) {
-  const bl = planBlockLength(planId);
+  const id = planId || state.primaryPlan;
+  const bl = planBlockLength(id);
   if (!bl) return false;
-  const w = planWeekNumber(planId);
-  return w > 0 && w % bl === 0;              // every 4th week
+  const t = deloadTrack(id);
+  // Once a scheduled deload has started this week, the whole week stays a deload week
+  if (t.lastDeloadDate && t.lastDeloadKind === 'scheduled' && weekKey(t.lastDeloadDate) === weekKey(today())) return true;
+  if (isDeloadActive()) return false;        // a manual deload is already running — never stack
+  if (isReentryWeek(id)) return false;       // 2+ weeks off already did the deload's job
+  return weeksSinceDeload(id) >= bl - 1;     // e.g. blockLength 4: three trained weeks, then deload
 }
 function isOnRampWeek(planId) {
   return !!planBlockLength(planId) && planWeekNumber(planId) === 1;
 }
+/* F3: coming back after 2+ full weeks off the plan → one week at on-ramp volume */
+function isReentryWeek(planId) {
+  const id = planId || state.primaryPlan;
+  if (!id || isOnRampWeek(id)) return false;
+  const cur = weekKey(today());
+  const before = planSessionDates(id).filter(d => weekKey(d) < cur);
+  if (!before.length) return false;
+  const gapWeeks = Math.round((new Date(cur + 'T12:00:00') - new Date(weekKey(before[before.length - 1]) + 'T12:00:00')) / (7 * 86400000)) - 1;
+  return gapWeeks >= REENTRY_EMPTY_WEEKS;
+}
 /* Anchor lift falling two weeks running → hold-the-line failure protocol */
+/* F5: compare the best estimated set (load × reps) across the last three VALID
+   sessions — skipping deloads, partial sessions and sets logged without a weight —
+   so a machine logged at 0 lb no longer switches the check off. */
+function bestSetScore(entry) {
+  const sets = (entry.sets || []).filter(s => (s.r || 0) > 0 && (s.w || 0) > 0);
+  if (!sets.length) return null;
+  return Math.max(...sets.map(s => s.w * (1 + s.r / 30)));
+}
 function anchorLiftDropping(exId) {
+  const scores = progLog(exId).map(bestSetScore).filter(v => v !== null).slice(0, 3);
+  if (scores.length < 3) return false;
+  return scores[0] < scores[1] && scores[1] < scores[2];
+}
+/* Latest working session of an anchor has reps but no load → the app cannot protect it */
+function anchorUnreadable(exId) {
   const log = ((state.exerciseLog && state.exerciseLog[exId]) || []).filter(e => !e.deload);
-  if (log.length < 3) return false;
-  const t = log.slice(0, 3).map(progTopSet);
-  if (t.some(x => !x || !x.weight)) return false;
-  return t[0].weight < t[1].weight && t[1].weight < t[2].weight;
+  if (!log.length) return false;
+  const sets = (log[0].sets || []).filter(s => (s.r || 0) > 0);
+  return sets.length > 0 && sets.every(s => !(s.w > 0));
 }
 function checkHoldTheLine() {
-  const anchors = ANCHOR_LIFTS[state.primaryPlan] || [];
+  const anchors = resolveAnchorIds(state.primaryPlan);
   const dropping = anchors.filter(anchorLiftDropping);
-  if (!dropping.length) return;
+  if (!dropping.length) {
+    const blind = anchors.filter(anchorUnreadable);
+    const lastBlind = state.anchorBlindWarnedOn ? new Date(state.anchorBlindWarnedOn) : null;
+    if (blind.length && !(lastBlind && (new Date(today()) - lastBlind) / 86400000 < 7)) {
+      state.anchorBlindWarnedOn = today();
+      saveState();
+      const nm = blind.map(id => (EXERCISES[id] ? EXERCISES[id].name : id)).join(' and ');
+      showToast('⚠️ ' + nm + ' was last logged without a weight — log the stack or plate load so the app can protect it.');
+    }
+    return;
+  }
   const last = state.holdLineWarnedOn ? new Date(state.holdLineWarnedOn) : null;
   if (last && (new Date(today()) - last) / 86400000 < 7) return;
   state.holdLineWarnedOn = today();
@@ -4331,16 +4669,27 @@ function checkHoldTheLine() {
 /* Exit criteria — offered once per plan run */
 function checkPlanExitCriteria() {
   const id = state.primaryPlan;
-  if (!id || !planBlockLength(id)) return;
-  if (planWeekNumber(id) < PLAN_EXIT_WEEKS) return;
+  const plan = id ? getPlan(id) : null;
+  const exitWeeks = plan && plan.exitWeeks;
+  if (!exitWeeks) return;
+  if (planWeekNumber(id) < exitWeeks) return;
   if (!state.planExitPrompted) state.planExitPrompted = {};
   if (state.planExitPrompted[id] === planAnchorDate(id)) return;
   state.planExitPrompted[id] = planAnchorDate(id);
   saveState();
+  const next = nextPlanFor(id);
+  const why = id === 'cut_phase'
+    ? '<p style="margin-bottom:12px;"><b>Next: an 8–12 week maintenance block before starting a building phase.</b> Indefinite dieting is what drives the post-cut regain pattern.</p>'
+    : id === 'maintenance'
+      ? '<p style="margin-bottom:12px;"><b>Your new weight has had time to settle.</b> A building plan is the next step — or another Cut Phase if fat loss is still the priority.</p>'
+      : '<p style="margin-bottom:12px;"><b>You have built the base this plan is for.</b> The next plan trains every muscle twice a week with more room to progress.</p>';
   showModal('You\u2019ve reached the end of this block', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
-    + '<p style="margin-bottom:12px;">This plan runs until goal weight or about ' + PLAN_EXIT_WEEKS + ' weeks — you are at week ' + planWeekNumber(id) + '.</p>'
-    + '<p style="margin-bottom:12px;"><b>Next: an 8–12 week maintenance block before starting a building phase.</b> Indefinite dieting is what drives the post-cut regain pattern.</p>'
-    + '<button onclick="closeModal()" style="width:100%;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Got it</button></div>');
+    + '<p style="margin-bottom:12px;">' + plan.name + ' runs about ' + exitWeeks + ' training weeks' + (id === 'cut_phase' ? ' (or until goal weight)' : '') + ' — you are at training week ' + planWeekNumber(id) + '.</p>'
+    + why
+    + '<div style="display:flex;gap:8px;">'
+    + (next ? '<button onclick="closeModal();selectPlanWithGates(\'' + next.id + '\')" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Switch to ' + next.name + '</button>' : '')
+    + '<button onclick="closeModal()" style="flex:1;padding:11px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);">Not yet</button>'
+    + '</div></div>');
 }
 
 /* Schematic movement demos — DRAFT, awaiting trainer/PT movement-depiction
@@ -4514,8 +4863,8 @@ function doseSets(exId, ex) {
   const base = (d && d.sets) ? d.sets : (ex ? ex.sets : 3);
   // Week-1 on-ramp (~70%, round down) and scheduled deload (halve) are plan rules,
   // not suggestions — they change the prescription itself. Never below 1 set.
-  if (isOnRampWeek()) return Math.max(1, Math.floor(base * ONRAMP_FACTOR));
-  if (isScheduledDeloadWeek()) return Math.max(1, Math.floor(base / 2));
+  if (isOnRampWeek() || isReentryWeek()) return Math.max(1, Math.floor(base * ONRAMP_FACTOR));
+  if (inDeloadWeek()) return Math.max(1, Math.floor(base * deloadSpec().setFactor));
   return base;
 }
 function doseReps(exId, ex) {
@@ -4534,6 +4883,48 @@ function getTodayWorkout(planId) {
     return normalizeDay(dayData) || { name: 'Rest', exercises: [] };
   }
   return normalizeDay(plan.days[dow]);
+}
+
+/* F17: weekly hard sets per muscle. Primary muscle = 1 set, secondary = 0.5.
+   Timed cardio is not counted. */
+const MUSCLE_ORDER = ['Quads','Hamstrings','Glutes','Abductors','Adductors','Calves','Chest','Back','Shoulders','Biceps','Triceps','Core'];
+function addMuscleSets(totals, exId, sets) {
+  const m = EXERCISE_META[exId];
+  if (!m || !sets || m.p.includes('Cardio')) return;
+  m.p.forEach(g => { totals[g] = (totals[g] || 0) + sets; });
+  m.s.forEach(g => { totals[g] = (totals[g] || 0) + sets * 0.5; });
+}
+function planWeeklySets(planId) {
+  const plan = getPlan(planId);
+  const totals = {};
+  if (!plan) return totals;
+  Object.values(plan.days || {}).forEach(day => {
+    (day && day.exercises || []).forEach(e => {
+      const id = typeof e === 'string' ? e : e.id;
+      const sets = (typeof e === 'object' && e.sets) ? e.sets : (EXERCISES[id] ? EXERCISES[id].sets : 0);
+      addMuscleSets(totals, limitSafeId(id, id), sets);
+    });
+  });
+  return totals;
+}
+function loggedWeeklySets(refDate) {
+  const wk = weekKey(refDate || today());
+  const totals = {};
+  (state.history || []).filter(h => h && h.date && weekKey(h.date) === wk).forEach(h => {
+    (h.exercises || []).forEach(ex => addMuscleSets(totals, ex.id, (ex.sets || []).filter(st => (st.r || 0) > 0).length));
+  });
+  return totals;
+}
+function muscleSetsHTML(totals, opts) {
+  const o = opts || {};
+  const items = MUSCLE_ORDER.filter(g => totals[g]).map(g => {
+    const v = Math.round(totals[g] * 2) / 2;
+    // flag only the big movers — accessory groups (calves, adductors, arms) are fine below 6
+    const major = ['Quads','Hamstrings','Glutes','Chest','Back','Shoulders'].includes(g);
+    const flag = (o.flags && major) ? (v < 6 ? ' ⚠️ low' : v > 22 ? ' ⚠️ high' : '') : '';
+    return `<span style="white-space:nowrap;">${g} <b>${v}</b>${flag}</span>`;
+  });
+  return items.length ? items.join(' · ') : (o.empty || '');
 }
 
 // Count active training days in a plan (used for compatibility check)
@@ -4568,7 +4959,19 @@ function checkPlanCompatibility(primaryId, suppId) {
     const sHas = sDay && sDay.exercises && sDay.exercises.length > 0;
     if (pHas && sHas) conflicts.push(DAYS[d]);
   }
-  const totalActive = countActiveDays(primaryId) + countActiveDays(suppId);
+  // Training days = the UNION of days with lifting or drills on either plan. Days that are
+  // only easy cardio (Zone 2 walk/bike) are not training load, and an add-on sharing a day
+  // with the main plan does not add a day.
+  const isLoadDay = day => !!(day && day.exercises && day.exercises.some(e => {
+    const id = typeof e === 'string' ? e : e.id;
+    return !(LOG_TYPES[id] && LOG_TYPES[id].reps === 'Minutes');
+  }));
+  let totalActive = 0;
+  for (let d = 0; d < 7; d++) {
+    const pDay = primary.days[d] ?? primary.days[String(d)];
+    const sDay = supp.days[d] ?? supp.days[String(d)];
+    if (isLoadDay(pDay) || isLoadDay(sDay)) totalActive++;
+  }
   if (totalActive > 6) {
     warnings.push(`${totalActive} training days combined — fewer than 1 rest day. High injury risk.`);
   }
@@ -4621,36 +5024,21 @@ function showToast(msg) {
 // ═══════════════════════════════════════════════════════════════════════════
 const NUDGE_INTERVAL_DAYS = 30;   // show nudge after this many days without export
 const NUDGE_SNOOZE_DAYS  = 7;    // "Later" snoozes for this many days
-const DELOAD_WEEKS = 6;           // suggest deload after this many consecutive weeks
 
 function checkDeloadNudge() {
+  // F2: the banner reflects the SAME signals as the deload prompt — it no longer
+  // counts every week of history (which never reset and stayed on forever).
   const nudge = DOM.deloadNudge;
   if (!nudge) return;
-  if (!state.primaryPlan || !state.history || state.history.length === 0) {
-    nudge.style.display = 'none'; return;
-  }
-  // Snoozed?
-  if (state.deloadSnoozedUntil && new Date().toISOString() < state.deloadSnoozedUntil) {
-    nudge.style.display = 'none'; return;
-  }
-  // Count distinct weeks with at least one session on this plan
-  const planSessions = state.history.filter(h => h.planName);
-  if (planSessions.length === 0) { nudge.style.display = 'none'; return; }
-  // Get weeks as YYYY-Www strings
-  const weeks = new Set(planSessions.map(h => {
-    const d = new Date(h.date);
-    const jan1 = new Date(d.getFullYear(), 0, 1);
-    const week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
-    return `${d.getFullYear()}-W${week}`;
-  }));
-  const weekCount = weeks.size;
-  if (weekCount >= DELOAD_WEEKS) {
-    const sub = document.getElementById('deload-nudge-sub');
-    if (sub) sub.textContent = `${weekCount} weeks of consistent training — reduce volume by 40% this week to recover`;
-    nudge.style.display = 'block';
-  } else {
-    nudge.style.display = 'none';
-  }
+  const hide = () => { nudge.style.display = 'none'; };
+  if (!state.primaryPlan || !state.history || state.history.length === 0) return hide();
+  if (state.deloadSnoozedUntil && new Date().toISOString() < state.deloadSnoozedUntil) return hide();
+  if (inDeloadWeek() || isOnRampWeek() || isReentryWeek()) return hide();
+  const signals = getDeloadSignals();
+  if (!signals.length) return hide();
+  const sub = document.getElementById('deload-nudge-sub');
+  if (sub) sub.textContent = signals.join(' · ') + ' — a deload week means ' + deloadSpecText() + '.';
+  nudge.style.display = 'block';
 }
 
 function dismissDeload() {
@@ -4833,7 +5221,7 @@ function renderToday() {
         page.insertBefore(b, page.firstChild);
       }
       const el = document.getElementById('deload-banner');
-      if (el) el.innerHTML = '🔋 <b>Deload week</b> · weights at ' + (DELOAD_INTENSITY * 100) + '% · stop at ' + DELOAD_SET_CAP + ' sets · ends ' + state.deloadMode.until;
+      if (el) el.innerHTML = '🔋 <b>Deload week</b> · ' + deloadSpecText() + ' · ends ' + state.deloadMode.until;
     } else if (existing) {
       existing.remove();
     }
@@ -4843,8 +5231,9 @@ function renderToday() {
   (function() {
     const page = document.getElementById('page-today');
     const existing = document.getElementById('planweek-banner');
-    const onRamp = isOnRampWeek(), sched = isScheduledDeloadWeek();
-    if ((onRamp || sched) && page) {
+    const onRamp = isOnRampWeek(), reentry = isReentryWeek();
+    const sched = isScheduledDeloadWeek() && !isDeloadActive();   // the manual-deload banner covers that case
+    if ((onRamp || reentry || sched) && page) {
       let el = existing;
       if (!el) {
         el = document.createElement('div');
@@ -4854,8 +5243,10 @@ function renderToday() {
         page.insertBefore(el, page.firstChild);
       }
       el.innerHTML = sched
-        ? '🔋 <b>Deload week</b> (week ' + planWeekNumber() + ') — sets are halved, keep the weight. Non-negotiable: this is how the block keeps working.'
-        : '🌱 <b>Week 1 is an on-ramp</b> — fewer sets, learn the movements, log honest effort. Full volume from week 2.';
+        ? '🔋 <b>Deload week</b> (training week ' + planWeekNumber() + ') — ' + deloadSpecText() + '. Non-negotiable: this is how the block keeps working.'
+        : reentry
+          ? '🌱 <b>Welcome back</b> — after 2+ weeks off, this week runs at on-ramp volume. Weights stay honest; full volume next week.'
+          : '🌱 <b>Week 1 is an on-ramp</b> — fewer sets, learn the movements, log honest effort. Full volume from week 2.';
     } else if (existing) {
       existing.remove();
     }
@@ -5228,7 +5619,8 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
       : String(doseReps(exId, effectiveEx));
   // Say WHY the set count is reduced, so a short day never looks like a glitch
   const _setsNote = volumeOverride ? '' : (isOnRampWeek() ? ' <span class="rec-chip-why">on-ramp</span>'
-                    : isScheduledDeloadWeek() ? ' <span class="rec-chip-why">deload</span>' : '');
+                    : isReentryWeek() ? ' <span class="rec-chip-why">re-entry</span>'
+                    : inDeloadWeek() ? ' <span class="rec-chip-why">deload</span>' : '');
 
   // Get progression status for this exercise
   const progStatus = getProgressionStatus(exId);
@@ -5238,8 +5630,9 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
   const defaultW = startingWeight(exId, effectiveEx);   // honours a 'use this next time' prefill
   let suggestedW = (progStatus && progStatus.suggestedWeight > 0)
     ? progStatus.suggestedWeight : defaultW;
-  if (isDeloadActive() && suggestedW > 0) {
-    suggestedW = Math.max(5, Math.round((suggestedW * DELOAD_INTENSITY) / 5) * 5);
+  const _dl = deloadSpec();
+  if (inDeloadWeek() && suggestedW > 0 && _dl.loadFactor < 1) {
+    suggestedW = Math.max(5, Math.round((suggestedW * _dl.loadFactor) / 5) * 5);
   }
   const allAtDefault = logEntry.sets.every(s => s.weight == null || s.weight === defaultW || s.weight === 0);
   if (allAtDefault && suggestedW !== defaultW) {
@@ -5255,7 +5648,7 @@ function buildExCard(exId, ex, logEntry, volumeOverride, isSwapped) {
     <div class="ex-card-header" onclick="toggleExCard('${exId}')">
       <div class="ex-icon ${effectiveEx.muscleClass}">${effectiveEx.icon}</div>
       <div class="ex-card-info">
-        <div class="ex-name">${effectiveEx.name}${isSwapped ? ' <span style="font-size:10px;font-family:var(--font-mono);color:var(--yellow);font-weight:400;letter-spacing:0.3px;">↔ swapped</span>' : ''}</div>
+        <div class="ex-name">${effectiveEx.name}${isSwapped ? ' <span style="font-size:10px;font-family:var(--font-mono);color:var(--yellow);font-weight:400;letter-spacing:0.3px;">↔ swapped' + (violatesLimits(exId) && getSwappedExId(exId) !== exId && !(state.todaySwaps[today()] && state.todaySwaps[today()][exId]) ? ' · ' + limitReason(exId) : '') + '</span>' : ''}</div>
         <div class="ex-muscle">${effectiveEx.muscle}</div>
       </div>
       <div class="ex-status">${logEntry.complete ? '✅' : '○'}</div>
@@ -5429,7 +5822,7 @@ function toggleExComplete(exId) {
     showToast('💪 Exercise complete!');
   }
   saveState();
-  if (entry.complete) setTimeout(() => checkDoubleProgression(exId), 400);  // double-progression check
+  if (entry.complete) setTimeout(() => { if (!checkZeroLoad(exId)) checkDoubleProgression(exId); }, 400);  // F21, then double progression
 
   // Update card DOM
   const card = document.getElementById('excard-' + exId);
@@ -5590,7 +5983,7 @@ const MUSCLE_POOLS = {
   Shoulders: ['ohp','lateral_raise','rear_delt_fly','shrug','face_pull','pike_pushup'] /* FR-10/VOL-003: upright_row pool removal */,
   Arms:      ['bicep_curl','hammer_curl','tricep_pushdown','skull_crusher','tricep_dip_chair'],
   Core:      ['plank','dead_bug','plank_rotation','pallof_press','ab_wheel','ab_wheel_bw'],
-  Cardio:    ['burpee','jump_squat','mountain_climber','high_knees','box_jump','treadmill_run','bike','jump_rope'],
+  Cardio:    ['incline_walk','bike','treadmill_run','bike_sprint','rower_interval','burpee','mountain_climber','high_knees','jump_rope'],
 };
 
 // ── Split templates by day count ─────────────────────────────────────────
@@ -5602,17 +5995,17 @@ const SPLIT_TEMPLATES = {
   },
   4: {
     strength:    ['Upper','Lower','Upper','Lower'],
-    hypertrophy: ['Push','Pull','Legs','Upper'],
+    hypertrophy: ['Upper','Lower','Upper','Lower'],   // F12: every muscle twice a week
     fatloss:     ['Full Body','Cardio','Full Body','Cardio'],
   },
   5: {
     strength:    ['Push','Pull','Legs','Core/Accessory','Lower'],
-    hypertrophy: ['Chest + Tris','Back + Bis','Legs','Shoulders + Arms','Full Body'],
+    hypertrophy: ['Upper','Lower','Push','Pull','Legs'],   // F12: twice-a-week frequency
     fatloss:     ['Full Body','HIIT','Full Body','HIIT','Full Body'],
   },
   6: {
     strength:    ['Push','Pull','Legs','Push','Pull','Legs'],
-    hypertrophy: ['Chest','Back','Legs','Shoulders','Arms','Full Body'],
+    hypertrophy: ['Push','Pull','Legs','Push','Pull','Legs'],   // F12: twice-a-week frequency
     fatloss:     ['Full Body','HIIT','Full Body','HIIT','Full Body','Cardio'],
   },
 };
@@ -5655,6 +6048,17 @@ function pickRandom(arr, n) {
   return shuffled.slice(0, Math.min(n, shuffled.length));
 }
 
+/* F12: the generator only draws exercises the user can do — movement limits,
+   injury-screen flags, and no specialist power drills in general plans. */
+function generatorPool(muscle) {
+  const flagged = new Set();
+  const ans = screeningAnswers();
+  SCREENING_ROUTING.forEach(r => { if (r.flagged && ans.includes(r.answer)) r.flagged.forEach(id => flagged.add(id)); });
+  return (MUSCLE_POOLS[muscle] || []).filter(id => {
+    const m = EXERCISE_META[id] || {};
+    return !m.genExclude && !violatesLimits(id) && !flagged.has(id);
+  });
+}
 function getSessionExercises(sessionLabel, focusMuscles, level, goal) {
   let muscles = SESSION_MUSCLES[sessionLabel] || ['Chest','Back','Legs'];
 
@@ -5673,7 +6077,7 @@ function getSessionExercises(sessionLabel, focusMuscles, level, goal) {
   const remainder = targetCount % muscles.length;
 
   muscles.forEach((muscle, i) => {
-    const musclePool = MUSCLE_POOLS[muscle] || [];
+    const musclePool = generatorPool(muscle);
     const perMuscle = base + (i < remainder ? 1 : 0);
     pickRandom(musclePool, perMuscle).forEach(id => {
       if (!pool.includes(id)) pool.push(id);
@@ -5682,14 +6086,14 @@ function getSessionExercises(sessionLabel, focusMuscles, level, goal) {
 
   // Fill any remaining slots (can happen if a muscle pool was too small)
   if (pool.length < targetCount) {
-    const allMuscleExs = muscles.flatMap(m => MUSCLE_POOLS[m] || []);
+    const allMuscleExs = muscles.flatMap(m => generatorPool(m));
     pickRandom(allMuscleExs, targetCount - pool.length + 3).forEach(id => {
       if (!pool.includes(id) && pool.length < targetCount) pool.push(id);
     });
   }
 
   // Cap to what the pool actually contains — never promise more than available
-  const maxPossible = [...new Set(muscles.flatMap(m => MUSCLE_POOLS[m] || []))].length;
+  const maxPossible = [...new Set(muscles.flatMap(m => generatorPool(m)))].length;
   return pool.slice(0, Math.min(targetCount, maxPossible));
 }
 
@@ -5833,6 +6237,17 @@ function renderPlans() {
   container.innerHTML = '';
   const dow = getDayOfWeek();
 
+  // F19: movement limits — set once, applied to every plan, swap and the generator
+  (function() {
+    const l = movementLimits();
+    const bar = document.createElement('div');
+    bar.style.cssText = 'grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:2px 0 6px;';
+    const chip = (key, label, on) => `<button onclick="setMovementLimit('${key}', ${!on})" class="plan-tag" style="cursor:pointer;${on ? 'background:var(--accent);color:var(--color-brand-on-primary);border-color:var(--accent);' : ''}">${on ? '✓ ' : ''}${label}</button>`;
+    bar.innerHTML = '<span style="font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;">My limits</span>'
+      + chip('noJumping', 'No jumping', l.noJumping) + chip('noFloor', 'No floor work', l.noFloor);
+    container.appendChild(bar);
+  })();
+
   // ── Helper: build a plan card element ─────────────────────────────────
   function makePlanCard({ id, badge, badgeBg, name, desc, watchType, watchTypeAlt, tags, color, todayLabel, isTodayRest, isPrimary, isSupplemental, isExpanded, isGenerated, volumeNote }) {
     const isAnyActive = isPrimary || isSupplemental;
@@ -5867,7 +6282,7 @@ function renderPlans() {
   }
 
   // ── Helper: build the dropdown element (always spans full width) ────────
-  function makeDropdown({ id, schedule, days, isPrimary, isSupplemental, isGenerated, volumeNote }) {
+  function makeDropdown({ id, schedule, days, isPrimary, isSupplemental, isGenerated, volumeNote, plan }) {
     const dropdown = document.createElement('div');
     dropdown.className = 'plan-dropdown open';
 
@@ -5899,6 +6314,18 @@ function renderPlans() {
            font-family:var(--font-mono);font-size:10px;color:var(--muted);">📊 ${volumeNote}</div>`
       : '';
 
+    // F9: plan options (e.g. Lower-Body Bias) as toggles
+    const optionRows = (plan && plan.options ? plan.options : []).map(o => {
+      const on = planOptionOn(id, o.key);
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--border);">
+          <div style="flex:1;min-width:0;"><div class="sched-label" style="font-weight:700;">${o.label}</div>
+          <div style="font-size:11.5px;color:var(--muted);line-height:1.45;">${o.desc || ''}</div></div>
+          <button class="select-plan-btn" onclick="event.stopPropagation();setPlanOption('${id}','${o.key}',${!on})"
+            style="flex:0 0 auto;${on ? '' : 'background:var(--bg3);border:1px solid var(--border);color:var(--text);'}">${on ? 'On' : 'Off'}</button>
+        </div>`;
+    }).join('');
+    const addOn = !!(plan && plan.addOn);
+
     let actions = '';
     if (isGenerated) {
       actions = `<button class="deactivate-plan-btn" onclick="clearGeneratedPlan()">✕ Deactivate</button>`;
@@ -5911,18 +6338,25 @@ function renderPlans() {
         <button class="deactivate-plan-btn" onclick="deactivatePlan('primary')">✕</button>`;
     } else if (isSupplemental) {
       actions = `
-        <button class="select-plan-btn" onclick="setPrimaryPlan('${id}')"
-          style="flex:1;">⬆ Make Primary</button>
+        ${addOn ? '' : `<button class="select-plan-btn" onclick="selectPlanWithGates('${id}')"
+          style="flex:1;">⬆ Make Primary</button>`}
         <button class="deactivate-plan-btn" onclick="deactivatePlan('supplemental')">✕</button>`;
+    } else if (addOn) {
+      actions = `
+        <button class="select-plan-btn" onclick="setSupplementalPlan('${id}')" style="flex:1;">+ Add alongside your main plan</button>`;
     } else {
       actions = `
-        <button class="select-plan-btn" onclick="setPrimaryPlan('${id}')" style="flex:1;">⚡ Set as Primary</button>
+        <button class="select-plan-btn" onclick="selectPlanWithGates('${id}')" style="flex:1;">⚡ Set as Primary</button>
         <button class="select-plan-btn" onclick="setSupplementalPlan('${id}')"
           style="background:rgba(255,138,61,0.1);border:1px solid rgba(255,138,61,0.3);color:var(--accent2);flex:1;">+ Add as Supplemental</button>`;
     }
 
+    const setsRow = (!isGenerated && plan)
+      ? `<div style="padding-top:8px;border-top:1px solid var(--border);font-size:11.5px;line-height:1.6;color:var(--muted);">
+           📊 <b>Weekly hard sets</b> (6–20 is the useful range per muscle): ${muscleSetsHTML(planWeeklySets(id), { flags: true })}</div>`
+      : '';
     dropdown.innerHTML = `
-      <div class="plan-dropdown-inner">${schedRows}${volumeRow}</div>
+      <div class="plan-dropdown-inner">${schedRows}${volumeRow}${setsRow}${optionRows}</div>
       <div class="plan-dropdown-actions">${actions}</div>`;
     return dropdown;
   }
@@ -5969,9 +6403,11 @@ function renderPlans() {
   // ── Regular plans, grouped under category headers (v2 'Category rendering');
   //    card component and click behavior unchanged; within-category order = PLANS order ──
   PLAN_CATEGORIES.concat([{ id: '__other', label: 'Other' }]).forEach(cat => {
-    const members = PLANS.filter(p => cat.id === '__other'
+    const members = PLANS.filter(p => (cat.id === '__other'
       ? !PLAN_CATEGORIES.some(c => c.id === p.category)
-      : p.category === cat.id);
+      : p.category === cat.id)
+      && (!p.hidden || state.primaryPlan === p.id || state.supplementalPlan === p.id))   // retired plans: only while in use
+      .map(p => getPlan(p.id));
     if (!members.length) return;
     const hdr = document.createElement('div');
     hdr.className = 'u-section-lbl';
@@ -6015,6 +6451,7 @@ function renderPlans() {
         isSupplemental: isSupp,
         isGenerated: false,
         volumeNote: null,
+        plan,
       }));
     }
     });
@@ -6024,6 +6461,11 @@ function renderPlans() {
 }
 
 function setPrimaryPlan(planId) {
+  const _p = getPlan(planId);
+  if (_p && _p.addOn && state.primaryPlan !== planId) {
+    showToast(_p.name + ' is an add-on — add it alongside a main plan as Supplemental.');
+    return;
+  }
   // If this was the supplemental, clear that role first
   if (state.supplementalPlan === planId) state.supplementalPlan = null;
   state.primaryPlan = planId;
@@ -6043,7 +6485,9 @@ function setPrimaryPlan(planId) {
   }
 }
 
-function setSupplementalPlan(planId) {
+function setSupplementalPlan(planId, gatesPassed) {
+  // Screening and experience notes apply to supplemental plans too (Athletic Power especially)
+  if (!gatesPassed && state.primaryPlan && state.primaryPlan !== planId && !checkPlanPrerequisites(planId, 'supp')) return;
   if (!state.primaryPlan) {
     showToast('Set a primary plan first');
     return;
@@ -6466,6 +6910,23 @@ function renderHistory() {
       <div class="stat-label">Day Streak</div>
     </div>
   `;
+
+  // F17: this week's hard sets per muscle, from logged sessions
+  (function() {
+    const row = document.getElementById('stats-row');
+    if (!row) return;
+    let card = document.getElementById('weekly-muscle-card');
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'weekly-muscle-card';
+      card.style.cssText = 'margin:10px 0 4px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);font-size:12px;line-height:1.6;color:var(--muted);';
+      row.parentNode.insertBefore(card, row.nextSibling);
+    }
+    const planT = state.primaryPlan ? planWeeklySets(state.primaryPlan) : null;
+    card.innerHTML = '<div style="font-weight:700;color:var(--text);margin-bottom:2px;">This week — hard sets per muscle</div>'
+      + muscleSetsHTML(loggedWeeklySets(), { empty: 'No sets logged yet this week.' })
+      + (planT ? '<div style="margin-top:6px;opacity:.8;">Plan target: ' + muscleSetsHTML(planT) + '</div>' : '');
+  })();
 
   const list = document.getElementById('history-list');
 
@@ -7241,6 +7702,12 @@ function switchPlatform(platform, el) {
 //  Each entry: array of { id, reason } — curated by movement pattern & muscle
 //  Plyometric swaps always go lower-impact, never higher
 // ═══════════════════════════════════════════════════════════════════════════
+/* F4: movement pattern per exercise — anchor swaps must stay inside their pattern */
+const MOVEMENT_PATTERN = {
+  hip_thrust: 'thrust', machine_hip_thrust: 'thrust', glute_bridge: 'thrust', banded_hip_thrust: 'thrust', lateral_hip_thrust: 'thrust',
+  leg_press: 'squat', hack_squat: 'squat', squat: 'squat', goblet_squat: 'squat', split_squat: 'squat', supported_split_squat: 'squat', squat_bw: 'squat',
+  romanian_deadlift: 'hinge', hip_hinge: 'hinge', single_leg_rdl: 'hinge', single_leg_rdl_bw: 'hinge', cable_pull_through: 'hinge', back_extension: 'hinge', deadlift: 'hinge',
+};
 const EXERCISE_SWAPS = {
   /* v2 ab/adductor additions */
   copenhagen_plank:  [{ id:'cushion_adductor_squeeze', reason:'Gentler adductor isometric' }, { id:'hip_adductor_machine', reason:'Machine option' }, { id:'side_plank', reason:'Lateral trunk, no adductor load' }],
@@ -7250,7 +7717,12 @@ const EXERCISE_SWAPS = {
   machine_torso_rotation: [{ id:'standing_cable_woodchop', reason:'Standing rotation' }, { id:'pallof_press', reason:'Anti-rotation instead' }, { id:'cable_crunch', reason:'Loaded flexion instead' }],
   standing_cable_woodchop:[{ id:'machine_torso_rotation', reason:'Seated machine rotation' }, { id:'suitcase_carry', reason:'Rotation option — carry' }, { id:'ab_crunch_machine', reason:'Rotation option — flexion' }],
   suitcase_carry:         [{ id:'standing_cable_woodchop', reason:'Rotation option — woodchop' }, { id:'ab_crunch_machine', reason:'Rotation option — ab machine' }, { id:'pallof_press', reason:'Standing anti-rotation' }],
-  machine_hip_thrust: [{ id:'hip_thrust', reason:'Barbell version — the progression' }, { id:'glute_bridge', reason:'Feet-elevated, no machine' }, { id:'banded_hip_thrust', reason:'Band burnout option' }],
+  machine_hip_thrust: [
+    { id: 'glute_bridge', reason: 'Easier — no machine needed' },
+    { id: 'banded_hip_thrust', reason: 'Travel — band version' },
+    { id: 'hip_thrust', reason: 'Harder — barbell progression' },
+    { id: 'lateral_hip_thrust', reason: 'Harder — single-leg' },
+  ],
   supported_split_squat: [{ id:'split_squat', reason:'Free-standing — the progression' }, { id:'leg_press', reason:'Machine, zero balance demand' }, { id:'box_step_up', reason:'Step pattern option' }],
   banded_hip_thrust: [{ id:'hip_thrust', reason:'Loaded barbell pattern' }, { id:'glute_bridge', reason:'No-band floor option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
   banded_seated_abduction: [{ id:'hip_abductor_machine', reason:'Loaded machine option' }, { id:'glute_med_raise', reason:'Side-lying option' }, { id:'lateral_band_walk', reason:'Standing band option' }],
@@ -7258,7 +7730,10 @@ const EXERCISE_SWAPS = {
   hack_squat:        [{ id:'squat', reason:'Barbell pattern' }, { id:'leg_press', reason:'Machine alternative' }, { id:'goblet_squat', reason:'Lighter option' }, { id:'split_squat', reason:'Unilateral option' }],
   leg_extension:     [{ id:'leg_press', reason:'Machine compound' }, { id:'split_squat', reason:'Free-weight quad' }, { id:'squat_bw', reason:'No-equipment option' }],
   machine_chest_press: [{ id:'bench_press', reason:'Barbell pattern' }, { id:'incline_dumbbell', reason:'Dumbbell option' }, { id:'pushup', reason:'No-equipment option' }],
-  db_shoulder_press: [{ id:'ohp', reason:'Barbell pattern' }, { id:'pike_pushup', reason:'No-equipment option' }, { id:'lateral_raise', reason:'Lighter isolation' }],
+  db_shoulder_press: [
+    { id: 'pike_pushup', reason: 'Bodyweight version' },
+    { id: 'ohp', reason: 'Harder — standing barbell press' },
+  ],
   cable_kickback:    [{ id:'hip_thrust', reason:'Loaded glute pattern' }, { id:'glute_bridge', reason:'No-equipment option' }, { id:'lateral_hip_thrust', reason:'Lateral emphasis' }],
   cable_crunch:      [{ id:'dead_bug', reason:'No spinal flexion' }, { id:'plank_rotation', reason:'Anti-rotation option' }, { id:'hanging_leg_raise', reason:'Harder progression' }],
   side_plank:        [{ id:'plank', reason:'Front pattern' }, { id:'dead_bug', reason:'Floor anti-extension' }, { id:'pallof_press', reason:'Standing anti-rotation' }],
@@ -7341,8 +7816,15 @@ const EXERCISE_SWAPS = {
   mountain_climber: [{ id:'high_knees', reason:'Standing version' }, { id:'plank', reason:'Static core' }, { id:'burpee', reason:'Full body option' }],
   high_knees:       [{ id:'mountain_climber', reason:'Floor version' }, { id:'jump_rope', reason:'Cardio alternative' }, { id:'treadmill_run', reason:'Running option' }],
   // ── Cable / Machine Isolation ───────────────────────────────────────────────
-  hip_abductor_machine: [{ id:'lateral_hip_thrust', reason:'Unilateral glute med' }, { id:'lateral_band_walk', reason:'Band activation option' }, { id:'skater_squat', reason:'Unilateral lateral' }, { id:'cable_lateral_raise', reason:'Cable abduction variation' }],
-  hip_adductor_machine: [{ id:'lateral_band_walk', reason:'Hip stability' }, { id:'split_squat', reason:'Unilateral adductor load' }, { id:'cable_pull_through', reason:'Cable hip option' }],
+  hip_abductor_machine: [
+    { id: 'banded_seated_abduction', reason: 'Band version' },
+    { id: 'lateral_band_walk', reason: 'Standing band version' },
+    { id: 'lateral_hip_thrust', reason: 'Harder — single-leg thrust' },
+  ],
+  hip_adductor_machine: [
+    { id: 'cushion_adductor_squeeze', reason: 'Easier / travel — seated squeeze' },
+    { id: 'copenhagen_plank', reason: 'Harder — short-lever Copenhagen' },
+  ],
   cable_pull_through:   [{ id:'hip_thrust', reason:'Loaded hip extension' }, { id:'romanian_deadlift', reason:'Hinge pattern' }, { id:'glute_bridge', reason:'Bodyweight version' }, { id:'deadlift', reason:'Full chain compound' }],
   lateral_band_walk:    [{ id:'hip_abductor_machine', reason:'Machine version' }, { id:'lateral_hip_thrust', reason:'Loaded lateral glute' }, { id:'skater_squat', reason:'Unilateral lateral' }, { id:'lateral_bound', reason:'Power version' }],
   cable_lateral_raise:  [{ id:'lateral_raise', reason:'Dumbbell version' }, { id:'face_pull', reason:'Rear delt option' }, { id:'rear_delt_fly', reason:'Posterior shoulder' }, { id:'ohp', reason:'Compound press' }],
@@ -7357,6 +7839,105 @@ const EXERCISE_SWAPS = {
   pullup_bw:         [{ id:'inverted_row', reason:'Horizontal row alternative' }, { id:'lat_pulldown', reason:'Machine version' }, { id:'row', reason:'Dumbbell row' }],
   ab_wheel_bw:       [{ id:'dead_bug', reason:'Safer core alternative' }, { id:'plank', reason:'Static core option' }, { id:'pallof_press', reason:'Anti-rotation core' }],
   upright_row:       [{ id:'lateral_raise', reason:'Safer shoulder isolation' }, { id:'face_pull', reason:'Rear delt alternative' }, { id:'ohp', reason:'Compound press' }],
+  hip_thrust: [
+    { id: 'machine_hip_thrust', reason: 'Machine version — easiest to load and log' },
+    { id: 'glute_bridge', reason: 'Easier — floor bridge, no bench' },
+    { id: 'banded_hip_thrust', reason: 'Travel — band version' },
+    { id: 'lateral_hip_thrust', reason: 'Harder — single-leg' },
+  ],
+  glute_bridge: [
+    { id: 'banded_hip_thrust', reason: 'Band version' },
+    { id: 'machine_hip_thrust', reason: 'Machine version' },
+    { id: 'hip_thrust', reason: 'Harder — loaded from a bench' },
+  ],
+  leg_press: [
+    { id: 'hack_squat', reason: 'Same pattern — machine squat' },
+    { id: 'goblet_squat', reason: 'Easier / travel — dumbbell squat' },
+    { id: 'split_squat', reason: 'Unilateral option' },
+    { id: 'squat', reason: 'Harder — barbell squat' },
+  ],
+  hack_squat: [
+    { id: 'leg_press', reason: 'Same pattern — machine' },
+    { id: 'goblet_squat', reason: 'Easier / travel — dumbbell squat' },
+    { id: 'split_squat', reason: 'Unilateral option' },
+    { id: 'squat', reason: 'Harder — barbell squat' },
+  ],
+  squat: [
+    { id: 'leg_press', reason: 'Machine version' },
+    { id: 'hack_squat', reason: 'Machine squat' },
+    { id: 'goblet_squat', reason: 'Easier technique' },
+    { id: 'split_squat', reason: 'Unilateral version' },
+  ],
+  deadlift: [
+    { id: 'cable_pull_through', reason: 'Easier — cable hinge, lightest on the back' },
+    { id: 'romanian_deadlift', reason: 'Lower-back-friendly hinge' },
+    { id: 'single_leg_rdl', reason: 'Unilateral hinge' },
+  ],
+  romanian_deadlift: [
+    { id: 'cable_pull_through', reason: 'Easier — cable hinge' },
+    { id: 'back_extension', reason: 'Supported hinge' },
+    { id: 'hip_hinge', reason: 'Dumbbell version' },
+    { id: 'single_leg_rdl', reason: 'Harder — single-leg' },
+  ],
+  hip_hinge: [
+    { id: 'cable_pull_through', reason: 'Easier — cable hinge' },
+    { id: 'romanian_deadlift', reason: 'Loaded hinge' },
+    { id: 'single_leg_rdl_bw', reason: 'Bodyweight single-leg hinge' },
+  ],
+  back_extension: [
+    { id: 'cable_pull_through', reason: 'Same pattern — cable hinge' },
+    { id: 'hip_hinge', reason: 'Dumbbell hinge' },
+    { id: 'romanian_deadlift', reason: 'Harder — loaded hinge' },
+  ],
+  cable_pull_through: [
+    { id: 'back_extension', reason: 'Supported hinge' },
+    { id: 'romanian_deadlift', reason: 'Loaded hinge' },
+    { id: 'deadlift', reason: 'Harder — barbell hinge' },
+  ],
+  single_leg_rdl: [
+    { id: 'single_leg_rdl_bw', reason: 'Easier — bodyweight' },
+    { id: 'hip_hinge', reason: 'Two-leg dumbbell hinge' },
+    { id: 'romanian_deadlift', reason: 'Two-leg loaded hinge' },
+  ],
+  leg_curl: [
+    { id: 'nordic_curl', reason: 'Harder — eccentric knee flexion' },
+    { id: 'romanian_deadlift', reason: 'No curl machine? Hinge instead (different pattern)' },
+  ],
+  calf_raise: [
+    { id: 'calf_raise_bw', reason: 'Bodyweight version' },
+    { id: 'leg_press', reason: 'Calf press on the leg press sled' },
+  ],
+  bicep_curl: [
+    { id: 'cable_curl', reason: 'Cable — constant tension' },
+    { id: 'hammer_curl', reason: 'Neutral grip' },
+  ],
+  hammer_curl: [
+    { id: 'bicep_curl', reason: 'Supinated curl' },
+    { id: 'cable_curl', reason: 'Cable version' },
+  ],
+  cable_curl: [
+    { id: 'bicep_curl', reason: 'Barbell / dumbbell curl' },
+    { id: 'hammer_curl', reason: 'Neutral grip' },
+  ],
+  rope_pushdown: [
+    { id: 'tricep_pushdown', reason: 'Bar pushdown' },
+    { id: 'skull_crusher', reason: 'Lying extension' },
+    { id: 'dips', reason: 'Harder — bodyweight' },
+  ],
+  treadmill_run: [
+    { id: 'incline_walk', reason: 'Low-impact — incline walk or stairmaster' },
+    { id: 'bike', reason: 'Non-impact — bike' },
+    { id: 'jump_rope', reason: 'Higher impact' },
+  ],
+  incline_walk: [
+    { id: 'bike', reason: 'Non-impact — bike' },
+    { id: 'treadmill_run', reason: 'Harder — running' },
+  ],
+  incline_plank: [
+    { id: 'pallof_press', reason: 'Standing core alternative' },
+    { id: 'plank', reason: 'Harder — floor plank' },
+    { id: 'dead_bug', reason: 'Floor option' },
+  ],
 };
 
 const EXERCISE_VARIANTS = {
@@ -7432,6 +8013,8 @@ const EXERCISE_VARIANTS = {
    (all are increment-0 except sled_push, where added load IS the progression). */
 const LOG_TYPES = {
   treadmill_run: { reps: 'Minutes', weight: 'Pace ×10' },
+  incline_walk:  { reps: 'Minutes', weight: 'Incline %' },
+  incline_plank: { reps: 'Seconds' },
   bike:          { reps: 'Minutes', weight: 'Resistance' },
   jump_rope:     { reps: 'Seconds' },
   plank:         { reps: 'Seconds' },
@@ -7447,6 +8030,7 @@ const LOG_TYPES = {
 };
 
 const WEIGHT_INCREMENTS = {
+  incline_walk: 0, incline_plank: 0,
   /* FR-18 (S&C R2): new-record increments; 0 = bodyweight/duration progression class */
   bike_sprint: 0, rower_interval: 0, battle_ropes: 0, bear_crawl: 0, side_plank: 0,
   hanging_leg_raise: 0, back_extension: 0, sled_push: 10, hack_squat: 20, leg_extension: 5,
@@ -7489,14 +8073,35 @@ const WEIGHT_INCREMENTS = {
 // Write per-exercise history whenever a session is saved
 function writeExerciseLog(completedExercises, dateKey) {
   if (!state.exerciseLog) state.exerciseLog = {};
+  const _deloadToday = typeof inDeloadWeek === 'function' && inDeloadWeek();
+  // A scheduled deload week starts with its first logged session — record it so
+  // the schedule restarts from here (F2/F3)
+  // A re-entry week (2+ weeks off) also restarts the deload clock.
+  if (state.primaryPlan) {
+    const kind = isReentryWeek() ? 'reentry' : isScheduledDeloadWeek() ? 'scheduled' : null;
+    const t = deloadTrack(state.primaryPlan);
+    if (kind && !(t.lastDeloadDate && weekKey(t.lastDeloadDate) === weekKey(dateKey))) {
+      t.lastDeloadDate = dateKey;
+      t.lastDeloadKind = kind;
+    }
+  }
   completedExercises.forEach(({ id, sets }) => {
     if (!state.exerciseLog[id]) state.exerciseLog[id] = [];
     // Avoid double-writing the same date
     const alreadyLogged = state.exerciseLog[id].some(e => e.date === dateKey);
     if (!alreadyLogged) {
+      // F21: fewer working sets than prescribed today = partial session; kept in
+      // history, left out of progression, stall and hold-the-line checks.
+      let partial;
+      try {
+        const generated = state.generatedPlanData && state.primaryPlan === state.generatedPlanData.id;
+        const done = sets.filter(s => (s.r || 0) > 0).length;
+        if (!generated && progIsLoadTracked(id) && done > 0 && done < doseSets(id, EXERCISES[id])) partial = true;
+      } catch (e) { partial = undefined; }
       state.exerciseLog[id].unshift({
         date: dateKey,
-        deload: (typeof isDeloadActive === 'function' && isDeloadActive()) || undefined,
+        deload: _deloadToday || undefined,   // F2: scheduled deload weeks are flagged too
+        partial,
         sets: sets.map(s => ({ w: s.w, r: s.r, rpe: s.rpe || null, note: s.note || null }))
       });
       // Keep only last 10 sessions per exercise
@@ -7506,6 +8111,113 @@ function writeExerciseLog(completedExercises, dateKey) {
     }
   });
 }
+
+/* ═══ F17/F19/F20: exercise metadata ═══════════════════════════════════════
+   p / s   primary and secondary muscles (secondary counts as half a set)
+   impact  'high' = jumping or landing; 'low' = stepping/running/crawling; 'none' otherwise
+   floor   needs getting down to, or up from, the floor
+   reps    explicit rep range (or seconds / minutes for timed work)
+   genExclude  specialist drills the plan generator never picks */
+const EXERCISE_META = {
+  squat: { p: ["Quads"], s: ["Glutes"], impact: 'none', floor: false, reps: [6, 10] },
+  goblet_squat: { p: ["Quads"], s: ["Glutes"], impact: 'none', floor: false, reps: [10, 15] },
+  lunge: { p: ["Quads"], s: ["Glutes"], impact: 'low', floor: false, reps: [8, 12] },
+  pushup: { p: ["Chest"], s: ["Triceps"], impact: 'none', floor: true, reps: [12, 20] },
+  bench_press: { p: ["Chest"], s: ["Triceps", "Shoulders"], impact: 'none', floor: false, reps: [6, 10] },
+  incline_dumbbell: { p: ["Chest"], s: ["Triceps", "Shoulders"], impact: 'none', floor: false, reps: [8, 12] },
+  cable_fly: { p: ["Chest"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  dips: { p: ["Chest"], s: ["Triceps"], impact: 'none', floor: false, reps: [8, 12] },
+  row: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: false, reps: [8, 12] },
+  deadlift: { p: ["Hamstrings", "Back"], s: ["Glutes", "Quads"], impact: 'none', floor: false, reps: [3, 6] },
+  pullup: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: false, reps: [6, 10] },
+  lat_pulldown: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: false, reps: [10, 15] },
+  cable_row: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: false, reps: [10, 15] },
+  face_pull: { p: ["Shoulders"], s: ["Back"], impact: 'none', floor: false, reps: [12, 20] },
+  ohp: { p: ["Shoulders"], s: ["Triceps"], impact: 'none', floor: false, reps: [6, 10] },
+  lateral_raise: { p: ["Shoulders"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  rear_delt_fly: { p: ["Shoulders"], s: ["Back"], impact: 'none', floor: false, reps: [12, 20] },
+  upright_row: { p: ["Shoulders"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  shrug: { p: ["Back"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  hip_hinge: { p: ["Hamstrings"], s: ["Glutes"], impact: 'none', floor: false, reps: [10, 15] },
+  romanian_deadlift: { p: ["Hamstrings"], s: ["Glutes"], impact: 'none', floor: false, reps: [8, 12] },
+  leg_press: { p: ["Quads"], s: ["Glutes"], impact: 'none', floor: false, reps: [10, 15] },
+  leg_curl: { p: ["Hamstrings"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  calf_raise: { p: ["Calves"], s: [], impact: 'none', floor: false, reps: [15, 25] },
+  bicep_curl: { p: ["Biceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  hammer_curl: { p: ["Biceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  tricep_pushdown: { p: ["Triceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  skull_crusher: { p: ["Triceps"], s: [], impact: 'none', floor: false, reps: [8, 12] },
+  wrist_curl: { p: ["Forearms"], s: [], impact: 'none', floor: false, reps: [15, 25] },
+  dead_bug: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [8, 12] },
+  plank_rotation: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [10, 15] },
+  pallof_press: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [8, 12] },
+  ab_wheel: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [6, 10] },
+  split_squat: { p: ["Quads"], s: ["Glutes"], impact: 'low', floor: false, reps: [8, 12] },
+  single_leg_rdl: { p: ["Hamstrings"], s: ["Glutes"], impact: 'none', floor: false, reps: [8, 12] },
+  lateral_bound: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [6, 10], genExclude: true },
+  skater_squat: { p: ["Quads"], s: ["Glutes"], impact: 'low', floor: false, reps: [6, 10], genExclude: true },
+  hip_thrust: { p: ["Glutes"], s: [], impact: 'none', floor: true, reps: [8, 12] },
+  lateral_hip_thrust: { p: ["Glutes"], s: [], impact: 'none', floor: false, reps: [8, 12] },
+  nordic_curl: { p: ["Hamstrings"], s: [], impact: 'none', floor: true, reps: [3, 6], genExclude: true },
+  skating_hold: { p: ["Quads"], s: ["Adductors"], impact: 'none', floor: false, reps: [20, 40], genExclude: true },
+  depth_jump: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [3, 6], genExclude: true },
+  lateral_hurdle_hop: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [6, 10], genExclude: true },
+  glute_med_raise: { p: ["Abductors"], s: [], impact: 'none', floor: true, reps: [15, 25] },
+  copenhagen_plank: { p: ["Adductors"], s: ["Core"], impact: 'none', floor: true, reps: [20, 30], genExclude: true },
+  cushion_adductor_squeeze: { p: ["Adductors"], s: [], impact: 'none', floor: true, reps: [12, 20] },
+  banded_hip_thrust: { p: ["Glutes"], s: [], impact: 'none', floor: true, reps: [15, 25] },
+  banded_seated_abduction: { p: ["Abductors"], s: [], impact: 'none', floor: false, reps: [20, 30] },
+  machine_hip_thrust: { p: ["Glutes"], s: [], impact: 'none', floor: false, reps: [8, 12] },
+  supported_split_squat: { p: ["Quads"], s: ["Glutes"], impact: 'none', floor: false, reps: [8, 12] },
+  ab_crunch_machine: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  machine_torso_rotation: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  standing_cable_woodchop: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  suitcase_carry: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [20, 40] },
+  broad_jump: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [3, 6], genExclude: true },
+  plank: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [20, 40] },
+  burpee: { p: ["Cardio"], s: [], impact: 'high', floor: true, reps: [8, 12], genExclude: true },
+  jump_squat: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [10, 15], genExclude: true },
+  mountain_climber: { p: ["Cardio"], s: [], impact: 'low', floor: true, reps: [15, 25] },
+  high_knees: { p: ["Cardio"], s: [], impact: 'high', floor: false, reps: [20, 40], genExclude: true },
+  box_jump: { p: ["Quads"], s: ["Glutes"], impact: 'high', floor: false, reps: [4, 8], genExclude: true },
+  box_step_up: { p: ["Quads"], s: ["Glutes"], impact: 'low', floor: false, reps: [6, 10] },
+  incline_walk: { p: ["Cardio"], s: [], impact: 'none', floor: false, reps: [25, 35] },
+  incline_plank: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [20, 40] },
+  treadmill_run: { p: ["Cardio"], s: [], impact: 'low', floor: false, reps: [20, 30] },
+  bike: { p: ["Cardio"], s: [], impact: 'none', floor: false, reps: [20, 30] },
+  jump_rope: { p: ["Cardio"], s: [], impact: 'high', floor: false, reps: [20, 40], genExclude: true },
+  pike_pushup: { p: ["Shoulders"], s: ["Triceps"], impact: 'none', floor: true, reps: [8, 12] },
+  tricep_dip_chair: { p: ["Triceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  squat_bw: { p: ["Quads"], s: [], impact: 'none', floor: false, reps: [15, 25] },
+  lunge_bw: { p: ["Quads"], s: ["Glutes"], impact: 'low', floor: false, reps: [10, 15] },
+  glute_bridge: { p: ["Glutes"], s: [], impact: 'none', floor: true, reps: [12, 20] },
+  single_leg_rdl_bw: { p: ["Hamstrings"], s: ["Glutes"], impact: 'none', floor: false, reps: [8, 12] },
+  calf_raise_bw: { p: ["Calves"], s: [], impact: 'none', floor: false, reps: [20, 30] },
+  inverted_row: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: true, reps: [8, 12] },
+  pullup_bw: { p: ["Back"], s: ["Biceps"], impact: 'none', floor: false, reps: [4, 8] },
+  ab_wheel_bw: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [6, 10] },
+  hip_abductor_machine: { p: ["Abductors"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  hip_adductor_machine: { p: ["Adductors"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  cable_pull_through: { p: ["Glutes"], s: ["Hamstrings"], impact: 'none', floor: false, reps: [10, 15] },
+  lateral_band_walk: { p: ["Abductors"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  cable_lateral_raise: { p: ["Shoulders"], s: [], impact: 'none', floor: false, reps: [12, 20] },
+  cable_curl: { p: ["Biceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  rope_pushdown: { p: ["Triceps"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  bike_sprint: { p: ["Cardio"], s: [], impact: 'none', floor: false, reps: [15, 25] },
+  rower_interval: { p: ["Cardio"], s: [], impact: 'none', floor: false, reps: [45, 75] },
+  sled_push: { p: ["Cardio"], s: [], impact: 'low', floor: false, reps: [15, 25] },
+  battle_ropes: { p: ["Cardio"], s: [], impact: 'low', floor: false, reps: [20, 40] },
+  hack_squat: { p: ["Quads"], s: ["Glutes"], impact: 'none', floor: false, reps: [8, 12] },
+  back_extension: { p: ["Glutes"], s: ["Hamstrings"], impact: 'none', floor: false, reps: [12, 20] },
+  leg_extension: { p: ["Quads"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  machine_chest_press: { p: ["Chest"], s: ["Triceps"], impact: 'none', floor: false, reps: [8, 12] },
+  db_shoulder_press: { p: ["Shoulders"], s: ["Triceps"], impact: 'none', floor: false, reps: [8, 12] },
+  cable_kickback: { p: ["Glutes"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  cable_crunch: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  side_plank: { p: ["Core"], s: [], impact: 'none', floor: true, reps: [35, 55] },
+  hanging_leg_raise: { p: ["Core"], s: [], impact: 'none', floor: false, reps: [10, 15] },
+  bear_crawl: { p: ["Cardio"], s: [], impact: 'low', floor: true, reps: [20, 40] },
+};
 
 // Get the rep range for an exercise — uses active plan's volume if generated
 function getRepRange(exId) {
@@ -7523,7 +8235,9 @@ function getRepRange(exId) {
     if (d.repsLow && d.repsHigh) return { low: d.repsLow, high: d.repsHigh };
     if (d.reps) return { low: Math.max(1, d.reps - 2), high: d.reps };
   }
-  // Default: ±2 around the library default rep count
+  // F20: explicit range from the exercise library metadata
+  const m = EXERCISE_META[exId];
+  if (m && m.reps) return { low: m.reps[0], high: m.reps[1] };
   return { low: Math.max(1, ex.reps - 2), high: ex.reps + 2 };
 }
 
@@ -7599,7 +8313,8 @@ function getEffectiveDefaultWeight(exId) {
 
 function getProgressionStatus(exId) {
   const rawLog = state.exerciseLog && state.exerciseLog[exId];
-  const log = rawLog ? rawLog.filter(e => !e.deload) : rawLog;
+  let log = rawLog ? rawLog.filter(e => !e.deload && !e.partial) : rawLog;
+  if (rawLog && log && !log.length) log = rawLog.filter(e => !e.deload);   // only partial sessions so far — still show them
   const ex = EXERCISES[exId];
   if (!ex) return null;
 
@@ -7848,7 +8563,21 @@ const RIR_FULL = {
   7: '3 more reps', 6: '4+ more reps', 5: 'warm-up / easy',
 };
 /* Anchor ("hold the line") lifts per plan — engine metadata, not PLANS content */
-const ANCHOR_LIFTS = { cut_phase_lower: ['machine_hip_thrust', 'hip_thrust', 'leg_press'] };
+const ANCHOR_LIFTS = {
+  cut_phase: ['machine_hip_thrust', 'hip_thrust', 'leg_press'],
+  cut_phase_lower: ['machine_hip_thrust', 'hip_thrust', 'leg_press'],   // legacy id (migrated to cut_phase)
+  long_track: ['hip_thrust', 'machine_hip_thrust', 'romanian_deadlift'],   // F5: the plan text names these as anchors
+};
+/* Anchors follow a permanent swap, so a swapped-in machine is still protected */
+function resolveAnchorIds(planId) {
+  const list = ANCHOR_LIFTS[planId] || [];
+  const ov = (state.planOverrides && state.planOverrides[planId]) || {};
+  return [...new Set(list.concat(list.map(id => ov[id]).filter(Boolean)))];
+}
+/* Progression history: no deload sessions, no partial sessions (F21) */
+function progLog(exId) {
+  return ((state.exerciseLog && state.exerciseLog[exId]) || []).filter(e => !e.deload && !e.partial);
+}
 const STARTING_LOAD_HINTS = {
   leg_press: 'Pick a weight where rep 12 is genuinely hard. If all 4 sets feel easy, it is too light — add 20–30 lb next time.',
   machine_hip_thrust: 'Find a load where the last 2 reps need a real squeeze. Easy top sets mean the weight is too light.',
@@ -7891,13 +8620,12 @@ function suggestedStallLoad(exId, weight) {
   return weight + 5;
 }
 function isAnchorLift(exId) {
-  const list = ANCHOR_LIFTS[state.primaryPlan] || [];
-  return list.includes(exId);
+  return resolveAnchorIds(state.primaryPlan).includes(exId);
 }
 /* Stall = same top-set weight AND same total reps for 3+ consecutive sessions */
 function detectStall(exId) {
   if (!progIsLoadTracked(exId)) return null;
-  const log = ((state.exerciseLog && state.exerciseLog[exId]) || []).filter(e => !e.deload);
+  const log = progLog(exId);
   if (log.length < 3) return null;
   const first = progTopSet(log[0]);
   if (!first || !first.weight) return null;
@@ -7967,6 +8695,17 @@ function buildLoadHint(exId) {
   if (!STARTING_LOAD_HINTS[exId]) return '';
   return '<div class="load-hint" role="note">🎯 ' + STARTING_LOAD_HINTS[exId] + '</div>';
 }
+/* F21: a weighted lift completed with no load → ask for the number before it pollutes progression */
+function checkZeroLoad(exId) {
+  if (!progIsLoadTracked(exId)) return false;
+  const entry = state.todayLog[today()] && state.todayLog[today()][exId];
+  if (!entry) return false;
+  const sets = (entry.sets || []).filter(s => (s.reps || 0) > 0);
+  if (!sets.length || sets.some(s => (s.weight || 0) > 0)) return false;
+  const name = EXERCISES[exId] ? EXERCISES[exId].name : exId;
+  showToast('⚠️ ' + name + ' has no weight logged — enter the stack or plate load so progression can track it.');
+  return true;
+}
 /* Double progression — evaluated when an exercise is marked complete */
 function checkDoubleProgression(exId) {
   if (!progIsLoadTracked(exId)) return;
@@ -7984,17 +8723,22 @@ function checkDoubleProgression(exId) {
   const markPrompted = () => { if (!state.progPromptedOn) state.progPromptedOn = {}; state.progPromptedOn[exId] = dateKey; saveState(); };
 
   const allTop = sets.every(s => (s.reps || 0) >= high);
-  const easy = rpes.length && rpes.every(v => v <= 7);
+  // F1: RPE 8 (2 reps left) is the app's own working-set target, so it must earn
+  // the bump. No RPE logged → the reps decide. 4+ reps left on every set → bigger jump.
+  const easy = !rpes.length || rpes.every(v => v <= 8);
+  const veryEasy = rpes.length > 0 && rpes.every(v => v <= 6);
   const belowRange = sets.filter(s => (s.reps || 0) < low).length;
+  const bump = veryEasy ? suggestedStallLoad(exId, topWeight + inc) - topWeight : inc;
 
-  if (allTop && easy && topWeight > 0) {
+  if (allTop && easy && topWeight > 0 && !inDeloadWeek()) {
     markPrompted();
     showModal('Top of the range', '<div style="font-size:13.5px;line-height:1.6;color:var(--text);">'
       + '<p style="margin-bottom:12px;">That is the top of the range' + (rpes.length ? ' at RPE ' + Math.max(...rpes) : '')
-      + ' on every set of ' + name + '. Add about ' + inc + ' lb next session?</p>'
+      + ' on every set of ' + name + '. Add about ' + bump + ' lb next session?'
+      + (veryEasy ? ' Those sets had 4+ reps left, so a bigger jump is fine.' : '') + '</p>'
       + '<div style="display:flex;gap:8px;">'
-      + '<button onclick="setNextLoad(\'' + exId + '\',' + (topWeight + inc) + ')" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Use '
-      + (topWeight + inc) + ' lbs next time</button>'
+      + '<button onclick="setNextLoad(\'' + exId + '\',' + (topWeight + bump) + ')" style="flex:1;padding:11px;border-radius:10px;background:var(--accent);color:var(--color-brand-on-primary);font-weight:700;">Use '
+      + (topWeight + bump) + ' lbs next time</button>'
       + '<button onclick="closeModal()" style="flex:1;padding:11px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);">Not yet</button>'
       + '</div></div>');
   } else if (belowRange >= 2) {
@@ -8177,6 +8921,7 @@ function importBackup(file) {
       renderHistory();
       closeBackupModal();
       showToast('✅ Backup restored successfully');
+      try { if (migratePlanIds()) saveState(); } catch (_mErr) {}   // older backups may name merged plans
       setTimeout(reconcileImportedHistory, 400);   // place the user on the plan calendar
     } catch(err) {
       showToast('❌ Invalid backup file — check the file and try again');
@@ -8195,7 +8940,11 @@ function openSwapModal(exId) {
   const dateKey = today();
   const currentId = (state.todaySwaps[dateKey] && state.todaySwaps[dateKey][exId]) || exId;
   const currentEx = EXERCISES[currentId];
-  const swaps = EXERCISE_SWAPS[exId];
+  let swaps = EXERCISE_SWAPS[exId];
+  // F4: an anchor lift is protected by its movement pattern — only same-pattern swaps are offered
+  const _anchor = isAnchorLift(exId) && MOVEMENT_PATTERN[exId];
+  if (_anchor && swaps) swaps = swaps.filter(sw => MOVEMENT_PATTERN[sw.id] === MOVEMENT_PATTERN[exId]);
+  if (swaps) swaps = swaps.filter(sw => !violatesLimits(sw.id));   // F19: never offer what the user ruled out
 
   document.getElementById('swap-modal-title').textContent =
     `⇄ Swap: ${currentEx ? currentEx.name : exId}`;
@@ -8213,7 +8962,7 @@ function openSwapModal(exId) {
   const isSwapped = state.todaySwaps[dateKey] && state.todaySwaps[dateKey][exId] && state.todaySwaps[dateKey][exId] !== exId;
 
   let html = `<p style="font-size:12px;color:rgba(229,231,235,0.55);line-height:1.5;margin-bottom:4px;">
-    Swap applies to today only — your plan is unchanged.</p>`;
+    Swap applies to today only — your plan is unchanged.${_anchor ? ' This is an anchor lift, so swaps stay in the same movement pattern.' : ''}</p>`;
 
   if (isSwapped) {
     html += `<div class="swap-section-label">Currently swapped to</div>
@@ -8295,14 +9044,66 @@ function resetSwap(originalId) {
 }
 
 function getSwappedExId(originalId) {
-  // Permanent plan override resolves first, then today-only swap on top
+  // Permanent plan override resolves first, then today-only swap on top,
+  // then the user's movement limits (F19) swap out anything they ruled out.
   const perm = state.planOverrides && state.primaryPlan &&
     state.planOverrides[state.primaryPlan] && state.planOverrides[state.primaryPlan][originalId];
   const baseId = perm || originalId;
   const dateKey = today();
   const swapped = state.todaySwaps[dateKey] && state.todaySwaps[dateKey][originalId];
-  if (swapped && swapped !== baseId) return swapped;
-  return baseId;
+  const chosen = (swapped && swapped !== baseId) ? swapped : baseId;
+  return limitSafeId(chosen, originalId);
+}
+/* F19: movement limits are a property of the user — every system reads them */
+function movementLimits() {
+  const l = state.movementLimits || {};
+  return { noJumping: !!l.noJumping, noFloor: !!l.noFloor };
+}
+function violatesLimits(exId) {
+  const m = EXERCISE_META[exId];
+  if (!m) return false;
+  const l = movementLimits();
+  return (l.noJumping && m.impact === 'high') || (l.noFloor && m.floor);
+}
+function limitReason(exId) {
+  const m = EXERCISE_META[exId] || {};
+  const l = movementLimits();
+  return l.noJumping && m.impact === 'high' ? 'no jumping' : l.noFloor && m.floor ? 'no floor work' : '';
+}
+/* First swap that respects the limits; anchors stay in their movement pattern. */
+function limitSafeId(exId, originalId) {
+  if (!violatesLimits(exId)) return exId;
+  const anchorPattern = isAnchorLift(originalId || exId) ? MOVEMENT_PATTERN[originalId || exId] : null;
+  const seen = new Set([exId]);
+  const queue = [exId];
+  const ok = [];
+  while (queue.length) {   // breadth-first through the swap graph, nearest option first
+    const cur = queue.shift();
+    for (const sw of (EXERCISE_SWAPS[cur] || [])) {
+      if (seen.has(sw.id) || !EXERCISES[sw.id]) continue;
+      seen.add(sw.id);
+      queue.push(sw.id);
+      if (anchorPattern && MOVEMENT_PATTERN[sw.id] !== anchorPattern) continue;
+      if (!violatesLimits(sw.id)) ok.push(sw.id);
+    }
+  }
+  if (!ok.length) return exId;   // nothing suitable — keep it and let the card say so
+  // Same primary muscle first; within that, a bodyweight exercise prefers a bodyweight
+  // replacement (home plans have no machines).
+  const prim = id => ((EXERCISE_META[id] || {}).p || [])[0];
+  const same = ok.filter(id => prim(id) === prim(exId));
+  const pool = same.length ? same : ok;
+  const isBW = id => (WEIGHT_INCREMENTS[id] ?? 5) === 0;
+  return (isBW(exId) && pool.find(isBW)) || pool[0];
+}
+function setMovementLimit(key, on) {
+  if (!state.movementLimits) state.movementLimits = {};
+  state.movementLimits[key] = !!on;
+  saveState();
+  renderPlans();
+  if (typeof renderToday === 'function') renderToday();
+  showToast(on ? '✓ ' + (key === 'noJumping' ? 'No jumping' : 'No floor work') + ' — matching exercises swap automatically'
+               : '○ ' + (key === 'noJumping' ? 'Jumping' : 'Floor work') + ' allowed again');
 }
 
 // ── Swap-pattern nudge: same swap 3+ times -> offer to make it permanent ──

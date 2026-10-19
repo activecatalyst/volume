@@ -7,9 +7,11 @@ Volume is a single-file progressive web app — one `index.html`, no build step,
 
 ## Features
 
-- **12 preset plans** across five groups — Start Here, Build Muscle, Lose Fat, Athletic Power, Conditioning — from a 3-day beginner full-body to a 6-day lower-body specialization, plus deficit-friendly Cut Phase and Cut Phase: Lower Bias.
-- **96-exercise library** with coaching cues, safety notes, swap options for every plan exercise, and regressions for the risky stuff. Every exercise card links to a web search for form videos.
-- **Plan generator** — pick days, goal, and level; get a balanced week with compound lifts first.
+- **11 preset plans** across Start Here, Build Muscle, Lose Fat, Maintain and Add-ons — from a 3-day beginner full-body and a 3-day machine full-body for busy seasons, through Upper/Lower 4-Day (the default), Intermediate PPL and Long Track, to Cut Phase (with a Lower-Body Bias option) and a Maintenance block for after the cut. Athletic Power and Pure Cardio run alongside a main plan.
+- **98-exercise library** with coaching cues, safety notes, swap options for every plan exercise, and regressions for the risky stuff. Every exercise card links to a web search for form videos.
+- **Plan generator** — pick days, goal, and level; get a balanced week with compound lifts first, every muscle trained twice a week, and nothing your limits or injury screen rule out.
+- **My limits** — tap *No jumping* or *No floor work* once on the Plans page and every plan, swap and generated session respects it, swapping in the nearest suitable exercise automatically.
+- **Weekly sets per muscle** — each plan shows its weekly hard sets per muscle group, and History shows what you have actually logged this week against that target.
 - **Progression engine** — double progression with rep-range logic, RPE back-off signals, multi-signal deload triggers, and honest units (minutes, seconds, and meters log as what they are, not fake reps).
 - **Progression feedback** — RPE is logged as *reps left in the tank*, not a vague effort score. The app watches your logs: a lift stuck at the same weight and reps for three sessions raises a card that tells you whether to add load (low effort) or deload (genuine plateau), with a one-tap prefill for next session. Hitting the top of a rep range prompts a load bump; a session logged well below working intensity gets a quiet note. Your review shows a Progression block — last session vs this one, with direction.
 - **Safety pathway** — first-run health notice, a "when to stop" rule reachable from every workout and the rest timer, and an injury/condition screening that actually changes what the app suggests.

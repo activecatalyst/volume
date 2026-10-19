@@ -2,7 +2,7 @@
 // Staged activation per release plan (Agent 7 H §3): a new SW installs, then
 // WAITS until all tabs are closed before taking over — never a mid-workout
 // takeover. skipWaiting()/clients.claim() removed deliberately.
-const CACHE_NAME = 'volume-v4';
+const CACHE_NAME = 'volume-v7';
 const ASSETS = [
   './index.html',
   './grind-dashboard.html',
